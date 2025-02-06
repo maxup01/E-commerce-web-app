@@ -2,7 +2,6 @@ package org.example.backend.dao.entity.transaction;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 

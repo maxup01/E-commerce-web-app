@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.image.ProductImage;
+import org.example.backend.dao.entity.transaction.Order;
+import org.example.backend.dao.entity.transaction.OrderedProduct;
 
 import java.util.List;
 import java.util.UUID;
@@ -45,6 +47,9 @@ public class Product {
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
     private List<ProductImage> images;
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    private List<OrderedProduct> orderedProducts;
 
 
     public Product(String name, String EANCode, String type, String description, Double regularPrice, Double currentPrice, List<Stock> stocks) {

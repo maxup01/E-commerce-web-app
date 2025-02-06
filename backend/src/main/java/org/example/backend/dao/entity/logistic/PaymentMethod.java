@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.transaction.Order;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -22,6 +25,9 @@ public class PaymentMethod {
 
     @Column(nullable = false)
     private boolean enabled;
+
+    @OneToMany(mappedBy = "paymentMethod", fetch = FetchType.LAZY)
+    private List<Order> orders;
 
     public PaymentMethod(String name, boolean enabled) {
         this.name = name;

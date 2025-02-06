@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.transaction.Order;
+
+import java.util.List;
 
 @Entity
 @Data
@@ -28,6 +31,9 @@ public class Address {
 
     @Column(nullable = false)
     private String address;
+
+    @OneToMany(mappedBy = "deliveryAddress", fetch = FetchType.LAZY)
+    private List<Order> orders;
 
     public Address(String country, String province, String city, String address) {
         this.country = country;
