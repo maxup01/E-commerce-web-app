@@ -9,6 +9,7 @@ import org.example.backend.dao.entity.user.User;
 
 import java.util.UUID;
 
+//Entity for storing profile image for user
 @Entity
 @Data
 @NoArgsConstructor

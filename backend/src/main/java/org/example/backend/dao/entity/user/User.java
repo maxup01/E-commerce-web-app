@@ -38,7 +38,7 @@ public class User {
     private Date birthDate;
 
     //Role related to the user
-    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
     private Role role;
 

@@ -9,6 +9,7 @@ import org.example.backend.dao.entity.product.Product;
 
 import java.util.UUID;
 
+//Entity for storing product image
 @Entity
 @Data
 @NoArgsConstructor
@@ -24,7 +25,7 @@ public class ProductImage {
     @Column(nullable = false)
     private byte[] image;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 
