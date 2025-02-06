@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class PaymentMethod {
+public class DeliveryProvider {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,7 +23,7 @@ public class PaymentMethod {
     @Column(nullable = false)
     private boolean enabled;
 
-    public PaymentMethod(String name, boolean enabled) {
+    public DeliveryProvider(String name, boolean enabled) {
         this.name = name;
         this.enabled = enabled;
     }
