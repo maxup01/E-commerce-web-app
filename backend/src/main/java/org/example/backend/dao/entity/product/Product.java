@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.image.ProductImage;
 
 import java.util.List;
 import java.util.UUID;
@@ -39,8 +40,12 @@ public class Product {
     @Column(nullable = false)
     private Double currentPrice;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    List<Stock> stocks;
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
+    private List<Stock> stocks;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "product")
+    private List<ProductImage> images;
+
 
     public Product(String name, String EANCode, String type, String description, Double regularPrice, Double currentPrice, List<Stock> stocks) {
         this.EANCode = EANCode;
@@ -50,5 +55,16 @@ public class Product {
         this.regularPrice = regularPrice;
         this.currentPrice = currentPrice;
         this.stocks = stocks;
+    }
+
+    public Product(String name, String EANCode, String type, String description, Double regularPrice, Double currentPrice, List<Stock> stocks, List<ProductImage> images) {
+        this.EANCode = EANCode;
+        this.name = name;
+        this.type = type;
+        this.description = description;
+        this.regularPrice = regularPrice;
+        this.currentPrice = currentPrice;
+        this.stocks = stocks;
+        this.images = images;
     }
 }

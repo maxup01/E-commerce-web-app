@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.image.UserImage;
 
 import java.util.Date;
 import java.util.UUID;
@@ -39,7 +40,11 @@ public class User {
     //Role related to the user
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
     @JoinColumn(name = "role_id", referencedColumnName = "id", nullable = false)
-    Role role;
+    private Role role;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "image_id", referencedColumnName = "id")
+    private UserImage profileImage;
 
     public User(String firstName, String lastName, String email, String password, Date birthDate, Role role) {
         this.firstName = firstName;
@@ -48,5 +53,15 @@ public class User {
         this.password = password;
         this.birthDate = birthDate;
         this.role = role;
+    }
+
+    public User(String firstName, String lastName, String email, String password, Date birthDate, Role role, UserImage userImage) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.password = password;
+        this.birthDate = birthDate;
+        this.role = role;
+        this.profileImage = userImage;
     }
 }
