@@ -5,7 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.transaction.Order;
+import org.example.backend.dao.entity.transaction.OrderTransaction;
+import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
 import java.util.List;
 
@@ -27,7 +28,10 @@ public class DeliveryProvider {
     private boolean enabled;
 
     @OneToMany(mappedBy = "deliveryProvider", fetch = FetchType.LAZY)
-    private List<Order> orders;
+    private List<OrderTransaction> orderTransactions;
+
+    @OneToMany(mappedBy = "deliveryProvider", fetch = FetchType.LAZY)
+    private List<ReturnTransaction> returnTransactions;
 
     public DeliveryProvider(String name, boolean enabled) {
         this.name = name;

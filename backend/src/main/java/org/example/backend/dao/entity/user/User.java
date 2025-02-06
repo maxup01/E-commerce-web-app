@@ -6,7 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.image.UserImage;
-import org.example.backend.dao.entity.transaction.Order;
+import org.example.backend.dao.entity.transaction.OrderTransaction;
+import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
 import java.util.Date;
 import java.util.List;
@@ -49,8 +50,10 @@ public class User {
     private UserImage profileImage;
 
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<Order> orders;
+    private List<OrderTransaction> orderTransactions;
 
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<ReturnTransaction> returnTransactions;
 
     public User(String firstName, String lastName, String email, String password, Date birthDate, Role role) {
         this.firstName = firstName;

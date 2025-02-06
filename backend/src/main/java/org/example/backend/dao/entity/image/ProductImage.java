@@ -25,6 +25,9 @@ public class ProductImage {
     @Column(nullable = false)
     private byte[] image;
 
+    @Column(nullable = false)
+    private boolean isMainImage;
+
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
@@ -33,8 +36,9 @@ public class ProductImage {
         this.image = image;
     }
 
-    public ProductImage(byte[] image, Product product) {
+    public ProductImage(byte[] image, boolean isMainImage, Product product) {
         this.image = image;
+        this.isMainImage = isMainImage;
         this.product = product;
     }
 }

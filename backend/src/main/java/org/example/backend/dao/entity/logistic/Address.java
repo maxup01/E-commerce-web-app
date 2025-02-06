@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.transaction.Order;
+import org.example.backend.dao.entity.transaction.OrderTransaction;
+import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
 import java.util.List;
 
+//Entity for storing address data
 @Entity
 @Data
 @NoArgsConstructor
@@ -33,7 +35,10 @@ public class Address {
     private String address;
 
     @OneToMany(mappedBy = "deliveryAddress", fetch = FetchType.LAZY)
-    private List<Order> orders;
+    private List<OrderTransaction> orderTransactions;
+
+    @OneToMany(mappedBy = "deliveryAddress", fetch = FetchType.LAZY)
+    private List<ReturnTransaction> returnTransactions;
 
     public Address(String country, String province, String city, String address) {
         this.country = country;

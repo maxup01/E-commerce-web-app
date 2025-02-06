@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.util.Date;
 import java.util.UUID;
 
-//This is super class for Order entity
+//This is super class for OrderTransaction and ReturnTransaction entities
 @MappedSuperclass
 @Data
 @NoArgsConstructor

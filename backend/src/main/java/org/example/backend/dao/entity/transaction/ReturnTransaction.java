@@ -4,20 +4,19 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
-import org.example.backend.dao.entity.logistic.PaymentMethod;
 import org.example.backend.dao.entity.user.User;
 
 import java.util.Date;
 import java.util.List;
 
-//Entity for storing data
+//Entity for storing data about returns
 @EqualsAndHashCode(callSuper = true)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Order extends Transaction {
+public class ReturnTransaction extends Transaction {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
@@ -32,18 +31,22 @@ public class Order extends Transaction {
     private DeliveryProvider deliveryProvider;
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
-    private PaymentMethod paymentMethod;
+    @JoinColumn(name = "retrurn_cause_id", referencedColumnName = "id")
+    private ReturnCause returnCause;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private List<OrderedProduct> orderedProducts;
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "return_transaction_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "returned_product_id", referencedColumnName = "id")
+    )
+    private List<ReturnedProduct> returnedProducts;
 
-    public Order(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, List<OrderedProduct> orderedProducts) {
+    public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {
         super(transactionDate);
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;
-        this.paymentMethod = paymentMethod;
-        this.orderedProducts = orderedProducts;
+        this.returnCause = returnCause;
+        this.returnedProducts = returnedProducts;
     }
 }

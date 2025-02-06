@@ -12,7 +12,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class OrderTest {
+public class OrderTransactionTest {
 
     private final Date RANDOM_TRANSACTION_DATE = new Date();
     private final User RANDOM_USER = new User();
@@ -24,15 +24,15 @@ public class OrderTest {
     @Test
     public void testOfConstructorWithTransactionDateAndUserAndDeliveryAddressAndDeliveryProviderAndPaymentMethodAndOrderedProductListArguments() {
 
-        Order order = new Order(RANDOM_TRANSACTION_DATE, RANDOM_USER, RANDOM_DELIVERY_ADDRESS, RANDOM_DELIVERY_PROVIDER,
+        OrderTransaction orderTransaction = new OrderTransaction(RANDOM_TRANSACTION_DATE, RANDOM_USER, RANDOM_DELIVERY_ADDRESS, RANDOM_DELIVERY_PROVIDER,
                 RANDOM_PAYMENT_METHOD, RANDOM_ORDERED_PRODUCT_LIST);
 
-        assertNull(order.getId());
-        assertEquals(order.getTransactionDate(), RANDOM_TRANSACTION_DATE);
-        assertEquals(order.getUser(), RANDOM_USER);
-        assertEquals(order.getDeliveryAddress(), RANDOM_DELIVERY_ADDRESS);
-        assertEquals(order.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);
-        assertEquals(order.getPaymentMethod(), RANDOM_PAYMENT_METHOD);
-        assertEquals(order.getOrderedProducts(), RANDOM_ORDERED_PRODUCT_LIST);
+        assertNull(orderTransaction.getId());
+        assertEquals(orderTransaction.getTransactionDate(), RANDOM_TRANSACTION_DATE);
+        assertEquals(orderTransaction.getUser(), RANDOM_USER);
+        assertEquals(orderTransaction.getDeliveryAddress(), RANDOM_DELIVERY_ADDRESS);
+        assertEquals(orderTransaction.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);
+        assertEquals(orderTransaction.getPaymentMethod(), RANDOM_PAYMENT_METHOD);
+        assertEquals(orderTransaction.getOrderedProducts(), RANDOM_ORDERED_PRODUCT_LIST);
     }
 }

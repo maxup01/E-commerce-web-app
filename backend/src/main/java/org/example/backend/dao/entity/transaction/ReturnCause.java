@@ -6,6 +6,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
+//Entity for storing causes of returns
 @Entity
 @Data
 @NoArgsConstructor
@@ -19,6 +22,9 @@ public class ReturnCause {
 
     @Column(nullable = false, unique = true)
     private String cause;
+
+    @OneToMany(mappedBy = "returnCause", fetch = FetchType.LAZY)
+    private List<ReturnTransaction> returnTransactions;
 
     public ReturnCause(String cause) {
         this.cause = cause;
