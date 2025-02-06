@@ -1,2 +1,4 @@
 # E-commerce-web-app
-E-commerce store web app 
+
+> [!NOTE]
+> Project is in early development phase
