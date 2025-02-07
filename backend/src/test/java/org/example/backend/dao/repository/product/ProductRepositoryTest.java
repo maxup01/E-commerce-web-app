@@ -1,11 +1,10 @@
-package org.example.backend.dao.repository.logistic;
+package org.example.backend.dao.repository.product;
 
 import jakarta.persistence.EntityManager;
 import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
-import org.example.backend.dao.repository.product.ProductRepository;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
