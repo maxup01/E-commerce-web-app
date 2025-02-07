@@ -1,6 +1,5 @@
 package org.example.backend.dao.entity.product;
 
-import org.example.backend.dao.entity.image.ProductImage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;

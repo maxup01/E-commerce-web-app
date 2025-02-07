@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
-import org.example.backend.dao.entity.logistic.PaymentMethod;
 import org.example.backend.dao.entity.user.User;
 
 import java.util.Date;

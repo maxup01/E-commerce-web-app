@@ -2,7 +2,6 @@ package org.example.backend.dao.entity.transaction;
 
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
-import org.example.backend.dao.entity.logistic.PaymentMethod;
 import org.example.backend.dao.entity.user.User;
 import org.junit.jupiter.api.Test;
 

@@ -1,11 +1,10 @@
-package org.example.backend.dao.entity.logistic;
+package org.example.backend.dao.entity.transaction;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.transaction.OrderTransaction;
 
 import java.util.List;
 

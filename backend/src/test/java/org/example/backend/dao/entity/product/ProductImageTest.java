@@ -1,6 +1,5 @@
-package org.example.backend.dao.entity.image;
+package org.example.backend.dao.entity.product;
 
-import org.example.backend.dao.entity.product.Product;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;

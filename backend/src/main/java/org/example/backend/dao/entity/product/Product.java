@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.image.ProductImage;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 
 import java.util.List;

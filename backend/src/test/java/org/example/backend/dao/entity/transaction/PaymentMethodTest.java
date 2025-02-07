@@ -1,4 +1,4 @@
-package org.example.backend.dao.entity.logistic;
+package org.example.backend.dao.entity.transaction;
 
 import org.junit.jupiter.api.Test;
 

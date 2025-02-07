@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.image.UserImage;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 

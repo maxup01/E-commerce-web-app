@@ -1,11 +1,10 @@
-package org.example.backend.dao.entity.image;
+package org.example.backend.dao.entity.product;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.example.backend.dao.entity.product.Product;
 
 import java.util.UUID;
 
