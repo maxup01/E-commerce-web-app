@@ -22,7 +22,7 @@ public class OrderedProduct extends TransactionProduct{
     )
     private List<Product> products;
 
-    //This is only many-to-many relationship cause of mappedBy in OrderedProduct entity.
+    //This is many-to-many relationship only because of mappedBy in OrderedProduct entity.
     //It cannot be more than one related return transaction to this entity!!!
     @ManyToMany(mappedBy = "orderedProducts", fetch = FetchType.EAGER)
     private List<OrderTransaction> orderTransaction;
