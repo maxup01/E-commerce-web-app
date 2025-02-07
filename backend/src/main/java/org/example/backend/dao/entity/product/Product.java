@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
+import org.example.backend.dao.entity.transaction.ReturnedProduct;
 
 import java.util.List;
 import java.util.UUID;
@@ -55,6 +56,8 @@ public class Product {
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
     private List<OrderedProduct> orderedProducts;
 
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    private List<ReturnedProduct> returnedProducts;
 
     public Product(String name, String EANCode, String type, String description, Double regularPrice,
                    Double currentPrice, Stock stock, ProductMainImage mainImage) {
