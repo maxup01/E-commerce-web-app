@@ -9,7 +9,7 @@ public interface AddressRepository extends JpaRepository<Address, Long> {
 
     //Finds address instance by country, province, city and address case-insensitive
     @Query("SELECT a FROM Address AS a WHERE LOWER(a.country) = LOWER(:country) AND LOWER(a.province) = LOWER(:province)" +
-            " AND LOWER(a.province) = LOWER(:province) AND LOWER(a.city) = LOWER(:city) AND LOWER(a.address) = LOWER(:address)")
+            " AND LOWER(a.city) = LOWER(:city) AND LOWER(a.address) = LOWER(:address)")
     Address findByCountryAndCityAndProvinceAndAddress(@Param("country") String country, @Param("province") String province,
                                                       @Param("city") String city, @Param("address") String address);
 }

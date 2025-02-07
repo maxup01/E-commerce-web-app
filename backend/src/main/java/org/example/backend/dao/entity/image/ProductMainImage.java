@@ -1,20 +1,21 @@
-package org.example.backend.dao.entity.product;
+package org.example.backend.dao.entity.image;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.product.Product;
 
 import java.util.UUID;
 
-//Entity for storing product image
+//Entity storing main product image (profile product image)
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ProductImage {
+public class ProductMainImage {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -24,20 +25,15 @@ public class ProductImage {
     @Column(nullable = false)
     private byte[] image;
 
-    @Column(nullable = false)
-    private boolean isMainImage;
-
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private Product product;
 
-    public ProductImage(byte[] image) {
+    public ProductMainImage(byte[] image) {
         this.image = image;
     }
 
-    public ProductImage(byte[] image, boolean isMainImage, Product product) {
+    public ProductMainImage(byte[] image, Product product) {
         this.image = image;
-        this.isMainImage = isMainImage;
         this.product = product;
     }
 }

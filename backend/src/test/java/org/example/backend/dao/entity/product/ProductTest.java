@@ -1,5 +1,7 @@
 package org.example.backend.dao.entity.product;
 
+import org.example.backend.dao.entity.image.ProductMainImage;
+import org.example.backend.dao.entity.image.ProductPageImage;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -15,14 +17,15 @@ public class ProductTest {
     private final String RANDOM_DESCRIPTION = "Random description";
     private final Double RANDOM_REGULAR_PRICE = 100.00;
     private final Double RANDOM_CURRENT_PRICE = 50.00;
-    private final List<Stock> RANDOM_STOCK_LIST = List.of(new Stock(), new Stock());
-    private final List<ProductImage> RANDOM_IMAGE_LIST = List.of(new ProductImage(), new ProductImage());
+    private final Stock RANDOM_STOCK = new Stock();
+    private final ProductMainImage RANDOM_MAIN_IMAGE = new ProductMainImage();
+    private final List<ProductPageImage> RANDOM_IMAGE_LIST = List.of(new ProductPageImage(), new ProductPageImage());
 
     @Test
     public void testOfConstructorWithEANCodeAndNameAndTypeAndDescriptionAndRegularPriceAndCurrentPriceAndStockArguments(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK_LIST);
+                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE);
 
         assertNull(product.getId());
         assertEquals(product.getEANCode(), RANDOM_EAN_CODE);
@@ -31,14 +34,15 @@ public class ProductTest {
         assertEquals(product.getDescription(), RANDOM_DESCRIPTION);
         assertEquals(product.getRegularPrice(), RANDOM_REGULAR_PRICE);
         assertEquals(product.getCurrentPrice(), RANDOM_CURRENT_PRICE);
-        assertEquals(product.getStocks(), RANDOM_STOCK_LIST);
+        assertEquals(product.getMainImage(), RANDOM_MAIN_IMAGE);
+        assertEquals(product.getStock(), RANDOM_STOCK);
     }
 
     @Test
     public void testOfConstructorWithEANCodeAndNameAndTypeAndDescriptionAndRegularPriceAndCurrentPriceAndStockAndProductImageArguments(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK_LIST, RANDOM_IMAGE_LIST);
+                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
 
         assertNull(product.getId());
         assertEquals(product.getEANCode(), RANDOM_EAN_CODE);
@@ -47,7 +51,8 @@ public class ProductTest {
         assertEquals(product.getDescription(), RANDOM_DESCRIPTION);
         assertEquals(product.getRegularPrice(), RANDOM_REGULAR_PRICE);
         assertEquals(product.getCurrentPrice(), RANDOM_CURRENT_PRICE);
-        assertEquals(product.getStocks(), RANDOM_STOCK_LIST);
-        assertEquals(product.getImages(), RANDOM_IMAGE_LIST);
+        assertEquals(product.getStock(), RANDOM_STOCK);
+        assertEquals(product.getMainImage(), RANDOM_MAIN_IMAGE);
+        assertEquals(product.getPageImages(), RANDOM_IMAGE_LIST);
     }
 }
