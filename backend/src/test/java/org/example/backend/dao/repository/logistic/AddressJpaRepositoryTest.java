@@ -39,7 +39,6 @@ public class AddressJpaRepositoryTest {
 
         Address address = new Address(RANDOM_COUNTRY_NAME_UPPER_CASE, RANDOM_PROVINCE_NAME_UPPER_CASE,
                 RANDOM_CITY_NAME_UPPER_CASE, RANDOM_ADDRESS_UPPER_CASE);
-
         addressRepository.save(address);
 
         Address address1 = addressRepository.findByCountryAndCityAndProvinceAndAddress(RANDOM_COUNTRY_NAME_LOWER_CASE,

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
-public class DeliveryProviderTest {
+public class DeliveryProviderRepository {
 
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Credit card";
     private final boolean RANDOM_ENABLED_VALUE = true;
