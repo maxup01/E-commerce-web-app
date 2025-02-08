@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface ReturnCauseRepository extends JpaRepository<ReturnCause, Long> {
 
-    @Query("SELECT r FROM ReturnCause AS r WHERE LOWER(r.cause) = LOWER(:cause)")
+    @Query("SELECT r FROM ReturnCause AS r WHERE r.cause = :cause")
     ReturnCause findByCause(@Param("cause") String cause);
 }

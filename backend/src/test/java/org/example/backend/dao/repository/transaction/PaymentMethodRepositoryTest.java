@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class PaymentMethodRepositoryTest {
 
-    private final String RANDOM_PAYMENT_METHOD_NAME = "Random payment method name";
-    private final String THE_SAME_PAYMENT_METHOD_NAME_WITH_RANDOM_CASE = "RANDOM PAYMENT METHOD NAME";
+    private final String RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE = "random payment method name";
     private final boolean RANDOM_ENABLED_VALUE = true;
 
     @Autowired
@@ -25,14 +24,14 @@ public class PaymentMethodRepositoryTest {
     @Test
     public void testOfSave(){
 
-        PaymentMethod paymentMethod1 = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME, RANDOM_ENABLED_VALUE);
+        PaymentMethod paymentMethod1 = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
 
         assertDoesNotThrow(() -> {
             paymentMethodRepository.save(paymentMethod1);
             entityManager.flush();
         });
 
-        PaymentMethod paymentMethod2 = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME, RANDOM_ENABLED_VALUE);
+        PaymentMethod paymentMethod2 = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
 
         //This should throw this error because paymentMethod2 has the same name as paymentDelivery1
         assertThrows(DataIntegrityViolationException.class, () -> {
@@ -44,11 +43,11 @@ public class PaymentMethodRepositoryTest {
     @Test
     public void testOfFindByName(){
 
-        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME, RANDOM_ENABLED_VALUE);
+        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
         paymentMethodRepository.save(paymentMethod);
 
-        PaymentMethod foundPaymentMethod = paymentMethodRepository.findByName(THE_SAME_PAYMENT_METHOD_NAME_WITH_RANDOM_CASE);
+        PaymentMethod foundPaymentMethod = paymentMethodRepository.findByName(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE);
 
-        assertEquals(foundPaymentMethod.getName(), RANDOM_PAYMENT_METHOD_NAME);
+        assertEquals(foundPaymentMethod.getName(), RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE);
     }
 }

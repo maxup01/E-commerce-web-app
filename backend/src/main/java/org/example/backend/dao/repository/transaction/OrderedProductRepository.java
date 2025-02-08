@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,12 +18,18 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     List<Object[]> getAllTypesAndTheirOrderedQuantityAndRevenue();
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct o" +
-            " WHERE LOWER(o.product.name) LIKE LOWER(:phrase) GROUP BY o.product.name")
+            " WHERE LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product.name")
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(@Param("phrase") String phrase);
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct o" +
-            " WHERE LOWER(o.product.type) = LOWER(:type) GROUP BY o.product.name")
+            " WHERE o.product.type = :type GROUP BY o.product.name")
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(@Param("type") String type);
 
+    //TODO test this method
+    @Query("SELECT SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct o WHERE " +
+            "o.orderTransaction.transactionDate >= :startingDate AND o.orderTransaction.transactionDate <= :endingDate")
+    List<Object[]> getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
+                                                                         @Param("endingDate") Date endingDate);
 
+    //TODO add method related to time
 }

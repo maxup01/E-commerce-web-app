@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class ReturnCauseRepositoryTest {
 
-    private final String RANDOM_CAUSE = "random cause";
-    private final String THE_SAME_CAUSE_WITH_DIFFERENT_CASE = "RANDOM CAUSE";
+    private final String RANDOM_CAUSE_LOWER_CASE = "random cause";
 
     @Autowired
     private EntityManager entityManager;
@@ -24,14 +23,14 @@ public class ReturnCauseRepositoryTest {
     @Test
     public void testOfSave(){
 
-        ReturnCause returnCause1 = new ReturnCause(RANDOM_CAUSE);
+        ReturnCause returnCause1 = new ReturnCause(RANDOM_CAUSE_LOWER_CASE);
 
         assertDoesNotThrow(() -> {
             returnCauseRepository.save(returnCause1);
             entityManager.flush();
         });
 
-        ReturnCause returnCause2 = new ReturnCause(RANDOM_CAUSE);
+        ReturnCause returnCause2 = new ReturnCause(RANDOM_CAUSE_LOWER_CASE);
 
         assertThrows(DataIntegrityViolationException.class, () -> {
             returnCauseRepository.save(returnCause2);
@@ -42,11 +41,11 @@ public class ReturnCauseRepositoryTest {
     @Test
     public void testOfFindByCause(){
 
-        ReturnCause returnCause = new ReturnCause(RANDOM_CAUSE);
+        ReturnCause returnCause = new ReturnCause(RANDOM_CAUSE_LOWER_CASE);
         returnCauseRepository.save(returnCause);
 
-        ReturnCause foundReturnCause = returnCauseRepository.findByCause(THE_SAME_CAUSE_WITH_DIFFERENT_CASE);
+        ReturnCause foundReturnCause = returnCauseRepository.findByCause(RANDOM_CAUSE_LOWER_CASE);
 
-        assertEquals(foundReturnCause.getCause(), RANDOM_CAUSE);
+        assertEquals(foundReturnCause.getCause(), RANDOM_CAUSE_LOWER_CASE);
     }
 }

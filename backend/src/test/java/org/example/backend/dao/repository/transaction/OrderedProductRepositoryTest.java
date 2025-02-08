@@ -17,13 +17,13 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class OrderedProductRepositoryTest {
 
-    private final String RANDOM_PHRASE = "%Random%";
+    private final String RANDOM_PHRASE_LOWER_CASE = "random";
     private final String RANDOM_PRODUCT_NAME = "Random name";
     private final String DIFFERENT_PRODUCT_NAME = "Different name";
     private final String RANDOM_EAN_CODE = "6234628742679";
     private final String DIFFERENT_EAN_CODE = "62346287431679";
-    private final String RANDOM_TYPE = "Random type";
-    private final String DIFFERENT_TYPE = "Different type";
+    private final String RANDOM_TYPE_LOWER_CASE = "Random type";
+    private final String DIFFERENT_TYPE_LOWER_CASE = "Different type";
     private final String RANDOM_DESCRIPTION = "Random description";
     private final Double RANDOM_REGULAR_PRICE = 99.10;
     private final Double RANDOM_CURRENT_PRICE = 100.99;
@@ -44,7 +44,7 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfSave(){
 
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
+        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
 
         OrderedProduct orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
@@ -55,7 +55,7 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetAllQuantityOfOrderedProductsAndRevenue(){
 
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
+        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product);
 
@@ -77,11 +77,11 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetAllTypesAndTheirOrderedQuantityAndRevenue(){
 
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
+        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE, RANDOM_DESCRIPTION,
+        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
         productRepository.save(product2);
 
@@ -103,20 +103,20 @@ public class OrderedProductRepositoryTest {
 
         assertEquals(map1.size(), 2);
         assertEquals(map2.size(), 2);
-        assertEquals(map1.get(RANDOM_TYPE), RANDOM_QUANTITY);
-        assertEquals(map1.get(DIFFERENT_TYPE), DIFFERENT_QUANTITY);
-        assertEquals(map2.get(RANDOM_TYPE), RANDOM_QUANTITY * product1.getCurrentPrice());
-        assertEquals(map2.get(DIFFERENT_TYPE), DIFFERENT_QUANTITY * product2.getCurrentPrice());
+        assertEquals(map1.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY);
+        assertEquals(map1.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY);
+        assertEquals(map2.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY * product1.getCurrentPrice());
+        assertEquals(map2.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY * product2.getCurrentPrice());
     }
 
     @Test
     public void testOfGetAllTypesAndTheirRevenueOfOrderedProducts(){
 
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
+        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product1);
 
-        Product product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE, RANDOM_DESCRIPTION,
+        Product product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
         productRepository.save(product2);
 
@@ -126,7 +126,7 @@ public class OrderedProductRepositoryTest {
         OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
         orderedProductRepository.save(orderedProduct2);
 
-        List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
+        List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(RANDOM_PHRASE_LOWER_CASE);
 
         HashMap<String, Long> map1 = new HashMap<>();
         HashMap<String, Double> map2 = new HashMap<>();
@@ -146,11 +146,11 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByType(){
 
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
+        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE, RANDOM_DESCRIPTION,
+        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
                 RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
         productRepository.save(product2);
 
@@ -160,7 +160,7 @@ public class OrderedProductRepositoryTest {
         OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
         orderedProductRepository.save(orderedProduct2);
 
-        List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(RANDOM_TYPE);
+        List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(RANDOM_TYPE_LOWER_CASE);
 
         HashMap<String, Long> map1 = new HashMap<>();
         HashMap<String, Double> map2 = new HashMap<>();

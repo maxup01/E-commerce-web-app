@@ -7,6 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethod, Long> {
 
-    @Query("SELECT p FROM PaymentMethod AS p WHERE LOWER(p.name) = LOWER(:name)")
+    @Query("SELECT p FROM PaymentMethod AS p WHERE p.name = :name")
     PaymentMethod findByName(@Param("name") String name);
 }

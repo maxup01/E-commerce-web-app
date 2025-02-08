@@ -13,6 +13,6 @@ public interface DeliveryProviderRepository extends JpaRepository<DeliveryProvid
 
     List<DeliveryProvider> findAllByEnabledTrue();
 
-    @Query("SELECT d FROM DeliveryProvider AS d WHERE LOWER(d.name) = LOWER(:name)")
+    @Query("SELECT d FROM DeliveryProvider AS d WHERE d.name = :name")
     DeliveryProvider findByName(@Param("name") String name);
 }

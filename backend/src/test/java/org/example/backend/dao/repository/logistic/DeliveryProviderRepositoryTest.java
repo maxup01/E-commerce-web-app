@@ -12,8 +12,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @DataJpaTest
 public class DeliveryProviderRepositoryTest {
 
-    final private String RANDOM_DELIVERY_NAME = "Random delivery provider name";
-    final private String RANDOM_DELIVERY_NAME_UPPER_CASE = "RANDOM DELIVERY PROVIDER NAME";
+    final private String RANDOM_DELIVERY_NAME_LOWER_CASE = "random delivery provider name";
     final private String DIFFERENT_DELIVERY_NAME = "Different delivery provider name";
     final private String ANOTHER_RANDOM_DELIVERY_NAME = "Another random delivery provider name";
     final private boolean ENABLED_TRUE = true;
@@ -25,8 +24,8 @@ public class DeliveryProviderRepositoryTest {
     @Test
     public void testOfSave(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME, ENABLED_TRUE);
-        DeliveryProvider provider2 = new DeliveryProvider(RANDOM_DELIVERY_NAME, ENABLED_FALSE);
+        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
+        DeliveryProvider provider2 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_FALSE);
 
         assertDoesNotThrow(() -> {
             deliveryProviderRepository.save(provider1);
@@ -40,23 +39,20 @@ public class DeliveryProviderRepositoryTest {
     @Test
     public void testOfFindByName(){
 
-        DeliveryProvider provider = new DeliveryProvider(RANDOM_DELIVERY_NAME, ENABLED_TRUE);
+        DeliveryProvider provider = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
         deliveryProviderRepository.save(provider);
 
-        DeliveryProvider foundDeliveryProvider1 = deliveryProviderRepository.findByName(RANDOM_DELIVERY_NAME);
-        DeliveryProvider foundDeliveryProvider2 = deliveryProviderRepository.findByName(RANDOM_DELIVERY_NAME_UPPER_CASE);
+        DeliveryProvider foundDeliveryProvider1 = deliveryProviderRepository.findByName(RANDOM_DELIVERY_NAME_LOWER_CASE);
 
-        assertEquals(foundDeliveryProvider1.getId(), foundDeliveryProvider2.getId());
-        assertEquals(foundDeliveryProvider1.getName(), foundDeliveryProvider2.getName());
-        assertEquals(foundDeliveryProvider1.isEnabled(), foundDeliveryProvider1.isEnabled());
-        assertEquals(foundDeliveryProvider2.getOrderTransactions(), foundDeliveryProvider2.getOrderTransactions());
-        assertEquals(foundDeliveryProvider2.getReturnTransactions(), foundDeliveryProvider2.getReturnTransactions());
+        assertNotNull(foundDeliveryProvider1.getId());
+        assertEquals(foundDeliveryProvider1.getName(), RANDOM_DELIVERY_NAME_LOWER_CASE);
+        assertEquals(foundDeliveryProvider1.isEnabled(), ENABLED_TRUE);
     }
 
     @Test
     public void testOffFindByEnabledTrue(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME, ENABLED_TRUE);
+        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
         deliveryProviderRepository.save(provider1);
 
         DeliveryProvider provider2 = new DeliveryProvider(DIFFERENT_DELIVERY_NAME, ENABLED_FALSE);
@@ -73,7 +69,7 @@ public class DeliveryProviderRepositoryTest {
     @Test
     public void testOffFindByEnabledFalse(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME, ENABLED_TRUE);
+        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
         deliveryProviderRepository.save(provider1);
 
         DeliveryProvider provider2 = new DeliveryProvider(DIFFERENT_DELIVERY_NAME, ENABLED_FALSE);

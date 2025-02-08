@@ -21,11 +21,10 @@ public class ProductRepositoryTest {
     private final String RANDOM_EAN_CODE = "0799439112766";
     private final String DIFFERENT_EAN_CODE = "07994391127222";
     private final String RANDOM_NAME = "Random name";
-    private final String DIFFERENT_NAME = "Different name";
-    private final String PHRASE_OF_RANDOM_NAME = "%Random%";
-    private final String RANDOM_TYPE = "Random type";
-    private final String RANDOM_TYPE_DIFFERENT_CASE = "RANDOM TYPE";
-    private final String DIFFERENT_RANDOM_TYPE = "Different type";
+    private final String DIFFERENT_NAME_LOWER_CASE = "different name";
+    private final String PHRASE_OF_RANDOM_NAME_LOWER_CASE = "random";
+    private final String RANDOM_TYPE_LOWER_CASE = "random type";
+    private final String DIFFERENT_RANDOM_TYPE_LOWER_CASE = "different type";
     private final String RANDOM_DESCRIPTION = "Random description";
     private final Double RANDOM_REGULAR_PRICE = 100.00;
     private final Double RANDOM_CURRENT_PRICE = 80.00;
@@ -49,7 +48,7 @@ public class ProductRepositoryTest {
     @Test
     public void testOfSave(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
 
         assertDoesNotThrow(() -> {
@@ -59,7 +58,7 @@ public class ProductRepositoryTest {
 
         //This product is created incorrectly cause of the same stock, pageImages, mainImage and EAN code
         // as product1, it violates @OneToOne and @ManyToOne relationships and uniqueness of EAC code fields
-        Product product2 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
 
         assertThrows(ConstraintViolationException.class, () -> {
@@ -77,7 +76,7 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByName(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
@@ -86,7 +85,7 @@ public class ProductRepositoryTest {
         assertNotNull(foundProduct.getId());
         assertEquals(foundProduct.getEANCode(), RANDOM_EAN_CODE);
         assertEquals(foundProduct.getName(), RANDOM_NAME);
-        assertEquals(foundProduct.getType(), RANDOM_TYPE);
+        assertEquals(foundProduct.getType(), RANDOM_TYPE_LOWER_CASE);
         assertEquals(foundProduct.getDescription(), RANDOM_DESCRIPTION);
         assertEquals(foundProduct.getRegularPrice(), RANDOM_REGULAR_PRICE);
         assertEquals(foundProduct.getCurrentPrice(), RANDOM_CURRENT_PRICE);
@@ -98,25 +97,23 @@ public class ProductRepositoryTest {
     @Test
     public void testOffFindByType(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
-        List<Product> products1 = productRepository.findByType(RANDOM_TYPE);
-        List<Product> products2 = productRepository.findByType(RANDOM_TYPE_DIFFERENT_CASE);
+        List<Product> products = productRepository.findByType(RANDOM_TYPE_LOWER_CASE);
 
-        assertEquals(products1.size(), 1);
-        assertEquals(products2.size(), 1);
+        assertEquals(products.size(), 1);
     }
 
     @Test
     public void testOfFindByPhrase(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
-        List<Product> products = productRepository.findByPhrase(PHRASE_OF_RANDOM_NAME);
+        List<Product> products = productRepository.findByPhrase(PHRASE_OF_RANDOM_NAME_LOWER_CASE);
 
         assertEquals(products.size(), 1);
     }
@@ -124,12 +121,12 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByPhraseAndType(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
-        List<Product> products = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME, RANDOM_TYPE_DIFFERENT_CASE);
-        List<Product> notFoundedProductList = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME, DIFFERENT_RANDOM_TYPE);
+        List<Product> products = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
+        List<Product> notFoundedProductList = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, DIFFERENT_RANDOM_TYPE_LOWER_CASE);
 
         assertEquals(products.size(), 1);
         assertEquals(notFoundedProductList.size(), 0);
@@ -138,7 +135,7 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByPriceRange(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
@@ -152,15 +149,15 @@ public class ProductRepositoryTest {
     @Test
     public void testOffFindByPhraseAndTypeAndPriceRange(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        List<Product> products = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME,
-                RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        List<Product> products = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+                RANDOM_TYPE_LOWER_CASE, LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
 
-        List<Product> productsNotFound = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME,
-                RANDOM_TYPE, GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2);
+        List<Product> productsNotFound = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+                RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2);
 
         assertEquals(products.size(), 1);
         assertEquals(productsNotFound.size(), 0);
@@ -169,11 +166,11 @@ public class ProductRepositoryTest {
     @Test
     public void testOfShowOnSale(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
@@ -185,11 +182,11 @@ public class ProductRepositoryTest {
     @Test
     public void testOfGetTotalQuantityOfProducts(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
@@ -201,11 +198,11 @@ public class ProductRepositoryTest {
     @Test
     public void testOfGetTypesAndQuantityOfProductsWithThisTypes1(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, DIFFERENT_RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, DIFFERENT_RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
@@ -218,18 +215,18 @@ public class ProductRepositoryTest {
         });
 
         assertEquals(list.size(), 2);
-        assertEquals(map.get(RANDOM_TYPE), RANDOM_STOCK.getQuantity());
-        assertEquals(map.get(DIFFERENT_RANDOM_TYPE), DIFFERENT_STOCK.getQuantity());
+        assertEquals(map.get(RANDOM_TYPE_LOWER_CASE), RANDOM_STOCK.getQuantity());
+        assertEquals(map.get(DIFFERENT_RANDOM_TYPE_LOWER_CASE), DIFFERENT_STOCK.getQuantity());
     }
 
     @Test
     public void testOftestOfGetTypesAndQuantityOfProductsWithThisTypes2(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(RANDOM_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
@@ -242,21 +239,21 @@ public class ProductRepositoryTest {
         });
 
         assertEquals(list.size(), 1);
-        assertEquals(map.get(RANDOM_TYPE), RANDOM_STOCK.getQuantity() + DIFFERENT_STOCK.getQuantity());
+        assertEquals(map.get(RANDOM_TYPE_LOWER_CASE), RANDOM_STOCK.getQuantity() + DIFFERENT_STOCK.getQuantity());
     }
 
     @Test
     public void testOfGetProductsNameAndRelatedQuantityByPhrase(){
 
-        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product1 = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product1);
 
-        Product product2 = new Product(DIFFERENT_NAME, DIFFERENT_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
+        Product product2 = new Product(DIFFERENT_NAME_LOWER_CASE, DIFFERENT_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_REGULAR_PRICE,
                 RANDOM_REGULAR_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
-        List<Object[]> list = productRepository.getProductsAndRelatedQuantityByPhrase(PHRASE_OF_RANDOM_NAME);
+        List<Object[]> list = productRepository.getProductsAndRelatedQuantityByPhrase(PHRASE_OF_RANDOM_NAME_LOWER_CASE);
 
         HashMap<String, Long> map = new HashMap<>();
 
@@ -264,7 +261,7 @@ public class ProductRepositoryTest {
             map.put(((Product) row[0]).getName(), (Long) row[1]);
         });
 
-        assertEquals(list.size(), 1);
+        assertEquals(map.size(), 1);
         assertEquals(map.get(RANDOM_NAME), RANDOM_STOCK.getQuantity());
     }
 }

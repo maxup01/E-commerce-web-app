@@ -12,21 +12,21 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     Product findByName(String name);
 
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.type) = LOWER(:type)")
+    @Query("SELECT p FROM Product AS p WHERE p.type = :type")
     List<Product> findByType(@Param("type") String type);
 
     //You need to adjust percent signs at the beginning and at the end of phrase argument
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase)")
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase%")
     List<Product> findByPhrase(@Param("phrase") String phrase);
 
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) AND LOWER(p.type) = LOWER(:type)")
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type")
     List<Product> findByPhraseAndType(@Param("phrase") String phrase, @Param("type") String type);
 
     @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
     List<Product> findByPriceRange(@Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
 
     //You need to adjust percent signs at the beginning and at the end of phrase argument
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) AND LOWER(p.type) = LOWER(:type)" +
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type" +
     " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
     List<Product> findByPhraseAndTypeAndPriceRanges(@Param("phrase") String phrase, @Param("type") String type,
                                                     @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
@@ -41,6 +41,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Object[]> getTypesAndQuantityOfProductsWithThisTypes();
 
     //You need to adjust percent signs at the beginning and at the end
-    @Query("SELECT p, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) GROUP BY p.name")
+    @Query("SELECT p, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% GROUP BY p.name")
     List<Object[]> getProductsAndRelatedQuantityByPhrase(@Param("phrase") String phrase);
 }
