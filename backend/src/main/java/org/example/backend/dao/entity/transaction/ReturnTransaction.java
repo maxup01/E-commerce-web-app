@@ -34,11 +34,7 @@ public class ReturnTransaction extends Transaction {
     @JoinColumn(name = "retrurn_cause_id", referencedColumnName = "id")
     private ReturnCause returnCause;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "return_transaction_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "returned_product_id", referencedColumnName = "id")
-    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnTransaction")
     private List<ReturnedProduct> returnedProducts;
 
     public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {

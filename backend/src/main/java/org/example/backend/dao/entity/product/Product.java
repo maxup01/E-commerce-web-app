@@ -53,10 +53,10 @@ public class Product {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "product")
     private List<ProductPageImage> pageImages;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<OrderedProduct> orderedProducts;
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<ReturnedProduct> returnedProducts;
 
     public Product(String name, String EANCode, String type, String description, Double regularPrice,

@@ -34,11 +34,7 @@ public class OrderTransaction extends Transaction {
     @JoinColumn(name = "payment_method_id", referencedColumnName = "id")
     private PaymentMethod paymentMethod;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "order_transaction_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "ordered_product_id", referencedColumnName = "id")
-    )
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "orderTransaction")
     private List<OrderedProduct> orderedProducts;
 
     public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, List<OrderedProduct> orderedProducts) {

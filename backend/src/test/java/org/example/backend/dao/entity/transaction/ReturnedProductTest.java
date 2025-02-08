@@ -20,7 +20,7 @@ public class ReturnedProductTest {
         ReturnedProduct returnedProduct = new ReturnedProduct(RANDOM_PRODUCT, RANDOM_QUANTITY, RANDOM_PRICE_PER_UNIT);
 
         assertNull(returnedProduct.getId());
-        assertEquals(returnedProduct.getProducts(), List.of(RANDOM_PRODUCT));
+        assertEquals(returnedProduct.getProduct(), RANDOM_PRODUCT);
         assertEquals(returnedProduct.getQuantity(), RANDOM_QUANTITY);
         assertEquals(returnedProduct.getPricePerUnit(), RANDOM_PRICE_PER_UNIT);
     }

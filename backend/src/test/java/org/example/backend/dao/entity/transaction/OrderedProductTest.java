@@ -20,7 +20,7 @@ public class OrderedProductTest {
         OrderedProduct orderedProduct = new OrderedProduct(RANDOM_PRODUCT, RANDOM_QUANTITY, RANDOM_PRICE_PER_UNIT);
 
         assertNull(orderedProduct.getId());
-        assertEquals(orderedProduct.getProducts(), List.of(RANDOM_PRODUCT));
+        assertEquals(orderedProduct.getProduct(), RANDOM_PRODUCT);
         assertEquals(orderedProduct.getQuantity(), RANDOM_QUANTITY);
         assertEquals(orderedProduct.getPricePerUnit(), RANDOM_PRICE_PER_UNIT);
     }

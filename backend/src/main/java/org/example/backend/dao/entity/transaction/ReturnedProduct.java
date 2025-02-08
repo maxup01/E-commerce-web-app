@@ -15,20 +15,16 @@ import java.util.List;
 @Builder
 public class ReturnedProduct extends TransactionProduct {
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinTable(
-            joinColumns = @JoinColumn(name = "returned_product_id", referencedColumnName = "id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id", referencedColumnName = "id")
-    )
-    private List<Product> products;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "product_id", referencedColumnName = "id")
+    private Product product;
 
-    //This is many-to-many relationship only because of mappedBy in ReturnedProduct entity,
-    //It cannot be more than one related return transaction to this entity!!!
-    @ManyToMany(mappedBy = "returnedProducts", fetch = FetchType.EAGER)
-    private List<ReturnTransaction> returnTransaction;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @JoinColumn(name = "return_transaction_id", referencedColumnName = "id")
+    private ReturnTransaction returnTransaction;
 
     public ReturnedProduct(Product product, Long quantity, Double pricePerUnit) {
         super(quantity, pricePerUnit);
-        this.products = List.of(product);
+        this.product = product;
     }
 }

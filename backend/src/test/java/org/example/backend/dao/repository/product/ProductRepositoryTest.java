@@ -256,12 +256,12 @@ public class ProductRepositoryTest {
                 RANDOM_REGULAR_PRICE, DIFFERENT_STOCK, DIFFERENT_MAIN_IMAGE, DIFFERENT_IMAGE_LIST);
         productRepository.save(product2);
 
-        List<Object[]> list = productRepository.getProductsNameAndRelatedQuantityByPhrase(PHRASE_OF_RANDOM_NAME);
+        List<Object[]> list = productRepository.getProductsAndRelatedQuantityByPhrase(PHRASE_OF_RANDOM_NAME);
 
         HashMap<String, Long> map = new HashMap<>();
 
         list.forEach(row -> {
-            map.put((String) row[0], (Long) row[1]);
+            map.put(((Product) row[0]).getName(), (Long) row[1]);
         });
 
         assertEquals(list.size(), 1);

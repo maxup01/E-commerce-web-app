@@ -15,7 +15,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.type) = LOWER(:type)")
     List<Product> findByType(@Param("type") String type);
 
-    //You need to adjust percent signs at the beginning and at the end
+    //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase)")
     List<Product> findByPhrase(@Param("phrase") String phrase);
 
@@ -25,6 +25,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
     List<Product> findByPriceRange(@Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
 
+    //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) AND LOWER(p.type) = LOWER(:type)" +
     " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
     List<Product> findByPhraseAndTypeAndPriceRanges(@Param("phrase") String phrase, @Param("type") String type,
@@ -40,6 +41,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     List<Object[]> getTypesAndQuantityOfProductsWithThisTypes();
 
     //You need to adjust percent signs at the beginning and at the end
-    @Query("SELECT p.name, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) GROUP BY p.name")
-    List<Object[]> getProductsNameAndRelatedQuantityByPhrase(@Param("phrase") String phrase);
+    @Query("SELECT p, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE LOWER(:phrase) GROUP BY p.name")
+    List<Object[]> getProductsAndRelatedQuantityByPhrase(@Param("phrase") String phrase);
 }
