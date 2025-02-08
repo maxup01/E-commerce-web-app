@@ -24,7 +24,7 @@ public class Privilege {
     @Column(nullable = false, unique = true)
     private String name;
 
-    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER, cascade = CascadeType.DETACH)
+    @ManyToMany(mappedBy = "privileges", fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private List<Role> roles;
 
     public Privilege(String name) {
