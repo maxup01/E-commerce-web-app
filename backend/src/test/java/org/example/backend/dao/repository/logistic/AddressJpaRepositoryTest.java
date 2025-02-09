@@ -1,6 +1,7 @@
 package org.example.backend.dao.repository.logistic;
 
 import org.example.backend.dao.entity.logistic.Address;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -15,14 +16,19 @@ public class AddressJpaRepositoryTest {
     private final String RANDOM_CITY_NAME_LOWER_CASE = "warsaw";
     private final String RANDOM_ADDRESS_LOWER_CASE = "xyz";
 
+    private Address address;
+
     @Autowired
     private AddressRepository addressRepository;
 
+    @BeforeEach
+    public void setUp() {
+        address = new Address(RANDOM_COUNTRY_NAME_LOWER_CASE, RANDOM_PROVINCE_NAME_LOWER_CASE,
+                RANDOM_CITY_NAME_LOWER_CASE, RANDOM_ADDRESS_LOWER_CASE);
+    }
+
     @Test
     public void testOfSave(){
-
-        Address address = new Address(RANDOM_COUNTRY_NAME_LOWER_CASE, RANDOM_PROVINCE_NAME_LOWER_CASE,
-                RANDOM_CITY_NAME_LOWER_CASE, RANDOM_ADDRESS_LOWER_CASE);
 
         assertDoesNotThrow(() -> {
             addressRepository.save(address);
@@ -32,8 +38,6 @@ public class AddressJpaRepositoryTest {
     @Test
     public void testOfFindByCountryAndCityAndProvinceAndAddress(){
 
-        Address address = new Address(RANDOM_COUNTRY_NAME_LOWER_CASE, RANDOM_PROVINCE_NAME_LOWER_CASE,
-                RANDOM_CITY_NAME_LOWER_CASE, RANDOM_ADDRESS_LOWER_CASE);
         addressRepository.save(address);
 
         Address address1 = addressRepository.findByCountryAndCityAndProvinceAndAddress(RANDOM_COUNTRY_NAME_LOWER_CASE,

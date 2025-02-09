@@ -17,6 +17,7 @@ import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -94,13 +95,70 @@ public class OrderedProductRepositoryTest {
     @Autowired
     private AddressRepository addressRepository;
 
+    private Product product1;
+    private Product product2;
+    private Privilege privilege;
+    private Role role;
+    private User user;
+    private Address address;
+    private DeliveryProvider deliveryProvider;
+    private PaymentMethod paymentMethod;
+    private OrderedProduct orderedProduct1;
+    private OrderedProduct orderedProduct2;
+    private OrderTransaction orderTransaction1;
+    private OrderTransaction orderTransaction2;
+
+    @BeforeEach
+    public void setUp() {
+
+        product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
+                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
+        productRepository.save(product1);
+
+        product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
+                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
+        productRepository.save(product2);
+
+        privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
+        privilegeRepository.save(privilege);
+
+        role = new Role(RANDOM_ROLE_NAME, List.of(privilege));
+        roleRepository.save(role);
+
+        user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD, LOCAL_DATE_NOW,
+                role);
+        userRepository.save(user);
+
+        address = new Address(RANDOM_COUNTRY_NAME, RANDOM_PROVINCE_NAME, RANDOM_CITY, RANDOM_ADDRESS);
+        addressRepository.save(address);
+
+        deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
+        deliveryProviderRepository.save(deliveryProvider);
+
+        paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
+        paymentMethodRepository.save(paymentMethod);
+
+        orderedProduct1 = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
+        orderedProductRepository.save(orderedProduct1);
+
+        orderTransaction1 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct1));
+        orderTransactionRepository.save(orderTransaction1);
+
+        orderedProduct1.setOrderTransaction(orderTransaction1);
+
+        orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
+        orderedProductRepository.save(orderedProduct2);
+
+        orderTransaction2 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct2));
+        orderTransactionRepository.save(orderTransaction2);
+
+        orderedProduct2.setOrderTransaction(orderTransaction2);
+    }
+
     @Test
     public void testOfSave(){
 
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-
-        OrderedProduct orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
+        OrderedProduct orderedProduct = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
 
         assertDoesNotThrow(() -> orderedProductRepository.save(orderedProduct));
     }
@@ -108,41 +166,17 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetAllQuantityOfOrderedProductsAndRevenue(){
 
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product);
-
-        OrderedProduct orderedProduct1 = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct1);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
-
         List<Object[]> quantityAndRevenue =  orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenue();
 
         Long quantity = (Long) quantityAndRevenue.get(0)[0];
         Double revenue = (Double) quantityAndRevenue.get(0)[1];
 
-        assertEquals(quantity, RANDOM_QUANTITY * 2);
-        assertEquals(revenue, RANDOM_QUANTITY * 2 * product.getCurrentPrice());
+        assertEquals(quantity, RANDOM_QUANTITY + DIFFERENT_QUANTITY);
+        assertEquals(revenue, RANDOM_QUANTITY * product1.getCurrentPrice() + DIFFERENT_QUANTITY * product2.getCurrentPrice());
     }
 
     @Test
     public void testOfGetAllTypesAndTheirOrderedQuantityAndRevenue(){
-
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product1);
-
-        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product2);
-
-        OrderedProduct orderedProduct1 = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct1);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
 
         List<Object[]> list = orderedProductRepository.getAllTypesAndTheirOrderedQuantityAndRevenue();
 
@@ -165,20 +199,6 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetAllTypesAndTheirRevenueOfOrderedProducts(){
 
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product1);
-
-        Product product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product2);
-
-        OrderedProduct orderedProduct1 = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct1);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
-
         List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(RANDOM_PHRASE_LOWER_CASE);
 
         HashMap<String, Long> map1 = new HashMap<>();
@@ -198,20 +218,6 @@ public class OrderedProductRepositoryTest {
 
     @Test
     public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByType(){
-
-        Product product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product1);
-
-        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product2);
-
-        OrderedProduct orderedProduct1 = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct1);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
 
         List<Object[]> list = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(RANDOM_TYPE_LOWER_CASE);
 
@@ -233,37 +239,6 @@ public class OrderedProductRepositoryTest {
     @Test
     public void testOfGetAllQuantityOfOrderedProductsAndRevenueByTimePeriod(){
 
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product);
-
-        Privilege privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-        privilegeRepository.save(privilege);
-
-        Role role = new Role(RANDOM_ROLE_NAME, List.of(privilege));
-        roleRepository.save(role);
-
-        User user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD, LOCAL_DATE_NOW,
-                role);
-        userRepository.save(user);
-
-        Address address = new Address(RANDOM_COUNTRY_NAME, RANDOM_PROVINCE_NAME, RANDOM_CITY, RANDOM_ADDRESS);
-        addressRepository.save(address);
-
-        DeliveryProvider deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
-        deliveryProviderRepository.save(deliveryProvider);
-
-        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
-        paymentMethodRepository.save(paymentMethod);
-
-        OrderedProduct orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct);
-
-        OrderTransaction orderTransaction = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction);
-
-        orderedProduct.setOrderTransaction(orderTransaction);
-
         List<Object[]> result = orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         Object[] quantityAndRevenue = result.get(0);
@@ -272,55 +247,12 @@ public class OrderedProductRepositoryTest {
         Double revenue = (Double) quantityAndRevenue[1];
 
         assertEquals(result.size(), 1);
-        assertEquals(quantity, RANDOM_QUANTITY);
-        assertEquals(revenue, RANDOM_QUANTITY * orderedProduct.getPricePerUnit());
+        assertEquals(quantity, RANDOM_QUANTITY + DIFFERENT_QUANTITY);
+        assertEquals(revenue, RANDOM_QUANTITY * orderedProduct1.getPricePerUnit() + DIFFERENT_QUANTITY * product2.getCurrentPrice());
     }
 
     @Test
     public void testOfGetAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(){
-
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product);
-
-        Product product2 = new Product(RANDOM_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product2);
-
-        Privilege privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-        privilegeRepository.save(privilege);
-
-        Role role = new Role(RANDOM_ROLE_NAME, List.of(privilege));
-        roleRepository.save(role);
-
-        User user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD, LOCAL_DATE_NOW,
-                role);
-        userRepository.save(user);
-
-        Address address = new Address(RANDOM_COUNTRY_NAME, RANDOM_PROVINCE_NAME, RANDOM_CITY, RANDOM_ADDRESS);
-        addressRepository.save(address);
-
-        DeliveryProvider deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
-        deliveryProviderRepository.save(deliveryProvider);
-
-        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
-        paymentMethodRepository.save(paymentMethod);
-
-        OrderedProduct orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct);
-
-        OrderTransaction orderTransaction = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction);
-
-        orderedProduct.setOrderTransaction(orderTransaction);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct2));
-        orderTransactionRepository.save(orderTransaction2);
-
-        orderedProduct2.setOrderTransaction(orderTransaction2);
 
         List<Object[]> result = orderedProductRepository
                 .getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
@@ -335,56 +267,13 @@ public class OrderedProductRepositoryTest {
 
         assertEquals(map1.size(), 2);
         assertEquals(map1.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY);
-        assertEquals(map2.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY * orderedProduct.getPricePerUnit());
+        assertEquals(map2.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
         assertEquals(map1.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY);
         assertEquals(map2.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY * orderedProduct2.getPricePerUnit());
     }
 
     @Test
     public void testOfGetAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(){
-
-        Product product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product);
-
-        Product product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
-        productRepository.save(product2);
-
-        Privilege privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-        privilegeRepository.save(privilege);
-
-        Role role = new Role(RANDOM_ROLE_NAME, List.of(privilege));
-        roleRepository.save(role);
-
-        User user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD, LOCAL_DATE_NOW,
-                role);
-        userRepository.save(user);
-
-        Address address = new Address(RANDOM_COUNTRY_NAME, RANDOM_PROVINCE_NAME, RANDOM_CITY, RANDOM_ADDRESS);
-        addressRepository.save(address);
-
-        DeliveryProvider deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
-        deliveryProviderRepository.save(deliveryProvider);
-
-        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
-        paymentMethodRepository.save(paymentMethod);
-
-        OrderedProduct orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, product.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct);
-
-        OrderTransaction orderTransaction = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction);
-
-        orderedProduct.setOrderTransaction(orderTransaction);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct2));
-        orderTransactionRepository.save(orderTransaction2);
-
-        orderedProduct2.setOrderTransaction(orderTransaction2);
 
         List<Object[]> result = orderedProductRepository
                 .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE);
@@ -400,6 +289,6 @@ public class OrderedProductRepositoryTest {
 
         assertEquals(map1.size(), 1);
         assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
-        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct.getPricePerUnit());
+        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
     }
 }

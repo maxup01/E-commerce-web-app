@@ -97,21 +97,13 @@ public class OrderTransactionRepositoryTest {
     private EntityManager entityManager;
 
     private Product product;
-
     private Address address;
-
     private DeliveryProvider deliveryProvider;
-
     private PaymentMethod paymentMethod;
-
     private Privilege privilege;
-
     private Role role;
-
     private User user;
-
     private OrderedProduct orderedProduct;
-
     private OrderTransaction orderTransaction;
 
     @BeforeEach

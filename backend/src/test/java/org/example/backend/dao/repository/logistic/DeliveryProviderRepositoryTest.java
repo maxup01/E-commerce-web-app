@@ -1,6 +1,7 @@
 package org.example.backend.dao.repository.logistic;
 
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -21,26 +22,40 @@ public class DeliveryProviderRepositoryTest {
     @Autowired
     DeliveryProviderRepository deliveryProviderRepository;
 
+    private DeliveryProvider deliveryProvider1;
+    private DeliveryProvider deliveryProvider2;
+    private DeliveryProvider deliveryProvider3;
+
+    @BeforeEach
+    public void setUp() {
+
+        deliveryProvider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
+
+        deliveryProvider2 = new DeliveryProvider(DIFFERENT_DELIVERY_NAME, ENABLED_FALSE);
+        deliveryProviderRepository.save(deliveryProvider2);
+
+        deliveryProvider3 = new DeliveryProvider(ANOTHER_RANDOM_DELIVERY_NAME, ENABLED_TRUE);
+        deliveryProviderRepository.save(deliveryProvider3);
+    }
+
     @Test
     public void testOfSave(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
-        DeliveryProvider provider2 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_FALSE);
+        DeliveryProvider incorrectDeliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_FALSE);
 
         assertDoesNotThrow(() -> {
-            deliveryProviderRepository.save(provider1);
+            deliveryProviderRepository.save(deliveryProvider1);
         });
 
         assertThrows(org.springframework.dao.DataIntegrityViolationException.class, () -> {
-            deliveryProviderRepository.save(provider2);
+            deliveryProviderRepository.save(incorrectDeliveryProvider);
         });
     }
 
     @Test
     public void testOfFindByName(){
 
-        DeliveryProvider provider = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
-        deliveryProviderRepository.save(provider);
+        deliveryProviderRepository.save(deliveryProvider1);
 
         DeliveryProvider foundDeliveryProvider1 = deliveryProviderRepository.findByName(RANDOM_DELIVERY_NAME_LOWER_CASE);
 
@@ -52,14 +67,7 @@ public class DeliveryProviderRepositoryTest {
     @Test
     public void testOffFindByEnabledTrue(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
-        deliveryProviderRepository.save(provider1);
-
-        DeliveryProvider provider2 = new DeliveryProvider(DIFFERENT_DELIVERY_NAME, ENABLED_FALSE);
-        deliveryProviderRepository.save(provider2);
-
-        DeliveryProvider provider3 = new DeliveryProvider(ANOTHER_RANDOM_DELIVERY_NAME, ENABLED_TRUE);
-        deliveryProviderRepository.save(provider3);
+        deliveryProviderRepository.save(deliveryProvider1);
 
         List<DeliveryProvider> providers = deliveryProviderRepository.findAllByEnabledTrue();
 
@@ -69,14 +77,7 @@ public class DeliveryProviderRepositoryTest {
     @Test
     public void testOffFindByEnabledFalse(){
 
-        DeliveryProvider provider1 = new DeliveryProvider(RANDOM_DELIVERY_NAME_LOWER_CASE, ENABLED_TRUE);
-        deliveryProviderRepository.save(provider1);
-
-        DeliveryProvider provider2 = new DeliveryProvider(DIFFERENT_DELIVERY_NAME, ENABLED_FALSE);
-        deliveryProviderRepository.save(provider2);
-
-        DeliveryProvider provider3 = new DeliveryProvider(ANOTHER_RANDOM_DELIVERY_NAME, ENABLED_TRUE);
-        deliveryProviderRepository.save(provider3);
+        deliveryProviderRepository.save(deliveryProvider1);
 
         List<DeliveryProvider> providers = deliveryProviderRepository.findAllByEnabledFalse();
 
