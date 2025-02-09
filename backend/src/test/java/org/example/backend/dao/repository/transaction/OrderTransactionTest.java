@@ -5,7 +5,6 @@ import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
-import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.repository.logistic.AddressRepository;
 import org.example.backend.dao.repository.product.ProductRepository;

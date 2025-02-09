@@ -4,8 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 import org.example.backend.dao.entity.product.Product;
 
-import java.util.List;
-
 //Entity for storing data with returned product and it's quantity
 @EqualsAndHashCode(callSuper = true)
 @Entity
