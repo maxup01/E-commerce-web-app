@@ -1,15 +1,12 @@
 package org.example.backend.dao.repository.transaction;
 
-import jakarta.persistence.EntityManager;
 import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
-import org.example.backend.dao.entity.transaction.OrderTransaction;
-import org.example.backend.dao.entity.transaction.OrderedProduct;
-import org.example.backend.dao.entity.transaction.PaymentMethod;
+import org.example.backend.dao.entity.transaction.*;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
@@ -31,17 +28,15 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class OrderTransactionRepositoryTest {
+public class ReturnTransactionRepositoryTest {
 
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Random delivery provider";
     private final String RANDOM_COUNTRY_NAME = "Random country";
     private final String RANDOM_PROVINCE_NAME = "Random province";
     private final String RANDOM_CITY_NAME = "Random city";
     private final String RANDOM_ADDRESS = "Random address";
-    private final String RANDOM_PAYMENT_METHOD = "Random payment method";
     private final Long RANDOM_QUANTITY = 1L;
     private final String RANDOM_EAN_CODE = "32211421412";
     private final String RANDOM_PRODUCT_NAME = "Random product name";
@@ -62,12 +57,7 @@ public class OrderTransactionRepositoryTest {
     private final Date DATE_BEFORE = new Date(0);
     private final Date DATE_AFTER = new Date(Instant.now().toEpochMilli() + 1000000000);
     private final Date DATE_NOT_IN_RANGE = new Date(Instant.now().toEpochMilli() + 100000000000L);
-
-    @Autowired
-    private OrderTransactionRepository orderTransactionRepository;
-
-    @Autowired
-    private OrderedProductRepository orderedProductRepository;
+    private final String RANDOM_CAUSE_NAME_LOWER_CASE = "random cause";
 
     @Autowired
     private ProductRepository productRepository;
@@ -79,29 +69,32 @@ public class OrderTransactionRepositoryTest {
     private DeliveryProviderRepository deliveryProviderRepository;
 
     @Autowired
-    private PaymentMethodRepository paymentMethodRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private PrivilegeRepository privilegeRepository;
 
     @Autowired
     private RoleRepository roleRepository;
 
     @Autowired
-    private PrivilegeRepository privilegeRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private ReturnedProductRepository returnedProductRepository;
+
+    @Autowired
+    private ReturnTransactionRepository returnTransactionRepository;
+
+    @Autowired
+    private ReturnCauseRepository returnCauseRepository;
 
     private Product product;
     private Address address;
     private DeliveryProvider deliveryProvider;
-    private PaymentMethod paymentMethod;
     private Privilege privilege;
     private Role role;
     private User user;
-    private OrderedProduct orderedProduct;
-    private OrderTransaction orderTransaction;
+    private ReturnedProduct returnedProduct;
+    private ReturnTransaction returnTransaction;
+    private ReturnCause returnCause;
 
     @BeforeEach
     public void setUp() {
@@ -119,8 +112,8 @@ public class OrderTransactionRepositoryTest {
         deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED);
         deliveryProviderRepository.save(deliveryProvider);
 
-        paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD, RANDOM_ENABLED);
-        paymentMethodRepository.save(paymentMethod);
+        returnCause = new ReturnCause(RANDOM_CAUSE_NAME_LOWER_CASE);
+        returnCauseRepository.save(returnCause);
 
         privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
         privilegeRepository.save(privilege);
@@ -132,98 +125,18 @@ public class OrderTransactionRepositoryTest {
                 role);
         userRepository.save(user);
 
-        orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
-        orderedProductRepository.save(orderedProduct);
+        returnedProduct = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
+        returnedProductRepository.save(returnedProduct);
 
-        orderTransaction = new OrderTransaction(TODAYS_DATE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
+        returnTransaction = new ReturnTransaction(TODAYS_DATE, user, address,
+                deliveryProvider, returnCause, List.of(returnedProduct));
     }
 
     @Test
     public void testOfSave(){
 
         assertDoesNotThrow(() -> {
-            orderTransactionRepository.save(orderTransaction);
-            entityManager.flush();
+            returnTransactionRepository.save(returnTransaction);
         });
-    }
-
-    @Test
-    public void testOfGetCountOfAllOrderTransactionsByTimePeriod(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction2);
-
-        Long count = orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
-
-        assertEquals(count, 1L);
-    }
-
-    @Test
-    public void testOfFindProductsByTimePeriod(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction2);
-
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriod(DATE_BEFORE, DATE_AFTER);
-
-        assertEquals(orders.size(), 1);
-        assertEquals(orders.get(0).getDeliveryAddress(), address);
-        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
-    }
-
-    @Test
-    public void testOfFindProductsByTimePeriodAndPaymentMethodName(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriodAndPaymentMethodName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD);
-
-        assertEquals(orders.size(), 1);
-        assertEquals(orders.get(0).getDeliveryAddress(), address);
-        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
-    }
-
-    @Test
-    public void testOfFindProductsByTimePeriodAndDeliveryProviderName(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
-
-        assertEquals(orders.size(), 1);
-        assertEquals(orders.get(0).getDeliveryAddress(), address);
-        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
-    }
-
-    @Test
-    public void testOfFindProductsByTimePeriodAndUserEmail(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        List<OrderTransaction> orders = orderTransactionRepository
-                .findProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
-
-        assertEquals(orders.size(), 1);
-        assertEquals(orders.get(0).getDeliveryAddress(), address);
-        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
     }
 }
