@@ -28,6 +28,7 @@ import java.util.Date;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
 public class ReturnTransactionRepositoryTest {
@@ -94,6 +95,8 @@ public class ReturnTransactionRepositoryTest {
     private User user;
     private ReturnedProduct returnedProduct;
     private ReturnTransaction returnTransaction;
+    private ReturnedProduct returnedProduct2;
+    private ReturnTransaction returnTransaction2;
     private ReturnCause returnCause;
 
     @BeforeEach
@@ -130,6 +133,13 @@ public class ReturnTransactionRepositoryTest {
 
         returnTransaction = new ReturnTransaction(TODAYS_DATE, user, address,
                 deliveryProvider, returnCause, List.of(returnedProduct));
+
+        returnedProduct2 = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
+        returnedProductRepository.save(returnedProduct2);
+
+        returnTransaction2 = new ReturnTransaction(DATE_NOT_IN_RANGE, user, address,
+                deliveryProvider, returnCause, List.of(returnedProduct));
+        returnTransactionRepository.save(returnTransaction2);
     }
 
     @Test
@@ -138,5 +148,70 @@ public class ReturnTransactionRepositoryTest {
         assertDoesNotThrow(() -> {
             returnTransactionRepository.save(returnTransaction);
         });
+    }
+
+    @Test
+    public void testOfGetCountOfAllReturnTransactionsByTimePeriod(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        Long count = returnTransactionRepository.getCountOfAllReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+
+        assertEquals(count, 1L);
+    }
+
+    @Test
+    public void testOfFindProductsByTimePeriod(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+
+        assertEquals(returns.size(), 1);
+        assertEquals(returns.get(0).getDeliveryAddress(), address);
+        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+    }
+
+    @Test
+    public void testOfFindProductsByTimePeriodAndPaymentMethodName(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriodAndReturnCauseName(
+                DATE_BEFORE, DATE_AFTER, RANDOM_CAUSE_NAME_LOWER_CASE);
+
+        assertEquals(returns.size(), 1);
+        assertEquals(returns.get(0).getDeliveryAddress(), address);
+        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+    }
+
+    @Test
+    public void testOfFindProductsByTimePeriodAndDeliveryProviderName(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(
+                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
+
+        assertEquals(returns.size(), 1);
+        assertEquals(returns.get(0).getDeliveryAddress(), address);
+        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+    }
+
+    @Test
+    public void testOfFindProductsByTimePeriodAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 1);
+        assertEquals(returns.get(0).getDeliveryAddress(), address);
+        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
     }
 }

@@ -102,6 +102,9 @@ public class OrderTransactionRepositoryTest {
     private User user;
     private OrderedProduct orderedProduct;
     private OrderTransaction orderTransaction;
+    private OrderedProduct orderedProduct2;
+    private OrderTransaction orderTransaction2;
+
 
     @BeforeEach
     public void setUp() {
@@ -137,6 +140,13 @@ public class OrderTransactionRepositoryTest {
 
         orderTransaction = new OrderTransaction(TODAYS_DATE, user, address,
                 deliveryProvider, paymentMethod, List.of(orderedProduct));
+
+        orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
+        orderedProductRepository.save(orderedProduct2);
+
+        orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
+                deliveryProvider, paymentMethod, List.of(orderedProduct));
+        orderTransactionRepository.save(orderTransaction2);
     }
 
     @Test
@@ -153,13 +163,6 @@ public class OrderTransactionRepositoryTest {
 
         orderTransactionRepository.save(orderTransaction);
 
-        OrderedProduct orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction2);
-
         Long count = orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         assertEquals(count, 1L);
@@ -169,13 +172,6 @@ public class OrderTransactionRepositoryTest {
     public void testOfFindProductsByTimePeriod(){
 
         orderTransactionRepository.save(orderTransaction);
-
-        OrderedProduct orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
-        orderedProductRepository.save(orderedProduct2);
-
-        OrderTransaction orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
-        orderTransactionRepository.save(orderTransaction2);
 
         List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
