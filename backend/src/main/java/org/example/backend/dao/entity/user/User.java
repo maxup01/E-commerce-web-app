@@ -9,6 +9,7 @@ import org.example.backend.dao.entity.image.UserImage;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -19,6 +20,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@Table(name = "app_user")
 public class User {
 
     @Id
@@ -38,7 +40,7 @@ public class User {
     private String password;
 
     @Column(nullable = false)
-    private Date birthDate;
+    private LocalDate birthDate;
 
     //Role related to the user
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
@@ -55,7 +57,7 @@ public class User {
     @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
     private List<ReturnTransaction> returnTransactions;
 
-    public User(String firstName, String lastName, String email, String password, Date birthDate, Role role) {
+    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, Role role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
@@ -64,7 +66,7 @@ public class User {
         this.role = role;
     }
 
-    public User(String firstName, String lastName, String email, String password, Date birthDate, Role role, UserImage userImage) {
+    public User(String firstName, String lastName, String email, String password, LocalDate birthDate, Role role, UserImage userImage) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;

@@ -2,6 +2,7 @@ package org.example.backend.dao.entity.user;
 
 import org.junit.jupiter.api.Test;
 
+import java.time.LocalDate;
 import java.util.Date;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -13,7 +14,7 @@ public class UserTest {
     private final String RANDOM_LAST_NAME = "lastName";
     private final String RANDOM_EMAIL = "email";
     private final String RANDOM_PASSWORD = "password";
-    private final Date RANDOM_DATE_OF_BIRTH = new Date();
+    private final LocalDate RANDOM_DATE_OF_BIRTH = LocalDate.now();
     private final Role RANDOM_ROLE = new Role();
 
 
