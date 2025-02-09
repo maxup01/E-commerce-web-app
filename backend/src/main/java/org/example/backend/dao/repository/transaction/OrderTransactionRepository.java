@@ -2,10 +2,33 @@ package org.example.backend.dao.repository.transaction;
 
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
+import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 public interface OrderTransactionRepository extends JpaRepository<OrderTransaction, UUID> {
 
-    //TODO finish this repo
+    @Query("SELECT COUNT(o) FROM OrderTransaction AS o WHERE o.transactionDate >= :startingDate AND o.transactionDate <= :endingDate")
+    Long getCountOfAllOrderTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.transactionDate >= :startingDate AND o.transactionDate <= :endingDate")
+    List<OrderTransaction> findProductsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.transactionDate >= :startingDate AND o.transactionDate <= :endingDate AND " +
+            " o.paymentMethod.name = :paymentMethodName")
+    List<OrderTransaction> findProductsByTimePeriodAndPaymentMethodName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                    @Param("paymentMethodName") String paymentMethodName);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.transactionDate >= :startingDate AND o.transactionDate <= :endingDate AND " +
+            " o.deliveryProvider.name = :deliveryProviderName")
+    List<OrderTransaction> findProductsByTimePeriodAndDeliveryProviderName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                                        @Param("deliveryProviderName") String deliveryProviderName);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.transactionDate >= :startingDate AND o.transactionDate <= :endingDate AND " +
+            " o.user.email = :userEmail")
+    List<OrderTransaction> findProductsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                                           @Param("userEmail") String userEmail);
 }
