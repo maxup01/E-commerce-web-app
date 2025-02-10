@@ -3,6 +3,7 @@ package org.example.backend.dao.service.user;
 import jakarta.transaction.Transactional;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
+import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.exception.global.BadArgumentException;
@@ -13,6 +14,7 @@ import org.example.backend.exception.role.RoleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -120,7 +122,7 @@ public class UserDataService {
             });
         }
 
-        privilegeRepository.deleteById(id);
+        privilegeRepository.delete(privilege);
     }
 
     @Transactional
@@ -160,6 +162,44 @@ public class UserDataService {
         }
 
         return foundRole;
+    }
+
+    @Transactional
+    public void deleteRoleById(Long idOfRoleToDelete, Long idOfRoleToAssignToUsers) {
+
+        if((idOfRoleToDelete == null) || (idOfRoleToDelete <= 0))
+            throw new BadArgumentException("Incorrect argument: idOfRoleToDelete");
+
+        if((idOfRoleToAssignToUsers == null) || (idOfRoleToAssignToUsers <= 0))
+            throw new BadArgumentException("Incorrect argument: idOfRoleToAssignToUsers");
+
+        Role roleToDelete = roleRepository.findById(idOfRoleToDelete).orElse(null);
+        Role roleToAssign = roleRepository.findById(idOfRoleToAssignToUsers).orElse(null);
+
+        if(roleToDelete == null)
+            throw new RoleNotFoundException("Role to delete with id " + idOfRoleToDelete + " not found");
+
+        if(roleToAssign == null)
+            throw new RoleNotFoundException("Role to assign to users with id " + idOfRoleToAssignToUsers + " not found");
+
+        if(roleToDelete.getPrivileges() != null){
+            roleToDelete.getPrivileges().forEach(privilege -> {
+                List<Privilege> privileges = roleToDelete.getPrivileges();
+                privileges.removeIf(pomPrivilege -> pomPrivilege.getId() == idOfRoleToDelete);
+            });
+        }
+
+        if(roleToAssign.getUsers() == null)
+            roleToAssign.setUsers(new ArrayList<>());
+
+        if (roleToDelete.getUsers() != null) {
+            roleToDelete.getUsers().forEach(user -> {
+                user.setRole(roleToAssign);
+                roleToAssign.getUsers().add(user);
+            });
+        }
+
+        roleRepository.delete(roleToDelete);
     }
 
     @Transactional

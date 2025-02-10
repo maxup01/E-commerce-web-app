@@ -23,13 +23,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class UserDataServiceTest {
 
-    private final Long ID_OF_FIRST_CREATED_PRIVILEGE = 1L;
+
+    private final Long ID_OF_FIRST_CREATED_ENTITY = 1L;
+    private final Long ID_OF_SECOND_CREATED_ENTITY = 2L;
     private final Long OTHER_ID = 5L;
     private final Long NEGATIVE_ID = -1L;
     private final String RANDOM_PRIVILEGE_NAME = "RANDOM_PRIVILEGE";
     private final String OTHER_PRIVILEGE_NAME = "WRITE_PRIVILEGE";
     private final String RANDOM_WRONG_PRIVILEGE_NAME = "random privilege name";
     private final String RANDOM_ROLE_NAME = "ROLE_RANDOM";
+    private final String DIFFERENT_ROLE_NAME = "ROLE_DIFFERENT";
     private final String OTHER_ROLE_NAME = "ROLE_OTHER";
     private final String WRONG_ROLE_NAME = "WRONG_ROLE";
 
@@ -44,15 +47,22 @@ public class UserDataServiceTest {
 
     private Privilege existingPrivilege;
     private Role role;
+    private Role otherRole;
 
     @BeforeEach
     public void setUp() {
         existingPrivilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-        existingPrivilege.setId(ID_OF_FIRST_CREATED_PRIVILEGE);
+        existingPrivilege.setId(ID_OF_FIRST_CREATED_ENTITY);
 
         role = Role
                 .builder()
-                .id(ID_OF_FIRST_CREATED_PRIVILEGE)
+                .id(ID_OF_FIRST_CREATED_ENTITY)
+                .name(RANDOM_ROLE_NAME)
+                .build();
+
+        otherRole = role = Role
+                .builder()
+                .id(ID_OF_FIRST_CREATED_ENTITY)
                 .name(RANDOM_ROLE_NAME)
                 .build();
     }
@@ -106,7 +116,7 @@ public class UserDataServiceTest {
     @Test
     public void testOfUpdateNameOfPrivilegeById(){
 
-        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_PRIVILEGE))
+        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_ENTITY))
                 .thenReturn(Optional.ofNullable(existingPrivilege));
 
         when(privilegeRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
@@ -121,12 +131,12 @@ public class UserDataServiceTest {
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             userDataService.updateNameOfPrivilegeById(
-                    ID_OF_FIRST_CREATED_PRIVILEGE, null);
+                    ID_OF_FIRST_CREATED_ENTITY, null);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             userDataService.updateNameOfPrivilegeById(
-                    ID_OF_FIRST_CREATED_PRIVILEGE, RANDOM_WRONG_PRIVILEGE_NAME);
+                    ID_OF_FIRST_CREATED_ENTITY, RANDOM_WRONG_PRIVILEGE_NAME);
         });
 
         assertThrows(PrivilegeNotFoundException.class, () -> {
@@ -135,9 +145,9 @@ public class UserDataServiceTest {
 
         assertDoesNotThrow(() -> {
             userDataService.updateNameOfPrivilegeById(
-                    ID_OF_FIRST_CREATED_PRIVILEGE, RANDOM_PRIVILEGE_NAME);
+                    ID_OF_FIRST_CREATED_ENTITY, RANDOM_PRIVILEGE_NAME);
             userDataService.updateNameOfPrivilegeById(
-                    ID_OF_FIRST_CREATED_PRIVILEGE, OTHER_PRIVILEGE_NAME);
+                    ID_OF_FIRST_CREATED_ENTITY, OTHER_PRIVILEGE_NAME);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
@@ -149,7 +159,7 @@ public class UserDataServiceTest {
     @Test
     public void testOfFindById(){
 
-        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_PRIVILEGE))
+        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_ENTITY))
                 .thenReturn(Optional.ofNullable(existingPrivilege));
 
         when(privilegeRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
@@ -167,7 +177,7 @@ public class UserDataServiceTest {
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.getPrivilegeById(ID_OF_FIRST_CREATED_PRIVILEGE);
+            userDataService.getPrivilegeById(ID_OF_FIRST_CREATED_ENTITY);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
@@ -205,7 +215,7 @@ public class UserDataServiceTest {
     @Test
     public void testOfDeletePrivilegeById(){
 
-        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_PRIVILEGE))
+        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_ENTITY))
                 .thenReturn(Optional.ofNullable(existingPrivilege));
         when(privilegeRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
 
@@ -222,7 +232,7 @@ public class UserDataServiceTest {
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.deletePrivilegeById(ID_OF_FIRST_CREATED_PRIVILEGE);
+            userDataService.deletePrivilegeById(ID_OF_FIRST_CREATED_ENTITY);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
@@ -235,11 +245,11 @@ public class UserDataServiceTest {
 
         Role role = Role
                 .builder()
-                .id(ID_OF_FIRST_CREATED_PRIVILEGE)
+                .id(ID_OF_FIRST_CREATED_ENTITY)
                 .name(RANDOM_ROLE_NAME)
                 .build();
 
-        when(roleRepository.findById(ID_OF_FIRST_CREATED_PRIVILEGE)).thenReturn(Optional.ofNullable(role));
+        when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
         when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
@@ -255,7 +265,7 @@ public class UserDataServiceTest {
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.getRoleById(ID_OF_FIRST_CREATED_PRIVILEGE);
+            userDataService.getRoleById(ID_OF_FIRST_CREATED_ENTITY);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
@@ -288,5 +298,48 @@ public class UserDataServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: name");
         assertEquals(secondException.getMessage(), "Incorrect argument: name");
         assertEquals(thirdException.getMessage(), "Role with name " + OTHER_ROLE_NAME + " not found");
+    }
+
+    @Test
+    public void testOfDeleteRoleById(){
+
+        when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
+        when(roleRepository.findById(ID_OF_SECOND_CREATED_ENTITY)).thenReturn(Optional.ofNullable(otherRole));
+        when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleById(null, ID_OF_FIRST_CREATED_ENTITY);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleById(NEGATIVE_ID, ID_OF_FIRST_CREATED_ENTITY);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleById(ID_OF_FIRST_CREATED_ENTITY, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleById(ID_OF_FIRST_CREATED_ENTITY, NEGATIVE_ID);
+        });
+
+        Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.deleteRoleById(OTHER_ID, ID_OF_SECOND_CREATED_ENTITY);
+        });
+
+        Exception sixthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.deleteRoleById(ID_OF_SECOND_CREATED_ENTITY, OTHER_ID);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.deleteRoleById(ID_OF_FIRST_CREATED_ENTITY, ID_OF_SECOND_CREATED_ENTITY);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: idOfRoleToDelete");
+        assertEquals(secondException.getMessage(), "Incorrect argument: idOfRoleToDelete");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: idOfRoleToAssignToUsers");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: idOfRoleToAssignToUsers");
+        assertEquals(fifthException.getMessage(), "Role to delete with id " + OTHER_ID + " not found");
+        assertEquals(sixthException.getMessage(), "Role to assign to users with id " + OTHER_ID + " not found");
     }
 }
