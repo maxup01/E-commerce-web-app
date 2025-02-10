@@ -7,7 +7,7 @@
 
 - [ ] Backend 
   - [x] Entities
-  - [ ] Repositories
+  - [x] Repositories
   - [ ] Services
   - [ ] Controllers
   - [ ] Business logic
