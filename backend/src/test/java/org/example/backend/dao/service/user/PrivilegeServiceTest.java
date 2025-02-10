@@ -5,7 +5,6 @@ import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.privilege.PrivilegeNotSavedException;
-import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
