@@ -104,6 +104,22 @@ public class UserDataService {
 
     @Transactional
     public void deletePrivilegeById(Long id) {
+
+        if((id == null) || (id <= 0))
+            throw new BadArgumentException("Incorrect argument: id");
+
+        Privilege privilege = privilegeRepository.findById(id).orElseThrow(() -> {
+            return new PrivilegeNotFoundException("Privilege with id " + id + " not found");
+        });
+
+        if(privilege.getRoles() != null){
+            privilege.getRoles().forEach(role -> {
+                List<Privilege> privileges = role.getPrivileges();
+                privileges.removeIf((pomPrivilege) -> pomPrivilege.getId() == id);
+                role.setPrivileges(privileges);
+            });
+        }
+
         privilegeRepository.deleteById(id);
     }
 
@@ -121,11 +137,9 @@ public class UserDataService {
             throw new BadArgumentException("Incorrect argument: id");
         }
 
-        foundRole = roleRepository.findById(id).orElse(null);
-
-        if(foundRole == null){
-            throw new RoleNotFoundException("Role with id " + id + " not found");
-        }
+        foundRole = roleRepository.findById(id).orElseThrow(() -> {
+            return new RoleNotFoundException("Role with id " + id + " not found");
+        });
 
         return foundRole;
     }
