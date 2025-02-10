@@ -43,11 +43,18 @@ public class UserDataServiceTest {
     private UserDataService userDataService;
 
     private Privilege existingPrivilege;
+    private Role role;
 
     @BeforeEach
     public void setUp() {
         existingPrivilege = new Privilege(RANDOM_PRIVILEGE_NAME);
         existingPrivilege.setId(ID_OF_FIRST_CREATED_PRIVILEGE);
+
+        role = Role
+                .builder()
+                .id(ID_OF_FIRST_CREATED_PRIVILEGE)
+                .name(RANDOM_ROLE_NAME)
+                .build();
     }
 
     @Test
@@ -230,12 +237,6 @@ public class UserDataServiceTest {
 
     @Test
     public void testOfGetRoleByName(){
-
-        Role role = Role
-                .builder()
-                .id(ID_OF_FIRST_CREATED_PRIVILEGE)
-                .name(RANDOM_ROLE_NAME)
-                .build();
 
         when(roleRepository.findByName(RANDOM_ROLE_NAME)).thenReturn(role);
         when(roleRepository.findByName(OTHER_ROLE_NAME)).thenReturn(null);

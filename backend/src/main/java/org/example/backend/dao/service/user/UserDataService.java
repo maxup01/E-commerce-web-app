@@ -13,6 +13,7 @@ import org.example.backend.exception.role.RoleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.regex.Pattern;
 
 @Service
@@ -102,6 +103,16 @@ public class UserDataService {
     }
 
     @Transactional
+    public void deletePrivilegeById(Long id) {
+        privilegeRepository.deleteById(id);
+    }
+
+    @Transactional
+    public List<Privilege> getAllPrivileges() {
+        return privilegeRepository.findAll();
+    }
+
+    @Transactional
     public Role getRoleById(Long id){
 
         Role foundRole;
@@ -135,6 +146,11 @@ public class UserDataService {
         }
 
         return foundRole;
+    }
+
+    @Transactional
+    public List<Role> getAllRoles() {
+        return roleRepository.findAll();
     }
 
     @Autowired
