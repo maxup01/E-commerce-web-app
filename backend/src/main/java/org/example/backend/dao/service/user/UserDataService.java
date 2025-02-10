@@ -2,21 +2,26 @@ package org.example.backend.dao.service.user;
 
 import jakarta.transaction.Transactional;
 import org.example.backend.dao.entity.user.Privilege;
+import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
+import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.privilege.PrivilegeNotSavedException;
 import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
+import org.example.backend.exception.role.RoleNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
 
 @Service
-public class PrivilegeService {
+public class UserDataService {
 
     private final Pattern privilegeNamePattern;
+    private final Pattern roleNamePattern;
     private final PrivilegeRepository privilegeRepository;
+    private final RoleRepository roleRepository;
 
     @Transactional
     public Privilege saveNewPrivilege(Privilege privilege) {
@@ -49,9 +54,9 @@ public class PrivilegeService {
         Privilege privilegeSaved;
 
         if((id == null) || (id <= 0))
-            throw new BadArgumentException("Argument id is incorrect");
+            throw new BadArgumentException("Incorrect argument: id");
         else if ((privilegeName == null) || (!privilegeNamePattern.matcher(privilegeName).matches()))
-            throw new BadArgumentException("Argument privilegeName is incorrect");
+            throw new BadArgumentException("Incorrect argument: privilegeName");
 
         Privilege privilege = privilegeRepository.findById(id).orElse(null);
 
@@ -74,7 +79,7 @@ public class PrivilegeService {
     public Privilege getPrivilegeById(Long id) {
 
         if ((id == null) || (id <= 0))
-            throw new BadArgumentException("Argument id is incorrect");
+            throw new BadArgumentException("Incorrect argument: id");
 
         return privilegeRepository.findById(id).orElseThrow(() ->
                 new PrivilegeNotFoundException("Privilege with id " + id + " not found"));
@@ -84,7 +89,7 @@ public class PrivilegeService {
     public Privilege getPrivilegeByName(String name) {
 
         if((name == null) || (!privilegeNamePattern.matcher(name).matches())){
-            throw new BadArgumentException("Argument name is incorrect");
+            throw new BadArgumentException("Incorrect argument: name");
         }
 
         Privilege foundPrivilege = privilegeRepository.findByName(name);
@@ -96,9 +101,47 @@ public class PrivilegeService {
         return foundPrivilege;
     }
 
+    @Transactional
+    public Role getRoleById(Long id){
+
+        Role foundRole;
+
+        if((id == null) || (id <= 0)){
+            throw new BadArgumentException("Incorrect argument: id");
+        }
+
+        foundRole = roleRepository.findById(id).orElse(null);
+
+        if(foundRole == null){
+            throw new RoleNotFoundException("Role with id " + id + " not found");
+        }
+
+        return foundRole;
+    }
+
+    @Transactional
+    public Role getRoleByName(String name) {
+
+        Role foundRole;
+
+        if((name == null) || (!roleNamePattern.matcher(name).matches())){
+            throw new BadArgumentException("Incorrect argument: name");
+        }
+
+        foundRole = roleRepository.findByName(name);
+
+        if(foundRole == null){
+            throw new RoleNotFoundException("Role with name " + name + " not found");
+        }
+
+        return foundRole;
+    }
+
     @Autowired
-    public PrivilegeService(PrivilegeRepository privilegeRepository) {
+    public UserDataService(PrivilegeRepository privilegeRepository, RoleRepository roleRepository) {
         this.privilegeRepository = privilegeRepository;
+        this.roleRepository = roleRepository;
         privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
+        roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
     }
 }
