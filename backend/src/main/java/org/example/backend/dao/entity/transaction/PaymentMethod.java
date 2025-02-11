@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Entity for storing payment method data
@@ -32,5 +33,6 @@ public class PaymentMethod {
     public PaymentMethod(String name, boolean enabled) {
         this.name = name;
         this.enabled = enabled;
+        this.orderTransactions = new ArrayList<>();
     }
 }

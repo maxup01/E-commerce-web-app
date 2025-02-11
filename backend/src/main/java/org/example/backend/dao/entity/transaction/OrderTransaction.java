@@ -6,6 +6,7 @@ import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -37,7 +38,7 @@ public class OrderTransaction extends Transaction {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "orderTransaction")
     private List<OrderedProduct> orderedProducts;
 
-    public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, List<OrderedProduct> orderedProducts) {
+    public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
         super(transactionDate);
         this.user = user;
         this.deliveryAddress = deliveryAddress;

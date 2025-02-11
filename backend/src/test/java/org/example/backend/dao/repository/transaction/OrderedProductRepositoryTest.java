@@ -24,6 +24,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -141,7 +142,10 @@ public class OrderedProductRepositoryTest {
         orderedProduct1 = new OrderedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
         orderedProductRepository.save(orderedProduct1);
 
-        orderTransaction1 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct1));
+        ArrayList<OrderedProduct> orderedProducts1 = new ArrayList<>();
+        orderedProducts1.add(orderedProduct1);
+
+        orderTransaction1 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, orderedProducts1);
         orderTransactionRepository.save(orderTransaction1);
 
         orderedProduct1.setOrderTransaction(orderTransaction1);
@@ -149,7 +153,10 @@ public class OrderedProductRepositoryTest {
         orderedProduct2 = new OrderedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
         orderedProductRepository.save(orderedProduct2);
 
-        orderTransaction2 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, List.of(orderedProduct2));
+        ArrayList<OrderedProduct> orderedProducts2 = new ArrayList<>();
+        orderedProducts2.add(orderedProduct2);
+
+        orderTransaction2 = new OrderTransaction(DATE_NOW, user, address, deliveryProvider, paymentMethod, orderedProducts2);
         orderTransactionRepository.save(orderTransaction2);
 
         orderedProduct2.setOrderTransaction(orderTransaction2);

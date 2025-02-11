@@ -27,6 +27,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -138,14 +139,20 @@ public class OrderTransactionRepositoryTest {
         orderedProduct = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
         orderedProductRepository.save(orderedProduct);
 
+        ArrayList<OrderedProduct> orderedProducts1 = new ArrayList<>();
+        orderedProducts1.add(orderedProduct);
+
         orderTransaction = new OrderTransaction(TODAYS_DATE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
+                deliveryProvider, paymentMethod, orderedProducts1);
 
         orderedProduct2 = new OrderedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
         orderedProductRepository.save(orderedProduct2);
 
+        ArrayList<OrderedProduct> orderedProducts2 = new ArrayList<>();
+        orderedProducts1.add(orderedProduct2);
+
         orderTransaction2 = new OrderTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, paymentMethod, List.of(orderedProduct));
+                deliveryProvider, paymentMethod, orderedProducts2);
         orderTransactionRepository.save(orderTransaction2);
     }
 

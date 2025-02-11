@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Entity for storing causes of returns
@@ -28,5 +29,6 @@ public class ReturnCause {
 
     public ReturnCause(String cause) {
         this.cause = cause;
+        this.returnTransactions = new ArrayList<>();
     }
 }
