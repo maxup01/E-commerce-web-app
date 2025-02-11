@@ -13,7 +13,9 @@ import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.role.RoleNotUpdatedException;
+import org.example.backend.model.user.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,8 +27,21 @@ public class UserDataService {
 
     private final Pattern privilegeNamePattern;
     private final Pattern roleNamePattern;
+
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
+
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
+    @Autowired
+    public UserDataService(PrivilegeRepository privilegeRepository, RoleRepository roleRepository,
+                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+        this.privilegeRepository = privilegeRepository;
+        this.roleRepository = roleRepository;
+        this.privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
+        this.roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+    }
 
     @Transactional
     public Privilege saveNewPrivilege(String privilegeName) {
@@ -279,13 +294,5 @@ public class UserDataService {
     @Transactional
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
-    }
-
-    @Autowired
-    public UserDataService(PrivilegeRepository privilegeRepository, RoleRepository roleRepository) {
-        this.privilegeRepository = privilegeRepository;
-        this.roleRepository = roleRepository;
-        privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
-        roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
     }
 }
