@@ -47,7 +47,7 @@ public class UserDataService {
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
         this.roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
-        this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-z0-9]@[a-z0-9]+.[a-z]");
+        this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z0-9]+@[a-zA-Z0-9]+.[a-z]+");
         this.userPasswordPattern = Pattern.compile("[A-Z]+[a-zA-Z]\\w+");
     }
 
@@ -313,5 +313,19 @@ public class UserDataService {
         return userRepository.findById(id).orElseThrow(() -> {
             return new UserNotFoundException("User with id " + id + " not found");
         });
+    }
+
+    @Transactional
+    public User getUserByEmail(String email){
+
+        if((email == null) || (!userEmailPattern.matcher(email).matches()))
+            throw new BadArgumentException("Incorrect argument: email");
+
+        User foundUser = userRepository.findByEmail(email);
+
+        if(foundUser == null)
+            throw new UserNotFoundException("User with email " + email + " not found");
+
+        return foundUser;
     }
 }

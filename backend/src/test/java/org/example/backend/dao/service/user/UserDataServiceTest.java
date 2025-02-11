@@ -48,6 +48,8 @@ public class UserDataServiceTest {
     private final String RANDOM_FIRST_NAME = "Name";
     private final String RANDOM_LAST_NAME = "LastName";
     private final String RANDOM_EMAIL = "email@email.com";
+    private final String EMAIL_OF_USER_WHICH_NOT_EXIST = "not@exist.com";
+    private final String WRONG_USER_EMAIL = "WrongEmail";
     private final String RANDOM_PASSWORD = "password";
     private final LocalDate RANDOM_BIRTH_DATE = LocalDate.of(2004, 4, 2);
 
@@ -519,5 +521,32 @@ public class UserDataServiceTest {
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfGetUserByEmail(){
+
+        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
+        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.getUserByEmail(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.getUserByEmail(WRONG_USER_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.getUserByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.getUserByEmail(RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: email");
+        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(thirdException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 }
