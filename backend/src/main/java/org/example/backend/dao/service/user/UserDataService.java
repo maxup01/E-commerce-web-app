@@ -12,6 +12,7 @@ import org.example.backend.exception.privilege.PrivilegeNotSavedException;
 import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
+import org.example.backend.exception.role.RoleNotUpdatedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -167,15 +168,38 @@ public class UserDataService {
     }
 
     @Transactional
-    public Role getRoleById(Long id){
+    public Role updateRoleNameById(Long id, String newRoleName) {
 
-        Role foundRole;
+        if((id == null) || (id <= 0))
+            throw new BadArgumentException("Incorrect argument: id");
+        else if ((newRoleName == null) || (!roleNamePattern.matcher(newRoleName).matches()))
+            throw new BadArgumentException("Incorrect argument: newRoleName");
+
+        Role role = roleRepository.findById(id).orElse(null);
+
+        if(role == null)
+            throw new RoleNotFoundException("Role with id " + id + " not found");
+
+        role.setName(newRoleName);
+        Role updatedRole;
+
+        try{
+            updatedRole = roleRepository.save(role);
+        } catch (Exception e){
+            throw new RoleNotUpdatedException(e.getMessage());
+        }
+
+        return updatedRole;
+    }
+
+    @Transactional
+    public Role getRoleById(Long id){
 
         if((id == null) || (id <= 0)){
             throw new BadArgumentException("Incorrect argument: id");
         }
 
-        foundRole = roleRepository.findById(id).orElseThrow(() -> {
+        Role foundRole = roleRepository.findById(id).orElseThrow(() -> {
             return new RoleNotFoundException("Role with id " + id + " not found");
         });
 
@@ -185,13 +209,11 @@ public class UserDataService {
     @Transactional
     public Role getRoleByName(String name) {
 
-        Role foundRole;
-
         if((name == null) || (!roleNamePattern.matcher(name).matches())){
             throw new BadArgumentException("Incorrect argument: name");
         }
 
-        foundRole = roleRepository.findByName(name);
+        Role foundRole = roleRepository.findByName(name);
 
         if(foundRole == null){
             throw new RoleNotFoundException("Role with name " + name + " not found");

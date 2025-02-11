@@ -280,6 +280,43 @@ public class UserDataServiceTest {
     }
 
     @Test
+    public void testOfUpdateRoleNameById(){
+
+        when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
+        when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateRoleNameById(null, DIFFERENT_ROLE_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateRoleNameById(NEGATIVE_ID, DIFFERENT_ROLE_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateRoleNameById(ID_OF_FIRST_CREATED_ENTITY, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateRoleNameById(ID_OF_FIRST_CREATED_ENTITY, WRONG_ROLE_NAME);
+        });
+
+        Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.updateRoleNameById(OTHER_ID, DIFFERENT_ROLE_NAME);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.updateRoleNameById(ID_OF_FIRST_CREATED_ENTITY, DIFFERENT_ROLE_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: id");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: newRoleName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: newRoleName");
+        assertEquals(fifthException.getMessage(), "Role with id " + OTHER_ID + " not found");
+    }
+
+    @Test
     public void testOfGetRoleById(){
 
         Role role = Role
