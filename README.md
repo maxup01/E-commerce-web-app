@@ -6,8 +6,8 @@
 ## NECESSARY TODO
 
 - [ ] Backend 
-  - [x] Entities
-  - [x] Repositories
+  - [ ] Entities
+  - [ ] Repositories
   - [ ] Services
   - [ ] Controllers
   - [ ] Business logic
