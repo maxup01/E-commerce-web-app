@@ -11,6 +11,7 @@ import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.privilege.PrivilegeNotSavedException;
 import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.example.backend.exception.role.RoleNotFoundException;
+import org.example.backend.exception.role.RoleNotSavedException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,23 +28,20 @@ public class UserDataService {
     private final RoleRepository roleRepository;
 
     @Transactional
-    public Privilege saveNewPrivilege(Privilege privilege) {
+    public Privilege saveNewPrivilege(String privilegeName) {
 
-        Privilege privilegeSaved;
-
-        if (privilege == null)
-            throw new BadArgumentException("Privilege cannot be null");
-        else if((privilege.getId() != null))
-            throw new BadArgumentException("Privilege id cannot be not null");
-        else if((privilege.getName() == null) || (!privilegeNamePattern.matcher(privilege.getName()).matches()))
+        if((privilegeName == null) || (!privilegeNamePattern.matcher(privilegeName).matches()))
             throw new BadArgumentException(
                     "Privilege needs to match privilege name pattern and cannot be null");
-        else if (privilegeRepository.findByName(privilege.getName()) != null)
-            throw new PrivilegeNotSavedException(
+        else if (privilegeRepository.findByName(privilegeName) != null)
+            throw new PrivilegeNotFoundException(
                     "Privilege name cannot be the same as one of the existed privileges");
 
+        Privilege newPrivilege = new Privilege(privilegeName);
+        Privilege privilegeSaved;
+
         try{
-            privilegeSaved = privilegeRepository.save(privilege);
+            privilegeSaved = privilegeRepository.save(newPrivilege);
         } catch (Exception e){
             throw new PrivilegeNotSavedException(e.getMessage());
         }
@@ -128,6 +126,44 @@ public class UserDataService {
     @Transactional
     public List<Privilege> getAllPrivileges() {
         return privilegeRepository.findAll();
+    }
+
+    @Transactional
+    public Role saveNewRole(String roleName, List<String> privilegeNameList) {
+
+        if((roleName == null) || (!roleNamePattern.matcher(roleName).matches()))
+            throw new BadArgumentException("Incorrect argument: roleName");
+        else if(roleRepository.findByName(roleName) != null)
+            throw new RoleNotSavedException("Role with name " + roleName + " already exists");
+        else if((privilegeNameList == null) || (privilegeNameList.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: privilegeList");
+
+        List<Privilege> privileges = new ArrayList<>();
+
+        privilegeNameList.forEach(privilege -> {
+
+            if((!privilegeNamePattern.matcher(privilege).matches()))
+                throw new BadArgumentException("Incorrect argument: privilegeNameList item");
+
+            Privilege foundPrivilege = privilegeRepository.findByName(privilege);
+
+            if(foundPrivilege == null){
+                throw new PrivilegeNotFoundException("Privilege with name " + privilege + " not found");
+            }
+
+            privileges.add(foundPrivilege);
+        });
+
+        Role role = new Role(roleName, privileges);
+        Role roleSaved;
+
+        try{
+            roleSaved = roleRepository.save(role);
+        } catch (Exception e){
+            throw new RoleNotSavedException(e.getMessage());
+        }
+
+        return roleSaved;
     }
 
     @Transactional

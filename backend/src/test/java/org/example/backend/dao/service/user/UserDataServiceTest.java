@@ -6,8 +6,8 @@ import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
-import org.example.backend.exception.privilege.PrivilegeNotSavedException;
 import org.example.backend.exception.role.RoleNotFoundException;
+import org.example.backend.exception.role.RoleNotSavedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,7 +64,7 @@ public class UserDataServiceTest {
         otherRole = role = Role
                 .builder()
                 .id(ID_OF_FIRST_CREATED_ENTITY)
-                .name(RANDOM_ROLE_NAME)
+                .name(DIFFERENT_ROLE_NAME)
                 .build();
     }
 
@@ -75,42 +76,23 @@ public class UserDataServiceTest {
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            Privilege privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-            privilege.setId(1L);
-
-            userDataService.saveNewPrivilege(privilege);
-        });
-
-        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            Privilege privilege = new Privilege(null);
-
-            userDataService.saveNewPrivilege(privilege);
-        });
-
-        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            Privilege privilege = new Privilege(RANDOM_WRONG_PRIVILEGE_NAME);
-
-            userDataService.saveNewPrivilege(privilege);
+            userDataService.saveNewPrivilege(RANDOM_WRONG_PRIVILEGE_NAME);
         });
 
         assertDoesNotThrow(() -> {
-            Privilege privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-            userDataService.saveNewPrivilege(privilege);
+            userDataService.saveNewPrivilege(OTHER_PRIVILEGE_NAME);
         });
 
         when(privilegeRepository.findByName(RANDOM_PRIVILEGE_NAME)).thenReturn(existingPrivilege);
 
-        Exception fifthException = assertThrows(PrivilegeNotSavedException.class, () -> {
+        Exception thirdException = assertThrows(PrivilegeNotFoundException.class, () -> {
 
-            Privilege incorrectlyInitializedPrivilege = new Privilege(RANDOM_PRIVILEGE_NAME);
-            userDataService.saveNewPrivilege(incorrectlyInitializedPrivilege);
+            userDataService.saveNewPrivilege(RANDOM_PRIVILEGE_NAME);
         });
 
-        assertEquals(firstException.getMessage(), "Privilege cannot be null");
-        assertEquals(secondException.getMessage(), "Privilege id cannot be not null");
-        assertEquals(thirdException.getMessage(), "Privilege needs to match privilege name pattern and cannot be null");
-        assertEquals(fourthException.getMessage(), "Privilege needs to match privilege name pattern and cannot be null");
-        assertEquals(fifthException.getMessage(), "Privilege name cannot be the same as one of the existed privileges");
+        assertEquals(firstException.getMessage(), "Privilege needs to match privilege name pattern and cannot be null");
+        assertEquals(secondException.getMessage(), "Privilege needs to match privilege name pattern and cannot be null");
+        assertEquals(thirdException.getMessage(), "Privilege name cannot be the same as one of the existed privileges");
     }
 
     @Test
@@ -157,7 +139,7 @@ public class UserDataServiceTest {
     }
 
     @Test
-    public void testOfFindById(){
+    public void testOfFindPrivilegeById(){
 
         when(privilegeRepository.findById(ID_OF_FIRST_CREATED_ENTITY))
                 .thenReturn(Optional.ofNullable(existingPrivilege));
@@ -186,7 +168,7 @@ public class UserDataServiceTest {
     }
 
     @Test
-    public void testOfFindByName(){
+    public void testOfFindPrivilegeByName(){
 
         when(privilegeRepository.findByName(RANDOM_PRIVILEGE_NAME)).thenReturn(existingPrivilege);
         when(privilegeRepository.findByName(OTHER_PRIVILEGE_NAME)).thenReturn(null);
@@ -238,6 +220,63 @@ public class UserDataServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
         assertEquals(secondException.getMessage(), "Incorrect argument: id");
         assertEquals(thirdException.getMessage(), "Privilege with id " + OTHER_ID + " not found");
+    }
+
+    @Test
+    public void testOfSaveNewRole(){
+
+        when(privilegeRepository.findByName(RANDOM_PRIVILEGE_NAME))
+                .thenReturn(existingPrivilege);
+        when(privilegeRepository.findByName(OTHER_PRIVILEGE_NAME)).thenReturn(null);
+
+        Role role = Role
+                .builder()
+                .id(ID_OF_FIRST_CREATED_ENTITY)
+                .name(RANDOM_ROLE_NAME)
+                .build();
+
+        when(roleRepository.findByName(RANDOM_ROLE_NAME)).thenReturn(role);
+        when(roleRepository.findByName(DIFFERENT_ROLE_NAME)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewRole(null, List.of(RANDOM_PRIVILEGE_NAME));
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewRole(WRONG_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+        });
+
+        Exception thirdException = assertThrows(RoleNotSavedException.class, () -> {
+            userDataService.saveNewRole(RANDOM_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, null);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of());
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(RANDOM_WRONG_PRIVILEGE_NAME));
+        });
+
+        Exception seventhException = assertThrows(PrivilegeNotFoundException.class, () -> {
+            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(OTHER_PRIVILEGE_NAME));
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: roleName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: roleName");
+        assertEquals(thirdException.getMessage(), "Role with name " + RANDOM_ROLE_NAME + " already exists");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: privilegeList");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: privilegeList");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: privilegeNameList item");
+        assertEquals(seventhException.getMessage(), "Privilege with name " + OTHER_PRIVILEGE_NAME + " not found");
     }
 
     @Test
