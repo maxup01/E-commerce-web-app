@@ -2,22 +2,28 @@ package org.example.backend.dao.service.user;
 
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
+import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
+import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
+import org.example.backend.exception.user.UserNotFoundException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -37,6 +43,16 @@ public class UserDataServiceTest {
     private final String DIFFERENT_ROLE_NAME = "ROLE_DIFFERENT";
     private final String OTHER_ROLE_NAME = "ROLE_OTHER";
     private final String WRONG_ROLE_NAME = "WRONG_ROLE";
+    private final UUID RANDOM_USER_ID = UUID.randomUUID();
+    private final UUID ID_OF_USER_WHICH_NOT_EXIST = UUID.randomUUID();
+    private final String RANDOM_FIRST_NAME = "Name";
+    private final String RANDOM_LAST_NAME = "LastName";
+    private final String RANDOM_EMAIL = "email@email.com";
+    private final String RANDOM_PASSWORD = "password";
+    private final LocalDate RANDOM_BIRTH_DATE = LocalDate.of(2004, 4, 2);
+
+    @Mock
+    private BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Mock
     private PrivilegeRepository privilegeRepository;
@@ -44,12 +60,16 @@ public class UserDataServiceTest {
     @Mock
     private RoleRepository roleRepository;
 
+    @Mock
+    private UserRepository userRepository;
+
     @InjectMocks
     private UserDataService userDataService;
 
     private Privilege existingPrivilege;
     private Role role;
     private Role otherRole;
+    private User firstUser;
 
     @BeforeEach
     public void setUp() {
@@ -69,6 +89,17 @@ public class UserDataServiceTest {
                 .builder()
                 .id(ID_OF_SECOND_CREATED_ENTITY)
                 .name(DIFFERENT_ROLE_NAME)
+                .build();
+
+        firstUser = User
+                .builder()
+                .id(RANDOM_USER_ID)
+                .firstName(RANDOM_FIRST_NAME)
+                .lastName(RANDOM_LAST_NAME)
+                .email(RANDOM_EMAIL)
+                .password(RANDOM_PASSWORD)
+                .birthDate(RANDOM_BIRTH_DATE)
+                .role(role)
                 .build();
     }
 
@@ -466,5 +497,27 @@ public class UserDataServiceTest {
         assertEquals(fourthException.getMessage(), "Incorrect argument: idOfRoleToAssignToUsers");
         assertEquals(fifthException.getMessage(), "Role to delete with id " + OTHER_ID + " not found");
         assertEquals(sixthException.getMessage(), "Role to assign to users with id " + OTHER_ID + " not found");
+    }
+
+    @Test
+    public void testOfGetUserById(){
+
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.getUserById(null);
+        });
+
+        Exception secondException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.getUserById(ID_OF_USER_WHICH_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.getUserById(RANDOM_USER_ID);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 }

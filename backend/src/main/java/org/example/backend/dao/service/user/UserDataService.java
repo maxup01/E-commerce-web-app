@@ -6,6 +6,7 @@ import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
+import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.privilege.PrivilegeNotSavedException;
@@ -13,13 +14,14 @@ import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.role.RoleNotUpdatedException;
-import org.example.backend.model.user.UserModel;
+import org.example.backend.exception.user.UserNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Pattern;
 
 @Service
@@ -27,20 +29,26 @@ public class UserDataService {
 
     private final Pattern privilegeNamePattern;
     private final Pattern roleNamePattern;
+    private final Pattern userEmailPattern;
+    private final Pattern userPasswordPattern;
 
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
+    private final UserRepository userRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserDataService(PrivilegeRepository privilegeRepository, RoleRepository roleRepository,
-                           BCryptPasswordEncoder bCryptPasswordEncoder) {
+                           UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.privilegeRepository = privilegeRepository;
         this.roleRepository = roleRepository;
+        this.userRepository = userRepository;
+        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
         this.roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
-        this.bCryptPasswordEncoder = bCryptPasswordEncoder;
+        this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-z0-9]@[a-z0-9]+.[a-z]");
+        this.userPasswordPattern = Pattern.compile("[A-Z]+[a-zA-Z]\\w+");
     }
 
     @Transactional
@@ -294,5 +302,16 @@ public class UserDataService {
     @Transactional
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    @Transactional
+    public User getUserById(UUID id){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+
+        return userRepository.findById(id).orElseThrow(() -> {
+            return new UserNotFoundException("User with id " + id + " not found");
+        });
     }
 }
