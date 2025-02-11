@@ -2,8 +2,7 @@ package org.example.backend.dao.entity.user;
 
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class PrivilegeTest {
 
@@ -16,6 +15,6 @@ public class PrivilegeTest {
 
         assertNull(privilege.getId());
         assertEquals(privilege.getName(), RANDOM_PRIVILEGE_NAME);
-        assertNull(privilege.getRoles());
+        assertNotNull(privilege.getRoles());
     }
 }

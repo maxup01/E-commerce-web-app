@@ -197,6 +197,29 @@ public class UserDataService {
     }
 
     @Transactional
+    public Role deleteRoleRelationWithPrivilegeById(Long id, String privilegeName) {
+
+        if ((id == null) || (id <= 0))
+            throw new BadArgumentException("Incorrect argument: id");
+        else if ((privilegeName == null) || (!privilegeNamePattern.matcher(privilegeName).matches()))
+            throw new BadArgumentException("Incorrect argument: privilegeName");
+
+        Role role = roleRepository.findById(id).orElse(null);
+
+        if (role == null)
+            throw new RoleNotFoundException("Role with id " + id + " not found");
+
+        Privilege privilege = privilegeRepository.findByName(privilegeName);
+
+        if (privilege == null)
+            throw new PrivilegeNotFoundException("Privilege with name " + privilegeName + " not found");
+
+        role.getPrivileges().removeIf(pomPrivilege -> pomPrivilege.getId().equals(id));
+
+        return role;
+    }
+
+    @Transactional
     public Role getRoleById(Long id){
 
         if((id == null) || (id <= 0)){
@@ -244,20 +267,9 @@ public class UserDataService {
         if(roleToAssign == null)
             throw new RoleNotFoundException("Role to assign to users with id " + idOfRoleToAssignToUsers + " not found");
 
-        if(roleToDelete.getPrivileges() != null){
-            roleToDelete.getPrivileges().forEach(privilege -> {
-                List<Privilege> privileges = roleToDelete.getPrivileges();
-                privileges.removeIf(pomPrivilege -> pomPrivilege.getId() == idOfRoleToDelete);
-            });
-        }
-
-        if(roleToAssign.getUsers() == null)
-            roleToAssign.setUsers(new ArrayList<>());
-
         if (roleToDelete.getUsers() != null) {
             roleToDelete.getUsers().forEach(user -> {
                 user.setRole(roleToAssign);
-                roleToAssign.getUsers().add(user);
             });
         }
 

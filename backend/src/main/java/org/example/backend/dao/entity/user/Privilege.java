@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Entity for storing privilege data
@@ -29,5 +30,6 @@ public class Privilege {
 
     public Privilege(String name) {
         this.name = name;
+        roles = new ArrayList<>();
     }
 }

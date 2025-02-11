@@ -15,6 +15,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -59,11 +60,14 @@ public class UserDataServiceTest {
                 .builder()
                 .id(ID_OF_FIRST_CREATED_ENTITY)
                 .name(RANDOM_ROLE_NAME)
+                .privileges(new ArrayList<>())
                 .build();
 
-        otherRole = role = Role
+        role.getPrivileges().add(existingPrivilege);
+
+        otherRole  = Role
                 .builder()
-                .id(ID_OF_FIRST_CREATED_ENTITY)
+                .id(ID_OF_SECOND_CREATED_ENTITY)
                 .name(DIFFERENT_ROLE_NAME)
                 .build();
     }
@@ -314,6 +318,51 @@ public class UserDataServiceTest {
         assertEquals(thirdException.getMessage(), "Incorrect argument: newRoleName");
         assertEquals(fourthException.getMessage(), "Incorrect argument: newRoleName");
         assertEquals(fifthException.getMessage(), "Role with id " + OTHER_ID + " not found");
+    }
+
+    @Test
+    public void testOfDeleteRoleRelationWithPrivilegeById(){
+
+        when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
+        when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
+
+        when(privilegeRepository.findByName(RANDOM_PRIVILEGE_NAME)).thenReturn(existingPrivilege);
+        when(privilegeRepository.findByName(OTHER_PRIVILEGE_NAME)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(null, RANDOM_PRIVILEGE_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(NEGATIVE_ID, DIFFERENT_ROLE_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, WRONG_ROLE_NAME);
+        });
+
+        Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(OTHER_ID, RANDOM_PRIVILEGE_NAME);
+        });
+
+        Exception sixthException = assertThrows(PrivilegeNotFoundException.class, () -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, OTHER_PRIVILEGE_NAME);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, RANDOM_PRIVILEGE_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: id");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: privilegeName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: privilegeName");
+        assertEquals(fifthException.getMessage(), "Role with id " + OTHER_ID + " not found");
+        assertEquals(sixthException.getMessage(), "Privilege with name " + OTHER_PRIVILEGE_NAME + " not found");
     }
 
     @Test
