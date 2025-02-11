@@ -164,6 +164,10 @@ public class UserDataService {
             throw new RoleNotSavedException(e.getMessage());
         }
 
+        privileges.forEach(privilege -> {
+            privilege.getRoles().add(roleSaved);
+        });
+
         return roleSaved;
     }
 
