@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 //Entity for storing address data
@@ -45,5 +46,7 @@ public class Address {
         this.province = province;
         this.city = city;
         this.address = address;
+        this.orderTransactions = new ArrayList<>();
+        this.returnTransactions = new ArrayList<>();
     }
 }

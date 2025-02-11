@@ -10,6 +10,7 @@ import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.entity.transaction.ReturnedProduct;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -69,6 +70,9 @@ public class Product {
         this.currentPrice = currentPrice;
         this.stock = stock;
         this.mainImage = mainImage;
+        this.pageImages = new ArrayList<>();
+        this.orderedProducts = new ArrayList<>();
+        this.returnedProducts = new ArrayList<>();
     }
 
     public Product(String name, String EANCode, String type, String description, Double regularPrice,
@@ -82,5 +86,7 @@ public class Product {
         this.stock = stock;
         this.mainImage = mainImage;
         this.pageImages = images;
+        this.orderedProducts = new ArrayList<>();
+        this.returnedProducts = new ArrayList<>();
     }
 }

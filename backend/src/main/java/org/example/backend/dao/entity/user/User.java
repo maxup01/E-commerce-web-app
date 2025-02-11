@@ -10,6 +10,7 @@ import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -63,6 +64,8 @@ public class User {
         this.password = password;
         this.birthDate = birthDate;
         this.role = role;
+        this.orderTransactions = new ArrayList<>();
+        this.returnTransactions = new ArrayList<>();
     }
 
     public User(String firstName, String lastName, String email, String password, LocalDate birthDate, Role role, UserImage userImage) {
@@ -73,5 +76,7 @@ public class User {
         this.birthDate = birthDate;
         this.role = role;
         this.profileImage = userImage;
+        this.orderTransactions = new ArrayList<>();
+        this.returnTransactions = new ArrayList<>();
     }
 }

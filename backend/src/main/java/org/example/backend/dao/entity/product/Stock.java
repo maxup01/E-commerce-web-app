@@ -22,7 +22,7 @@ public class Stock {
     @Column(nullable = false)
     private Long quantity;
 
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "product_id", referencedColumnName = "id")
     private Product product;
 

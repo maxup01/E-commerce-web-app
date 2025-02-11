@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -36,5 +37,7 @@ public class DeliveryProvider {
     public DeliveryProvider(String name, boolean enabled) {
         this.name = name;
         this.enabled = enabled;
+        this.orderTransactions = new ArrayList<>();
+        this.returnTransactions = new ArrayList<>();
     }
 }
