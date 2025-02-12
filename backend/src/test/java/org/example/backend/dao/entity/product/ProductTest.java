@@ -20,12 +20,14 @@ public class ProductTest {
     private final Stock RANDOM_STOCK = new Stock();
     private final ProductMainImage RANDOM_MAIN_IMAGE = new ProductMainImage();
     private final List<ProductPageImage> RANDOM_IMAGE_LIST = List.of(new ProductPageImage(), new ProductPageImage());
+    private final Integer RANDOM_HEIGHT = 100;
+    private final Integer RANDOM_WIDTH = 100;
 
     @Test
     public void testOfConstructorWithEANCodeAndNameAndTypeAndDescriptionAndRegularPriceAndCurrentPriceAndStockArguments(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE);
+                RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE);
 
         assertNull(product.getId());
         assertEquals(product.getEANCode(), RANDOM_EAN_CODE);
@@ -41,8 +43,8 @@ public class ProductTest {
     @Test
     public void testOfConstructorWithEANCodeAndNameAndTypeAndDescriptionAndRegularPriceAndCurrentPriceAndStockAndProductImageArguments(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
+                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
 
         assertNull(product.getId());
         assertEquals(product.getEANCode(), RANDOM_EAN_CODE);

@@ -59,6 +59,8 @@ public class ReturnTransactionRepositoryTest {
     private final Date DATE_AFTER = new Date(Instant.now().toEpochMilli() + 1000000000);
     private final Date DATE_NOT_IN_RANGE = new Date(Instant.now().toEpochMilli() + 100000000000L);
     private final String RANDOM_CAUSE_NAME_LOWER_CASE = "random cause";
+    private final Integer RANDOM_HEIGHT = 100;
+    private final Integer RANDOM_WIDTH = 100;
 
     @Autowired
     private ProductRepository productRepository;
@@ -105,8 +107,8 @@ public class ReturnTransactionRepositoryTest {
         Stock stock = new Stock(RANDOM_QUANTITY);
         ProductMainImage productMainImage = new ProductMainImage(RANDOM_MAIN_IMAGE);
         ProductPageImage productPageImage = new ProductPageImage(DIFFERENT_IMAGE);
-        product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_PRODUCT_DESCRIPTION,
-                RANDOM_PRICE, RANDOM_PRICE, stock, productMainImage, List.of(productPageImage));
+        product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE, RANDOM_PRODUCT_DESCRIPTION, RANDOM_HEIGHT
+                , RANDOM_WIDTH, RANDOM_PRICE, RANDOM_PRICE, stock, productMainImage, List.of(productPageImage));
         productRepository.save(product);
 
         address = new Address(RANDOM_COUNTRY_NAME, RANDOM_PROVINCE_NAME, RANDOM_CITY_NAME, RANDOM_ADDRESS);

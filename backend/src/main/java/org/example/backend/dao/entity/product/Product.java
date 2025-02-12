@@ -38,6 +38,14 @@ public class Product {
     @Column(nullable = false)
     private String description;
 
+    //Height you need to specify in cm unit
+    @Column
+    private Integer height;
+
+    //Width you need to specify in cm unit
+    @Column
+    private Integer width;
+
     @Column(nullable = false)
     private Double regularPrice;
 
@@ -60,12 +68,14 @@ public class Product {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "product")
     private List<ReturnedProduct> returnedProducts;
 
-    public Product(String name, String EANCode, String type, String description, Double regularPrice,
-                   Double currentPrice, Stock stock, ProductMainImage mainImage) {
+    public Product(String name, String EANCode, String type, String description, Integer height, Integer width,
+                   Double regularPrice, Double currentPrice, Stock stock, ProductMainImage mainImage) {
         this.EANCode = EANCode;
         this.name = name;
         this.type = type;
         this.description = description;
+        this.height = height;
+        this.width = width;
         this.regularPrice = regularPrice;
         this.currentPrice = currentPrice;
         this.stock = stock;
@@ -75,12 +85,14 @@ public class Product {
         this.returnedProducts = new ArrayList<>();
     }
 
-    public Product(String name, String EANCode, String type, String description, Double regularPrice,
+    public Product(String name, String EANCode, String type, String description, Integer height, Integer width, Double regularPrice,
                    Double currentPrice, Stock stock, ProductMainImage mainImage, List<ProductPageImage> images) {
         this.EANCode = EANCode;
         this.name = name;
         this.type = type;
         this.description = description;
+        this.height = height;
+        this.width = width;
         this.regularPrice = regularPrice;
         this.currentPrice = currentPrice;
         this.stock = stock;
