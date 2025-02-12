@@ -1,4 +1,4 @@
-package org.example.backend.dao.repository.product;
+package org.example.backend.dao.repository.image;
 
 import org.example.backend.dao.entity.image.ProductPageImage;
 import org.junit.jupiter.api.Test;

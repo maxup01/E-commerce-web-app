@@ -1,6 +1,7 @@
 package org.example.backend.dao.service.user;
 
 import jakarta.transaction.Transactional;
+import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;

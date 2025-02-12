@@ -25,7 +25,7 @@ public class ProductMainImage {
     @Column(nullable = false)
     private byte[] image;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH}, mappedBy = "mainImage")
     private Product product;
 
     public ProductMainImage(byte[] image) {
