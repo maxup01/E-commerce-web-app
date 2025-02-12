@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.Date;
@@ -19,6 +20,10 @@ import java.util.List;
 @Builder
 public class ReturnTransaction extends Transaction {
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ReturnCause returnCause;
+
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.REFRESH, CascadeType.DETACH})
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
@@ -30,10 +35,6 @@ public class ReturnTransaction extends Transaction {
     @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     @JoinColumn(name = "delivery_provider_id", referencedColumnName = "id")
     private DeliveryProvider deliveryProvider;
-
-    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
-    @JoinColumn(name = "retrurn_cause_id", referencedColumnName = "id")
-    private ReturnCause returnCause;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnTransaction")
     private List<ReturnedProduct> returnedProducts;

@@ -16,6 +16,7 @@ import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.ReturnCause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -61,6 +62,7 @@ public class ReturnTransactionRepositoryTest {
     private final String RANDOM_CAUSE_NAME_LOWER_CASE = "random cause";
     private final Integer RANDOM_HEIGHT = 100;
     private final Integer RANDOM_WIDTH = 100;
+    private ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.MISLEADING_DATA;
 
     @Autowired
     private ProductRepository productRepository;
@@ -86,9 +88,6 @@ public class ReturnTransactionRepositoryTest {
     @Autowired
     private ReturnTransactionRepository returnTransactionRepository;
 
-    @Autowired
-    private ReturnCauseRepository returnCauseRepository;
-
     private Product product;
     private Address address;
     private DeliveryProvider deliveryProvider;
@@ -99,7 +98,6 @@ public class ReturnTransactionRepositoryTest {
     private ReturnTransaction returnTransaction;
     private ReturnedProduct returnedProduct2;
     private ReturnTransaction returnTransaction2;
-    private ReturnCause returnCause;
 
     @BeforeEach
     public void setUp() {
@@ -117,9 +115,6 @@ public class ReturnTransactionRepositoryTest {
         deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED);
         deliveryProviderRepository.save(deliveryProvider);
 
-        returnCause = new ReturnCause(RANDOM_CAUSE_NAME_LOWER_CASE);
-        returnCauseRepository.save(returnCause);
-
         privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
         privilegeRepository.save(privilege);
 
@@ -134,13 +129,13 @@ public class ReturnTransactionRepositoryTest {
         returnedProductRepository.save(returnedProduct);
 
         returnTransaction = new ReturnTransaction(TODAYS_DATE, user, address,
-                deliveryProvider, returnCause, List.of(returnedProduct));
+                deliveryProvider, RANDOM_RETURN_CAUSE, List.of(returnedProduct));
 
         returnedProduct2 = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
         returnedProductRepository.save(returnedProduct2);
 
         returnTransaction2 = new ReturnTransaction(DATE_NOT_IN_RANGE, user, address,
-                deliveryProvider, returnCause, List.of(returnedProduct));
+                deliveryProvider, RANDOM_RETURN_CAUSE, List.of(returnedProduct));
         returnTransactionRepository.save(returnTransaction2);
     }
 
@@ -171,7 +166,7 @@ public class ReturnTransactionRepositoryTest {
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
-        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
     }
 
@@ -181,11 +176,11 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriodAndReturnCauseName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_CAUSE_NAME_LOWER_CASE);
+                DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
-        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
     }
 
@@ -199,7 +194,7 @@ public class ReturnTransactionRepositoryTest {
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
-        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
     }
 
@@ -213,7 +208,7 @@ public class ReturnTransactionRepositoryTest {
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
-        assertEquals(returns.get(0).getReturnCause(), returnCause);
+        assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
     }
 }

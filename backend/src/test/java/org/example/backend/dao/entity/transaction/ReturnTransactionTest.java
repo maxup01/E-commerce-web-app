@@ -3,6 +3,7 @@ package org.example.backend.dao.entity.transaction;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
 import org.junit.jupiter.api.Test;
 
@@ -18,7 +19,7 @@ public class ReturnTransactionTest {
     private final User RANDOM_USER = new User();
     private final Address RANDOM_DELIVERY_ADDRESS = new Address();
     private final DeliveryProvider RANDOM_DELIVERY_PROVIDER = new DeliveryProvider();
-    private final ReturnCause RANDOM_RETURN_CAUSE = new ReturnCause();
+    private final ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.CHANGED_MIND;
     private final List<ReturnedProduct> RANDOM_RETRUNED_PRODUCT_LIST = List.of(new ReturnedProduct(), new ReturnedProduct());
 
     @Test

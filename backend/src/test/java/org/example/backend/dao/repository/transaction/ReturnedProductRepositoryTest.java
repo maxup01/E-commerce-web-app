@@ -1,7 +1,6 @@
 package org.example.backend.dao.repository.transaction;
 
 import org.example.backend.dao.entity.image.ProductMainImage;
-import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
@@ -16,6 +15,7 @@ import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.ReturnCause;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +23,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -71,6 +70,8 @@ public class ReturnedProductRepositoryTest {
     private final String DIFFERENT_RETURN_CAUSE_LOWER_CASE = "different return cause";
     private final Integer RANDOM_HEIGHT = 100;
     private final Integer RANDOM_WIDTH = 100;
+    private ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.DAMAGED;
+    private ReturnCause DIFFERENT_RETURN_CAUSE = ReturnCause.LOW_QUALITY;
 
     @Autowired
     private ProductRepository productRepository;
@@ -96,9 +97,6 @@ public class ReturnedProductRepositoryTest {
     @Autowired
     private ReturnTransactionRepository returnTransactionRepository;
 
-    @Autowired
-    private ReturnCauseRepository returnCauseRepository;
-
     private Product product1;
     private Product product2;
     private Address address;
@@ -110,8 +108,6 @@ public class ReturnedProductRepositoryTest {
     private ReturnedProduct returnedProduct2;
     private ReturnTransaction returnTransaction1;
     private ReturnTransaction returnTransaction2;
-    private ReturnCause returnCause;
-    private ReturnCause differentCause;
 
     @BeforeEach
     public void setUp() {
@@ -140,16 +136,10 @@ public class ReturnedProductRepositoryTest {
         deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
         deliveryProviderRepository.save(deliveryProvider);
 
-        returnCause = new ReturnCause(RANDOM_RETURN_CAUSE_LOWER_CASE);
-        returnCauseRepository.save(returnCause);
-
-        differentCause = new ReturnCause(DIFFERENT_RETURN_CAUSE_LOWER_CASE);
-        returnCauseRepository.save(differentCause);
-
         returnedProduct1 = new ReturnedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
         returnedProductRepository.save(returnedProduct1);
 
-        returnTransaction1 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, returnCause, List.of(returnedProduct1));
+        returnTransaction1 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, RANDOM_RETURN_CAUSE, List.of(returnedProduct1));
         returnTransactionRepository.save(returnTransaction1);
 
         returnedProduct1.setReturnTransaction(returnTransaction1);
@@ -157,7 +147,7 @@ public class ReturnedProductRepositoryTest {
         returnedProduct2 = new ReturnedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
         returnedProductRepository.save(returnedProduct2);
 
-        returnTransaction2 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, differentCause, List.of(returnedProduct2));
+        returnTransaction2 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, DIFFERENT_RETURN_CAUSE, List.of(returnedProduct2));
         returnTransactionRepository.save(returnTransaction2);
 
         returnedProduct2.setReturnTransaction(returnTransaction2);

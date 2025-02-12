@@ -1,6 +1,7 @@
 package org.example.backend.dao.repository.transaction;
 
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
+import org.example.backend.enumerated.ReturnCause;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,9 +19,9 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     List<ReturnTransaction> findProductsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.transactionDate >= :startingDate AND r.transactionDate <= :endingDate AND " +
-            " r.returnCause.cause = :returnCauseName")
+            " r.returnCause = :returnCause")
     List<ReturnTransaction> findProductsByTimePeriodAndReturnCauseName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-                                                                        @Param("returnCauseName") String returnCauseName);
+                                                                        @Param("returnCause") ReturnCause returnCause);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.transactionDate >= :startingDate AND r.transactionDate <= :endingDate AND " +
             " r.deliveryProvider.name = :deliveryProviderName")
