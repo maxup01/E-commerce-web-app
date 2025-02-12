@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @Builder
 public class UserModel {
 
+    private Long id;
     private String firstName;
     private String lastName;
     private String email;

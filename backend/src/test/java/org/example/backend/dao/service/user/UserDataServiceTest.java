@@ -11,6 +11,8 @@ import org.example.backend.exception.privilege.PrivilegeNotFoundException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.user.UserNotFoundException;
+import org.example.backend.exception.user.UserNotSavedException;
+import org.example.backend.model.user.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -40,7 +42,7 @@ public class UserDataServiceTest {
     private final String OTHER_PRIVILEGE_NAME = "WRITE_PRIVILEGE";
     private final String RANDOM_WRONG_PRIVILEGE_NAME = "random privilege name";
     private final String RANDOM_ROLE_NAME = "ROLE_RANDOM";
-    private final String DIFFERENT_ROLE_NAME = "ROLE_DIFFERENT";
+    private final String ROLE_NAME_WHICH_NOT_EXIST = "ROLE_DIFFERENT";
     private final String OTHER_ROLE_NAME = "ROLE_OTHER";
     private final String WRONG_ROLE_NAME = "WRONG_ROLE";
     private final UUID RANDOM_USER_ID = UUID.randomUUID();
@@ -50,7 +52,8 @@ public class UserDataServiceTest {
     private final String RANDOM_EMAIL = "email@email.com";
     private final String EMAIL_OF_USER_WHICH_NOT_EXIST = "not@exist.com";
     private final String WRONG_USER_EMAIL = "WrongEmail";
-    private final String RANDOM_PASSWORD = "password";
+    private final String RANDOM_PASSWORD = "Password1234";
+    private final String WRONG_RANDOM_PASSWORD = "wrongPassword";
     private final LocalDate RANDOM_BIRTH_DATE = LocalDate.of(2004, 4, 2);
 
     @Mock
@@ -90,7 +93,7 @@ public class UserDataServiceTest {
         otherRole  = Role
                 .builder()
                 .id(ID_OF_SECOND_CREATED_ENTITY)
-                .name(DIFFERENT_ROLE_NAME)
+                .name(ROLE_NAME_WHICH_NOT_EXIST)
                 .build();
 
         firstUser = User
@@ -273,7 +276,7 @@ public class UserDataServiceTest {
                 .build();
 
         when(roleRepository.findByName(RANDOM_ROLE_NAME)).thenReturn(role);
-        when(roleRepository.findByName(DIFFERENT_ROLE_NAME)).thenReturn(null);
+        when(roleRepository.findByName(ROLE_NAME_WHICH_NOT_EXIST)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.saveNewRole(null, List.of(RANDOM_PRIVILEGE_NAME));
@@ -288,23 +291,23 @@ public class UserDataServiceTest {
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, null);
+            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, null);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of());
+            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of());
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(RANDOM_WRONG_PRIVILEGE_NAME));
+            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(RANDOM_WRONG_PRIVILEGE_NAME));
         });
 
         Exception seventhException = assertThrows(PrivilegeNotFoundException.class, () -> {
-            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(OTHER_PRIVILEGE_NAME));
+            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(OTHER_PRIVILEGE_NAME));
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.saveNewRole(DIFFERENT_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(RANDOM_PRIVILEGE_NAME));
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: roleName");
@@ -323,11 +326,11 @@ public class UserDataServiceTest {
         when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateRoleNameById(null, DIFFERENT_ROLE_NAME);
+            userDataService.updateRoleNameById(null, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateRoleNameById(NEGATIVE_ID, DIFFERENT_ROLE_NAME);
+            userDataService.updateRoleNameById(NEGATIVE_ID, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
@@ -339,11 +342,11 @@ public class UserDataServiceTest {
         });
 
         Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
-            userDataService.updateRoleNameById(OTHER_ID, DIFFERENT_ROLE_NAME);
+            userDataService.updateRoleNameById(OTHER_ID, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.updateRoleNameById(ID_OF_FIRST_CREATED_ENTITY, DIFFERENT_ROLE_NAME);
+            userDataService.updateRoleNameById(ID_OF_FIRST_CREATED_ENTITY, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
@@ -367,7 +370,7 @@ public class UserDataServiceTest {
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(NEGATIVE_ID, DIFFERENT_ROLE_NAME);
+            userDataService.deleteRoleRelationWithPrivilegeById(NEGATIVE_ID, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
@@ -499,6 +502,124 @@ public class UserDataServiceTest {
         assertEquals(fourthException.getMessage(), "Incorrect argument: idOfRoleToAssignToUsers");
         assertEquals(fifthException.getMessage(), "Role to delete with id " + OTHER_ID + " not found");
         assertEquals(sixthException.getMessage(), "Role to assign to users with id " + OTHER_ID + " not found");
+    }
+
+    @Test
+    public void testOfSaveNewUser(){
+
+        UserModel userModel = new UserModel(null, RANDOM_FIRST_NAME, RANDOM_LAST_NAME, EMAIL_OF_USER_WHICH_NOT_EXIST
+                , RANDOM_PASSWORD, RANDOM_BIRTH_DATE);
+
+        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
+        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+
+        when(roleRepository.findByName(RANDOM_ROLE_NAME)).thenReturn(role);
+        when(roleRepository.findByName(ROLE_NAME_WHICH_NOT_EXIST)).thenReturn(null);
+
+        when(bCryptPasswordEncoder.encode(RANDOM_PASSWORD)).thenReturn(RANDOM_PASSWORD);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewUser(null, RANDOM_ROLE_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setFirstName(null);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setFirstName("");
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setFirstName(RANDOM_FIRST_NAME);
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setLastName(null);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setLastName("");
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setLastName(RANDOM_LAST_NAME);
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setEmail(null);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setEmail(WRONG_USER_EMAIL);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setEmail(RANDOM_EMAIL);
+
+        Exception eighthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setPassword(null);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        Exception ninthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setPassword(WRONG_RANDOM_PASSWORD);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setPassword(RANDOM_PASSWORD);
+
+        Exception tenthException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setBirthDate(null);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        Exception eleventhException = assertThrows(BadArgumentException.class, () -> {
+            userModel.setBirthDate(LocalDate.of(2050, 10, 1));
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setBirthDate(RANDOM_BIRTH_DATE);
+
+        Exception twelvethException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewUser(userModel, null);
+        });
+
+        Exception thirteenthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.saveNewUser(userModel, WRONG_ROLE_NAME);
+        });
+
+        Exception fourteenthException = assertThrows(UserNotSavedException.class, () -> {
+            userModel.setEmail(RANDOM_EMAIL);
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        userModel.setEmail(EMAIL_OF_USER_WHICH_NOT_EXIST);
+
+        Exception fifteenthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.saveNewUser(userModel, ROLE_NAME_WHICH_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.saveNewUser(userModel, RANDOM_ROLE_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: userModel");
+        assertEquals(secondException.getMessage(), "Incorrect argument: firstName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: firstName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: lastName");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: lastName");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: email");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: email");
+        assertEquals(eighthException.getMessage(), "Incorrect argument: password");
+        assertEquals(ninthException.getMessage(), "Incorrect argument: password");
+        assertEquals(tenthException.getMessage(), "Incorrect argument: birthDate");
+        assertEquals(eleventhException.getMessage(), "Incorrect argument: birthDate");
+        assertEquals(twelvethException.getMessage(), "Incorrect argument: roleName");
+        assertEquals(thirteenthException.getMessage(), "Incorrect argument: roleName");
+        assertEquals(fourteenthException.getMessage(), "User with email " + RANDOM_EMAIL + " already exists");
+        assertEquals(fifteenthException.getMessage(), "Role with name " + ROLE_NAME_WHICH_NOT_EXIST + " not found");
     }
 
     @Test

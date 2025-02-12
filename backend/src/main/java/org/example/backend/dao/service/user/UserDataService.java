@@ -15,10 +15,13 @@ import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.role.RoleNotUpdatedException;
 import org.example.backend.exception.user.UserNotFoundException;
+import org.example.backend.exception.user.UserNotSavedException;
+import org.example.backend.model.user.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -62,21 +65,12 @@ public class UserDataService {
                     "Privilege name cannot be the same as one of the existed privileges");
 
         Privilege newPrivilege = new Privilege(privilegeName);
-        Privilege privilegeSaved;
 
-        try{
-            privilegeSaved = privilegeRepository.save(newPrivilege);
-        } catch (Exception e){
-            throw new PrivilegeNotSavedException(e.getMessage());
-        }
-
-        return privilegeSaved;
+        return privilegeRepository.save(newPrivilege);
     }
 
     @Transactional
     public Privilege updateNameOfPrivilegeById(Long id, String privilegeName) {
-
-        Privilege privilegeSaved;
 
         if((id == null) || (id <= 0))
             throw new BadArgumentException("Incorrect argument: id");
@@ -91,13 +85,7 @@ public class UserDataService {
 
         privilege.setName(privilegeName);
 
-        try{
-            privilegeSaved = privilegeRepository.save(privilege);
-        } catch (Exception e){
-            throw new PrivilegeNotUpdatedException(e.getMessage());
-        }
-
-        return privilegeSaved;
+        return privilegeRepository.save(privilege);
     }
 
     @Transactional
@@ -302,6 +290,40 @@ public class UserDataService {
     @Transactional
     public List<Role> getAllRoles() {
         return roleRepository.findAll();
+    }
+
+    @Transactional
+    public User saveNewUser(UserModel userModel, String roleName) {
+
+        if(userModel == null)
+            throw new BadArgumentException("Null argument: userModel");
+        else if((userModel.getFirstName() == null) || (userModel.getFirstName().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: firstName");
+        else if((userModel.getLastName() == null) || (userModel.getLastName().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: lastName");
+        else if((userModel.getEmail() == null) || (!userEmailPattern.matcher(userModel.getEmail()).matches()))
+            throw new BadArgumentException("Incorrect argument: email");
+        else if((userModel.getPassword() == null) || (!userPasswordPattern.matcher(userModel.getPassword()).matches()))
+            throw new BadArgumentException("Incorrect argument: password");
+        else if((userModel.getBirthDate() == null) || (userModel.getBirthDate().isAfter(LocalDate.now())))
+            throw new BadArgumentException("Incorrect argument: birthDate");
+        else if((roleName == null) || (!roleNamePattern.matcher(roleName).matches()))
+            throw new BadArgumentException("Incorrect argument: roleName");
+
+        User foundUser = userRepository.findByEmail(userModel.getEmail());
+
+        if(foundUser != null)
+            throw new UserNotSavedException("User with email " + userModel.getEmail() + " already exists");
+
+        Role foundRole = roleRepository.findByName(roleName);
+
+        if(foundRole == null)
+            throw new RoleNotFoundException("Role with name " + roleName + " not found");
+
+        User newUser = new User(userModel.getFirstName(), userModel.getLastName(), userModel.getEmail(),
+                bCryptPasswordEncoder.encode(userModel.getPassword()), userModel.getBirthDate(), foundRole);
+
+        return userRepository.save(newUser);
     }
 
     @Transactional
