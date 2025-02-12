@@ -69,6 +69,8 @@ public class ReturnedProductRepositoryTest {
     private final boolean RANDOM_ENABLED_VALUE = true;
     private final String RANDOM_RETURN_CAUSE_LOWER_CASE = "random return cause";
     private final String DIFFERENT_RETURN_CAUSE_LOWER_CASE = "different return cause";
+    private final Integer RANDOM_HEIGHT = 100;
+    private final Integer RANDOM_WIDTH = 100;
 
     @Autowired
     private ProductRepository productRepository;
@@ -115,11 +117,11 @@ public class ReturnedProductRepositoryTest {
     public void setUp() {
 
         product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
+                RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product1);
 
         product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
+                RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
         productRepository.save(product2);
 
         privilege = new Privilege(RANDOM_PRIVILEGE_NAME);

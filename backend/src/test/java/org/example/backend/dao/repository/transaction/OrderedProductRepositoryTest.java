@@ -68,6 +68,8 @@ public class OrderedProductRepositoryTest {
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Credit card";
     private final boolean RANDOM_ENABLED_VALUE = true;
     private final String RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE = "random payment method name";
+    private final Integer RANDOM_HEIGHT = 100;
+    private final Integer RANDOM_WIDTH = 100;
 
     @Autowired
     private DeliveryProviderRepository deliveryProviderRepository;
@@ -113,11 +115,11 @@ public class OrderedProductRepositoryTest {
     public void setUp() {
 
         product1 = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
+                RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_PRODUCT_MAIN_IMAGE);
         productRepository.save(product1);
 
         product2 = new Product(DIFFERENT_PRODUCT_NAME, DIFFERENT_EAN_CODE, DIFFERENT_TYPE_LOWER_CASE, RANDOM_DESCRIPTION,
-                RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
+                RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, DIFFERENT_STOCK, DIFFERENT_PRODUCT_MAIN_IMAGE);
         productRepository.save(product2);
 
         privilege = new Privilege(RANDOM_PRIVILEGE_NAME);
