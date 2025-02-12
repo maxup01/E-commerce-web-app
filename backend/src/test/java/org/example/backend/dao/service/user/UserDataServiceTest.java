@@ -3,6 +3,7 @@ package org.example.backend.dao.service.user;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.dao.repository.image.UserImageRepository;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
@@ -55,6 +56,7 @@ public class UserDataServiceTest {
     private final String RANDOM_PASSWORD = "Password1234";
     private final String WRONG_RANDOM_PASSWORD = "wrongPassword";
     private final LocalDate RANDOM_BIRTH_DATE = LocalDate.of(2004, 4, 2);
+    private final byte[] RANDOM_IMAGE = new byte[12];
 
     @Mock
     private BCryptPasswordEncoder bCryptPasswordEncoder;
@@ -67,6 +69,9 @@ public class UserDataServiceTest {
 
     @Mock
     private UserRepository userRepository;
+
+    @Mock
+    private UserImageRepository userImageRepository;
 
     @InjectMocks
     private UserDataService userDataService;
@@ -731,6 +736,38 @@ public class UserDataServiceTest {
         assertEquals(thirdException.getMessage(), "Incorrect argument: password");
         assertEquals(fourthException.getMessage(), "Incorrect argument: password");
         assertEquals(fifthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfUpdateUserImageByEmail(){
+
+        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
+        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserImageByEmail(null, RANDOM_IMAGE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserImageByEmail(WRONG_USER_EMAIL, RANDOM_IMAGE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserImageByEmail(RANDOM_EMAIL, null);
+        });
+
+        Exception fourthException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserImageByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.updateUserImageByEmail(RANDOM_EMAIL, RANDOM_IMAGE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: email");
+        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: image");
+        assertEquals(fourthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test

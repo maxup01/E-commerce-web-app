@@ -1,10 +1,11 @@
 package org.example.backend.dao.service.user;
 
 import jakarta.transaction.Transactional;
-import org.example.backend.dao.entity.image.ProductMainImage;
+import org.example.backend.dao.entity.image.UserImage;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.dao.repository.image.UserImageRepository;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -38,15 +40,17 @@ public class UserDataService {
     private final PrivilegeRepository privilegeRepository;
     private final RoleRepository roleRepository;
     private final UserRepository userRepository;
+    private final UserImageRepository userImageRepository;
 
     private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Autowired
     public UserDataService(PrivilegeRepository privilegeRepository, RoleRepository roleRepository,
-                           UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
+                           UserImageRepository userImageRepository, UserRepository userRepository, BCryptPasswordEncoder bCryptPasswordEncoder) {
         this.privilegeRepository = privilegeRepository;
         this.roleRepository = roleRepository;
         this.userRepository = userRepository;
+        this.userImageRepository = userImageRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.privilegeNamePattern = Pattern.compile("[A-Z]+_PRIVILEGE");
         this.roleNamePattern = Pattern.compile("ROLE_[A-Z]+");
@@ -378,6 +382,28 @@ public class UserDataService {
         foundUser.setPassword(bCryptPasswordEncoder.encode(password));
 
         return userRepository.save(foundUser);
+    }
+
+    @Transactional
+    public User updateUserImageByEmail(String email, byte[] image) {
+
+         if((email == null) || (!userEmailPattern.matcher(email).matches()))
+             throw new BadArgumentException("Incorrect argument: email");
+         else if(image == null)
+             throw new BadArgumentException("Incorrect argument: image");
+
+         User foundUser = userRepository.findByEmail(email);
+
+         if(foundUser == null)
+             throw new UserNotFoundException("User with email " + email + " not found");
+
+         if(foundUser.getProfileImage() != null)
+             userImageRepository.delete(foundUser.getProfileImage());
+
+         UserImage userImage = userImageRepository.save(new UserImage(image));
+
+         foundUser.setProfileImage(userImage);
+         return userRepository.save(foundUser);
     }
 
     @Transactional
