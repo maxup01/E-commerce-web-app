@@ -1,4 +1,4 @@
-package org.example.backend.dao.service.user;
+package org.example.backend.dao.service;
 
 import jakarta.transaction.Transactional;
 import org.example.backend.dao.entity.image.UserImage;
@@ -24,7 +24,6 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.regex.Pattern;
 

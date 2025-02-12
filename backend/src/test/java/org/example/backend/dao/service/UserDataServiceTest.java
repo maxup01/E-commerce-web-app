@@ -1,4 +1,4 @@
-package org.example.backend.dao.service.user;
+package org.example.backend.dao.service;
 
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
