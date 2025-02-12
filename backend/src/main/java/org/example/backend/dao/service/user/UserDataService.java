@@ -344,6 +344,24 @@ public class UserDataService {
     }
 
     @Transactional
+    public User updateUserLastNameByEmail(String email, String lastName) {
+
+        if((email == null) || (!userEmailPattern.matcher(email).matches()))
+            throw new BadArgumentException("Incorrect argument: email");
+        else if((lastName == null) || (lastName.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: lastName");
+
+        User foundUser = userRepository.findByEmail(email);
+
+        if(foundUser == null)
+            throw new UserNotFoundException("User with email " + email + " not found");
+
+        foundUser.setLastName(lastName);
+
+        return userRepository.save(foundUser);
+    }
+
+    @Transactional
     public User getUserById(UUID id){
 
         if(id == null)
