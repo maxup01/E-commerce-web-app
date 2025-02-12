@@ -39,8 +39,10 @@ public class ReturnTransaction extends Transaction {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "returnTransaction")
     private List<ReturnedProduct> returnedProducts;
 
-    public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {
-        super(transactionDate, TransactionStatus.ACCEPTED_RETURN);
+    public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider,
+                             ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {
+        super(transactionDate, TransactionStatus.ACCEPTED_RETURN,
+                user.getFirstName() + user.getLastName(), user.getEmail());
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;

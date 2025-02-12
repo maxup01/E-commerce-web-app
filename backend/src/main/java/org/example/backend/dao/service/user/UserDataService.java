@@ -403,4 +403,18 @@ public class UserDataService {
 
         return foundUser;
     }
+
+    @Transactional
+    public void deleteUserById(UUID id) {
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+
+        User foundUser = userRepository.findById(id).orElse(null);
+
+        if(foundUser == null)
+            throw new UserNotFoundException("User with id " + id + " not found");
+
+        userRepository.delete(foundUser);
+    }
 }

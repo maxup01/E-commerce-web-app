@@ -781,4 +781,26 @@ public class UserDataServiceTest {
         assertEquals(secondException.getMessage(), "Incorrect argument: email");
         assertEquals(thirdException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
     }
+
+    @Test
+    public void testOfDeleteUserById(){
+
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.deleteUserById(null);
+        });
+
+        Exception secondException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.deleteUserById(ID_OF_USER_WHICH_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.deleteUserById(RANDOM_USER_ID);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
+    }
 }

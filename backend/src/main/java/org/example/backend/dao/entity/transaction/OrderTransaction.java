@@ -40,7 +40,8 @@ public class OrderTransaction extends Transaction {
     private List<OrderedProduct> orderedProducts;
 
     public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
-        super(transactionDate, TransactionStatus.PAID);
+        super(transactionDate, TransactionStatus.PAID, user.getFirstName() + user.getLastName(),
+                user.getEmail());
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;

@@ -51,10 +51,10 @@ public class User {
     @JoinColumn(name = "image_id", referencedColumnName = "id")
     private UserImage profileImage;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private List<OrderTransaction> orderTransactions;
 
-    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = {CascadeType.DETACH, CascadeType.MERGE, CascadeType.REFRESH})
     private List<ReturnTransaction> returnTransactions;
 
     public User(String firstName, String lastName, String email, String password, LocalDate birthDate, Role role) {

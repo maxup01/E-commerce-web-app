@@ -20,6 +20,12 @@ public abstract class Transaction {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    @Column(nullable = false)
+    private String firstNameAndLastNameOfUser;
+
+    @Column(nullable = false)
+    private String userEmail;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private TransactionStatus status;
@@ -27,8 +33,10 @@ public abstract class Transaction {
     @Column(nullable = false)
     private Date transactionDate;
 
-    public Transaction(Date transactionDate, TransactionStatus transactionStatus) {
+    public Transaction(Date transactionDate, TransactionStatus transactionStatus, String firstNameAndLastName, String userEmail) {
         this.transactionDate = transactionDate;
         this.status = transactionStatus;
+        this.firstNameAndLastNameOfUser = firstNameAndLastName;
+        this.userEmail = userEmail;
     }
 }
