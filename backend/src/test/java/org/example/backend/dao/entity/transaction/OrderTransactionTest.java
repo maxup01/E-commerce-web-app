@@ -3,6 +3,7 @@ package org.example.backend.dao.entity.transaction;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.TransactionStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -36,5 +37,6 @@ public class OrderTransactionTest {
         assertEquals(orderTransaction.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);
         assertEquals(orderTransaction.getPaymentMethod(), RANDOM_PAYMENT_METHOD);
         assertEquals(orderTransaction.getOrderedProducts(), RANDOM_ORDERED_PRODUCT_LIST);
+        assertEquals(orderTransaction.getStatus(), TransactionStatus.PAID);
     }
 }

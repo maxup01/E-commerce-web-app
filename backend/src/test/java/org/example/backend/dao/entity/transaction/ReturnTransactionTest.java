@@ -3,6 +3,7 @@ package org.example.backend.dao.entity.transaction;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.TransactionStatus;
 import org.junit.jupiter.api.Test;
 
 import java.util.Date;
@@ -33,5 +34,6 @@ public class ReturnTransactionTest {
         assertEquals(returnTransaction.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);
         assertEquals(returnTransaction.getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returnTransaction.getReturnedProducts(), RANDOM_RETRUNED_PRODUCT_LIST);
+        assertEquals(returnTransaction.getStatus(), TransactionStatus.ACCEPTED_RETURN);
     }
 }

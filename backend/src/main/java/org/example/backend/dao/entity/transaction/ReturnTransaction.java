@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.Date;
 import java.util.List;
@@ -38,7 +39,7 @@ public class ReturnTransaction extends Transaction {
     private List<ReturnedProduct> returnedProducts;
 
     public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {
-        super(transactionDate);
+        super(transactionDate, TransactionStatus.ACCEPTED_RETURN);
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;

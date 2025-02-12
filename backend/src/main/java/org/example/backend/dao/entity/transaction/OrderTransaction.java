@@ -5,6 +5,7 @@ import lombok.*;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.user.User;
+import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -39,7 +40,7 @@ public class OrderTransaction extends Transaction {
     private List<OrderedProduct> orderedProducts;
 
     public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
-        super(transactionDate);
+        super(transactionDate, TransactionStatus.PAID);
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;
