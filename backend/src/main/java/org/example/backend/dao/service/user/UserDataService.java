@@ -362,6 +362,24 @@ public class UserDataService {
     }
 
     @Transactional
+    public User updateUserPasswordByEmail(String email, String password) {
+
+        if((email == null) || (!userEmailPattern.matcher(email).matches()))
+            throw new BadArgumentException("Incorrect argument: email");
+        else if((password == null) || (!userPasswordPattern.matcher(password).matches()))
+            throw new BadArgumentException("Incorrect argument: password");
+
+        User foundUser = userRepository.findByEmail(email);
+
+        if(foundUser == null)
+            throw new UserNotFoundException("User with email " + email + " not found");
+
+        foundUser.setPassword(bCryptPasswordEncoder.encode(password));
+
+        return userRepository.save(foundUser);
+    }
+
+    @Transactional
     public User getUserById(UUID id){
 
         if(id == null)
