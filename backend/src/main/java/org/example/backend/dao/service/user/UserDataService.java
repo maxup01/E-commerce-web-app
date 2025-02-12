@@ -9,8 +9,6 @@ import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
-import org.example.backend.exception.privilege.PrivilegeNotSavedException;
-import org.example.backend.exception.privilege.PrivilegeNotUpdatedException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.role.RoleNotUpdatedException;
@@ -27,6 +25,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+//TODO change return types to data models in future
 @Service
 public class UserDataService {
 
@@ -298,15 +297,15 @@ public class UserDataService {
         if(userModel == null)
             throw new BadArgumentException("Null argument: userModel");
         else if((userModel.getFirstName() == null) || (userModel.getFirstName().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: firstName");
+            throw new BadArgumentException("Incorrect argument field: userModel.firstName");
         else if((userModel.getLastName() == null) || (userModel.getLastName().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: lastName");
+            throw new BadArgumentException("Incorrect argument field: userModel.lastName");
         else if((userModel.getEmail() == null) || (!userEmailPattern.matcher(userModel.getEmail()).matches()))
-            throw new BadArgumentException("Incorrect argument: email");
+            throw new BadArgumentException("Incorrect argument field: userModel.email");
         else if((userModel.getPassword() == null) || (!userPasswordPattern.matcher(userModel.getPassword()).matches()))
-            throw new BadArgumentException("Incorrect argument: password");
+            throw new BadArgumentException("Incorrect argument field: userModel.password");
         else if((userModel.getBirthDate() == null) || (userModel.getBirthDate().isAfter(LocalDate.now())))
-            throw new BadArgumentException("Incorrect argument: birthDate");
+            throw new BadArgumentException("Incorrect argument field: userModel.birthDate");
         else if((roleName == null) || (!roleNamePattern.matcher(roleName).matches()))
             throw new BadArgumentException("Incorrect argument: roleName");
 
@@ -324,6 +323,24 @@ public class UserDataService {
                 bCryptPasswordEncoder.encode(userModel.getPassword()), userModel.getBirthDate(), foundRole);
 
         return userRepository.save(newUser);
+    }
+
+    @Transactional
+    public User updateUserFirstNameByEmail(String email, String firstName) {
+
+        if((email == null) || (!userEmailPattern.matcher(email).matches()))
+            throw new BadArgumentException("Incorrect argument: email");
+        else if((firstName == null) || (firstName.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: firstName");
+
+        User foundUser = userRepository.findByEmail(email);
+
+        if(foundUser == null)
+            throw new UserNotFoundException("User with email " + email + " not found");
+
+        foundUser.setFirstName(firstName);
+
+        return userRepository.save(foundUser);
     }
 
     @Transactional

@@ -606,20 +606,57 @@ public class UserDataServiceTest {
         });
 
         assertEquals(firstException.getMessage(), "Null argument: userModel");
-        assertEquals(secondException.getMessage(), "Incorrect argument: firstName");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: firstName");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: lastName");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: lastName");
-        assertEquals(sixthException.getMessage(), "Incorrect argument: email");
-        assertEquals(seventhException.getMessage(), "Incorrect argument: email");
-        assertEquals(eighthException.getMessage(), "Incorrect argument: password");
-        assertEquals(ninthException.getMessage(), "Incorrect argument: password");
-        assertEquals(tenthException.getMessage(), "Incorrect argument: birthDate");
-        assertEquals(eleventhException.getMessage(), "Incorrect argument: birthDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument field: userModel.firstName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument field: userModel.firstName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument field: userModel.lastName");
+        assertEquals(fifthException.getMessage(), "Incorrect argument field: userModel.lastName");
+        assertEquals(sixthException.getMessage(), "Incorrect argument field: userModel.email");
+        assertEquals(seventhException.getMessage(), "Incorrect argument field: userModel.email");
+        assertEquals(eighthException.getMessage(), "Incorrect argument field: userModel.password");
+        assertEquals(ninthException.getMessage(), "Incorrect argument field: userModel.password");
+        assertEquals(tenthException.getMessage(), "Incorrect argument field: userModel.birthDate");
+        assertEquals(eleventhException.getMessage(), "Incorrect argument field: userModel.birthDate");
         assertEquals(twelvethException.getMessage(), "Incorrect argument: roleName");
         assertEquals(thirteenthException.getMessage(), "Incorrect argument: roleName");
         assertEquals(fourteenthException.getMessage(), "User with email " + RANDOM_EMAIL + " already exists");
         assertEquals(fifteenthException.getMessage(), "Role with name " + ROLE_NAME_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfUpdateUserFirstNameByEmail(){
+
+        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
+        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserFirstNameByEmail(null, RANDOM_FIRST_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserFirstNameByEmail("", RANDOM_FIRST_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, "");
+        });
+
+        Exception fifthException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserFirstNameByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_FIRST_NAME);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, RANDOM_FIRST_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: email");
+        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: firstName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: firstName");
+        assertEquals(fifthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
