@@ -555,4 +555,23 @@ public class ProductDataServiceTest {
         assertEquals(firstException.getMessage(), "Null argument: type");
         assertEquals(secondException.getMessage(), "Products with type " + TYPE_THAT_NOT_EXIST + " not found");
     }
+
+    @Test
+    public void testOfGetProductsByTypeAndPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPhrase(null, RANDOM_PHRASE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPhrase(RANDOM_TYPE, null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductsByTypeAndPhrase(RANDOM_TYPE, RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: type");
+        assertEquals(secondException.getMessage(), "Null argument: phrase");
+    }
 }

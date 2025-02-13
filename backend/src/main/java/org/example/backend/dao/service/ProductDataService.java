@@ -249,4 +249,15 @@ public class ProductDataService {
 
         return foundProducts;
     }
+
+    @Transactional
+    public List<Product> getProductsByTypeAndPhrase(String type, String phrase){
+
+        if(type == null)
+            throw new BadArgumentException("Null argument: type");
+        else if(phrase == null)
+            throw new BadArgumentException("Null argument: phrase");
+
+        return productRepository.findByPhraseAndType(phrase, type);
+    }
 }
