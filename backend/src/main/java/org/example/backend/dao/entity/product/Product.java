@@ -2,7 +2,6 @@ package org.example.backend.dao.entity.product;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.example.backend.dao.entity.image.ProductMainImage;
@@ -18,7 +17,6 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
 public class Product {
 
     @Id

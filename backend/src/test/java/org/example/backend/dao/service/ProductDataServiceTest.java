@@ -1,7 +1,10 @@
 package org.example.backend.dao.service;
 
+import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
+import org.example.backend.dao.repository.image.ProductMainImageRepository;
+import org.example.backend.dao.repository.image.ProductPageImageRepository;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -48,6 +51,12 @@ public class ProductDataServiceTest {
     private final byte[] RANDOM_IMAGE = new byte[12];
 
     @Mock
+    ProductMainImageRepository productMainImageRepository;
+
+    @Mock
+    ProductPageImageRepository productPageImageRepository;
+
+    @Mock
     ProductRepository productRepository;
 
     @InjectMocks
@@ -58,7 +67,8 @@ public class ProductDataServiceTest {
 
     @BeforeEach
     public void setUp() {
-        product = new Product();
+        product = new Product(RANDOM_PRODUCT_NAME, OCCUPIED_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
+                RANDOM_WIDTH, RANDOM_PRICE, RANDOM_PRICE, new Stock(RANDOM_STOCK), new ProductMainImage(RANDOM_IMAGE));
         product.setStock(new Stock());
         list_of_products = new ArrayList<>();
         list_of_products.add(product);
@@ -421,6 +431,33 @@ public class ProductDataServiceTest {
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Null argument: newMainImage");
+        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfAddProductPageImageById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductPageImageById(null, RANDOM_IMAGE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_IMAGE);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Null argument: newPageImage");
         assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
     }
 

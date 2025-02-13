@@ -2,6 +2,7 @@ package org.example.backend.dao.service;
 
 import jakarta.transaction.Transactional;
 import org.example.backend.dao.entity.image.ProductMainImage;
+import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.repository.image.ProductMainImageRepository;
@@ -174,6 +175,22 @@ public class ProductDataService {
         }
 
         return productRepository.save(product);
+    }
+
+    @Transactional
+    public Product addProductPageImageById(UUID id, byte[] newPageImage){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if(newPageImage == null)
+            throw new BadArgumentException("Null argument: newPageImage");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        foundProduct.getPageImages().add(new ProductPageImage(newPageImage));
+        return productRepository.save(foundProduct);
     }
 
     @Transactional
