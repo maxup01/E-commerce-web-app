@@ -234,6 +234,38 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void updateProductDescriptionById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductDescriptionById(null, RANDOM_DESCRIPTION);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, "");
+        });
+
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_DESCRIPTION);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_DESCRIPTION);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: description");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: description");
+        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
     public void testOfGetProductById(){
 
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.ofNullable(product));
