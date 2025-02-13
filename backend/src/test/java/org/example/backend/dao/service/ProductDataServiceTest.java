@@ -398,6 +398,33 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfUpdateProductMainImageById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductMainImageById(null, RANDOM_IMAGE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_IMAGE);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Null argument: newMainImage");
+        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
     public void testOfGetProductById(){
 
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));

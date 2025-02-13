@@ -152,6 +152,31 @@ public class ProductDataService {
     }
 
     @Transactional
+    public Product updateProductMainImageById(UUID id, byte[] newMainImage){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if(newMainImage == null)
+            throw new BadArgumentException("Null argument: newMainImage");
+
+        Product product = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        ProductMainImage productMainImage = new ProductMainImage(newMainImage);
+
+        if(product.getMainImage() == null){
+            product.setMainImage(productMainImage);
+        }
+        else {
+            productMainImageRepository.delete(product.getMainImage());
+            product.setMainImage(productMainImage);
+        }
+
+        return productRepository.save(product);
+    }
+
+    @Transactional
     public Product getProductById(UUID id){
 
         if(id == null)
