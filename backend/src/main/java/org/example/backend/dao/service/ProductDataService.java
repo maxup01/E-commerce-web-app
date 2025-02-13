@@ -8,6 +8,7 @@ import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.repository.image.ProductMainImageRepository;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.user.ProductModel;
@@ -190,6 +191,28 @@ public class ProductDataService {
         });
 
         foundProduct.getPageImages().add(new ProductPageImage(newPageImage));
+        return productRepository.save(foundProduct);
+    }
+
+    @Transactional
+    public Product deleteProductPageImageById(UUID id, UUID pageImageId){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if(pageImageId == null)
+            throw new BadArgumentException("Null argument: pageImageId");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        int arraySize = foundProduct.getPageImages().size();
+
+        foundProduct.getPageImages().removeIf(productPageImage -> productPageImage.getId().equals(pageImageId));
+
+        if(arraySize == foundProduct.getPageImages().size())
+            throw new ProductPageImageNotFoundException("Product page image with id " + pageImageId + " not found");
+
         return productRepository.save(foundProduct);
     }
 

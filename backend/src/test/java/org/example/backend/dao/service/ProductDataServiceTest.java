@@ -1,12 +1,14 @@
 package org.example.backend.dao.service;
 
 import org.example.backend.dao.entity.image.ProductMainImage;
+import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.repository.image.ProductMainImageRepository;
 import org.example.backend.dao.repository.image.ProductPageImageRepository;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.user.ProductModel;
@@ -30,6 +32,8 @@ public class ProductDataServiceTest {
 
     private final UUID ID_OF_PRODUCT_WHICH_EXIST = UUID.randomUUID();
     private final UUID ID_OF_PRODUCT_WHICH_NOT_EXIST = UUID.randomUUID();
+    private final UUID ID_OF_PAGE_IMAGE_THAT_EXIST = UUID.randomUUID();
+    private final UUID ID_OF_PAGE_IMAGE_THAT_NOT_EXIST = UUID.randomUUID();
     private final String RANDOM_PRODUCT_NAME = "Random product name";
     private final String WRONG_EAN_CODE = "DHADABDB232";
     private final String OCCUPIED_EAN_CODE = "18921008";
@@ -69,7 +73,7 @@ public class ProductDataServiceTest {
     public void setUp() {
         product = new Product(RANDOM_PRODUCT_NAME, OCCUPIED_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
                 RANDOM_WIDTH, RANDOM_PRICE, RANDOM_PRICE, new Stock(RANDOM_STOCK), new ProductMainImage(RANDOM_IMAGE));
-        product.setStock(new Stock());
+        product.getPageImages().add(new ProductPageImage(ID_OF_PAGE_IMAGE_THAT_EXIST, RANDOM_IMAGE, product));
         list_of_products = new ArrayList<>();
         list_of_products.add(product);
     }
@@ -459,6 +463,38 @@ public class ProductDataServiceTest {
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Null argument: newPageImage");
         assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfDeleteProductPageImageById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.deleteProductPageImageById(null, ID_OF_PAGE_IMAGE_THAT_EXIST);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, ID_OF_PAGE_IMAGE_THAT_EXIST);
+        });
+
+        Exception fourthException = assertThrows(ProductPageImageNotFoundException.class, () -> {
+            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, ID_OF_PAGE_IMAGE_THAT_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, ID_OF_PAGE_IMAGE_THAT_EXIST);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Null argument: pageImageId");
+        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(fourthException.getMessage(), "Product page image with id " + ID_OF_PAGE_IMAGE_THAT_NOT_EXIST + " not found");
     }
 
     @Test
