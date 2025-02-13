@@ -19,7 +19,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-//TODO change return value types to data models
+//TODO change return value types to data models in all methods
 @Service
 public class ProductDataService {
 
@@ -290,5 +290,29 @@ public class ProductDataService {
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
 
         return productRepository.findByPhraseAndTypeAndPriceRanges(phrase, type, minimalPrice, maximalPrice);
+    }
+
+    @Transactional
+    public List<Product> getProductsOnSale(){
+        return productRepository.showOnSale();
+    }
+
+    @Transactional
+    public Long getTotalQuantityOfAllProducts(){
+        return productRepository.getTotalQuantityOfProducts();
+    }
+
+    @Transactional
+    public List<Object[]> getAllTypesOfProductsAndRelatedToThemQuantity(){
+        return productRepository.getTypesAndQuantityOfProductsWithThisTypes();
+    }
+
+    @Transactional
+    public List<Object[]> getProductsAndRelatedToThemQuantityByPhrase(String phrase){
+
+        if((phrase == null) || (phrase.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        return productRepository.getProductsAndRelatedQuantityByPhrase(phrase);
     }
 }

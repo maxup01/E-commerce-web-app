@@ -577,11 +577,11 @@ public class ProductDataServiceTest {
             productDataService.getProductsByTypeAndPhrase("", RANDOM_PHRASE);
         });
 
-        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             productDataService.getProductsByTypeAndPhrase(RANDOM_TYPE, null);
         });
 
-        Exception fourthException = assertThrows(ProductPageImageNotFoundException.class, () -> {
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             productDataService.getProductsByTypeAndPhrase(RANDOM_TYPE, "");
         });
 
@@ -691,5 +691,24 @@ public class ProductDataServiceTest {
         assertEquals(seventhException.getMessage(), "Incorrect argument: maximalPrice");
         assertEquals(eighthException.getMessage(), "Incorrect argument: maximalPrice");
         assertEquals(ninthException.getMessage(), "Argument minimalPrice mustn't be greater than maximalPrice");
+    }
+
+    @Test
+    public void testOfGetProductsAndRelatedToThemQuantityByPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsAndRelatedToThemQuantityByPhrase(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsAndRelatedToThemQuantityByPhrase("");
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductsAndRelatedToThemQuantityByPhrase(RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
     }
 }
