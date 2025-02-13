@@ -53,6 +53,7 @@ public class ProductDataServiceTest {
     private final Long DIFFERENT_STOCK = 76L;
     private final Long NEGATIVE_STOCK = -10L;
     private final byte[] RANDOM_IMAGE = new byte[12];
+    private final String RANDOM_PHRASE = "Random product";
 
     @Mock
     ProductMainImageRepository productMainImageRepository;
@@ -517,6 +518,20 @@ public class ProductDataServiceTest {
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfGetProductsByPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByPhrase(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductsByPhrase(RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: phrase");
     }
 
     @Test

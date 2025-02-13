@@ -228,6 +228,15 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<Product> getProductsByPhrase(String phrase){
+
+        if(phrase == null)
+            throw new BadArgumentException("Null argument: phrase");
+
+        return productRepository.findByPhrase(phrase);
+    }
+
+    @Transactional
     public List<Product> getProductsByType(String type){
 
         if(type == null)
