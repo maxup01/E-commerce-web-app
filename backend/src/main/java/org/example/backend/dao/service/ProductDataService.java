@@ -112,6 +112,25 @@ public class ProductDataService {
     }
 
     @Transactional
+    public Product updateProductSizeById(UUID id, Integer height, Integer width){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((height == null) || (height <= 0))
+            throw new BadArgumentException("Incorrect argument: height");
+        else if((width == null) || (width <= 0))
+            throw new BadArgumentException("Incorrect argument: width");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        foundProduct.setHeight(height);
+        foundProduct.setWidth(width);
+        return productRepository.save(foundProduct);
+    }
+
+    @Transactional
     public Product getProductById(UUID id){
 
         if(id == null)

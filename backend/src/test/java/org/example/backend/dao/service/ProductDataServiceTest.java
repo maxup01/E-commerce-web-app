@@ -301,9 +301,51 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfUpdateProductSizeById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductSizeById(null, RANDOM_HEIGHT, RANDOM_WIDTH);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, null, RANDOM_WIDTH);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_HEIGHT, RANDOM_WIDTH);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, null);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, NEGATIVE_WIDTH);
+        });
+
+        Exception sixthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_HEIGHT, RANDOM_WIDTH);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, RANDOM_WIDTH);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: height");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: height");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: width");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: width");
+        assertEquals(sixthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
     public void testOfGetProductById(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.ofNullable(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
