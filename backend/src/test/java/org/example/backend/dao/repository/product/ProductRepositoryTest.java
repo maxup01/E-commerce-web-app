@@ -88,25 +88,6 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void testOfFindByName(){
-
-        productRepository.save(product1);
-
-        Product foundProduct = productRepository.findByName(RANDOM_NAME);
-
-        assertNotNull(foundProduct.getId());
-        assertEquals(foundProduct.getEANCode(), RANDOM_EAN_CODE);
-        assertEquals(foundProduct.getName(), RANDOM_NAME);
-        assertEquals(foundProduct.getType(), RANDOM_TYPE_LOWER_CASE);
-        assertEquals(foundProduct.getDescription(), RANDOM_DESCRIPTION);
-        assertEquals(foundProduct.getRegularPrice(), RANDOM_REGULAR_PRICE);
-        assertEquals(foundProduct.getCurrentPrice(), RANDOM_CURRENT_PRICE);
-        assertEquals(foundProduct.getStock(), RANDOM_STOCK);
-        assertEquals(foundProduct.getMainImage(), RANDOM_MAIN_IMAGE);
-        assertEquals(foundProduct.getPageImages().size(), RANDOM_IMAGE_LIST.size());
-    }
-
-    @Test
     public void testOffFindByType(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,

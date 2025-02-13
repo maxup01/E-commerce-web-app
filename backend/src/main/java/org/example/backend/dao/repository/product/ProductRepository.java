@@ -10,8 +10,6 @@ import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-    Product findByName(String name);
-
     @Query("SELECT p FROM Product AS p WHERE p.type = :type")
     List<Product> findByType(@Param("type") String type);
 
