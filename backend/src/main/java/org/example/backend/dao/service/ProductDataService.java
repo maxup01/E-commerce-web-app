@@ -131,6 +131,27 @@ public class ProductDataService {
     }
 
     @Transactional
+    public Product updateProductRegularPriceAndCurrentPriceById(UUID id, Double regularPrice, Double currentPrice){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((regularPrice == null) || (regularPrice <= 0))
+            throw new BadArgumentException("Incorrect argument: regularPrice");
+        else if((currentPrice == null) || (currentPrice <= 0))
+            throw new BadArgumentException("Incorrect argument: currentPrice");
+        else if(currentPrice > regularPrice)
+            throw new BadArgumentException("Current price mustn't be greater than regular price");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        foundProduct.setRegularPrice(regularPrice);
+        foundProduct.setCurrentPrice(currentPrice);
+        return productRepository.save(foundProduct);
+    }
+
+    @Transactional
     public Product getProductById(UUID id){
 
         if(id == null)

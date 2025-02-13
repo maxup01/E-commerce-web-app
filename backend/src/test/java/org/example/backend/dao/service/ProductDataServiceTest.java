@@ -41,6 +41,7 @@ public class ProductDataServiceTest {
     private final Integer RANDOM_WIDTH = 100;
     private final Double NEGATIVE_PRICE = -10.00;
     private final Double RANDOM_PRICE = 10.00;
+    private final Double GREATER_PRICE = 17.00;
     private final Long RANDOM_STOCK = 1000L;
     private final Long DIFFERENT_STOCK = 76L;
     private final Long NEGATIVE_STOCK = -10L;
@@ -340,6 +341,60 @@ public class ProductDataServiceTest {
         assertEquals(fourthException.getMessage(), "Incorrect argument: width");
         assertEquals(fifthException.getMessage(), "Incorrect argument: width");
         assertEquals(sixthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfUpdateProductRegularPriceAndCurrentPriceById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(null, GREATER_PRICE, RANDOM_PRICE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, null,
+                    RANDOM_PRICE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_PRICE,
+                    RANDOM_PRICE);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
+                    null);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
+                    NEGATIVE_PRICE);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
+                    GREATER_PRICE);
+        });
+
+        Exception seventhException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_PRICE,
+                    RANDOM_PRICE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
+                    RANDOM_PRICE);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: regularPrice");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: regularPrice");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: currentPrice");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: currentPrice");
+        assertEquals(sixthException.getMessage(), "Current price mustn't be greater than regular price");
+        assertEquals(seventhException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
