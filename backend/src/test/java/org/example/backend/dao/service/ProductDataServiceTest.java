@@ -4,6 +4,8 @@ import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.product.ProductNotFoundException;
+import org.example.backend.exception.product.ProductNotSavedException;
+import org.example.backend.model.user.ProductModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,10 +24,25 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 public class ProductDataServiceTest {
 
-    private final UUID ID_OF_USER_WHICH_EXIST = UUID.randomUUID();
-    private final UUID ID_OF_USER_WHICH_NOT_EXIST = UUID.randomUUID();
+    private final UUID ID_OF_PRODUCT_WHICH_EXIST = UUID.randomUUID();
+    private final UUID ID_OF_PRODUCT_WHICH_NOT_EXIST = UUID.randomUUID();
+    private final String RANDOM_PRODUCT_NAME = "Random product name";
+    private final String WRONG_EAN_CODE = "DHADABDB232";
+    private final String OCCUPIED_EAN_CODE = "18921008";
+    private final String DIFFERENT_8_SIGN_EAN_CODE = "71021038";
+    private final String DIFFERENT_13_SIGN_EAN_CODE = "7102103839021";
     private final String RANDOM_TYPE = "random";
     private final String TYPE_THAT_NOT_EXIST = "notexist";
+    private final String RANDOM_DESCRIPTION = "random description";
+    private final Integer NEGATIVE_HEIGHT = -50;
+    private final Integer RANDOM_HEIGHT = 100;
+    private final Integer NEGATIVE_WIDTH = -50;
+    private final Integer RANDOM_WIDTH = 100;
+    private final Double NEGATIVE_PRICE = -10.00;
+    private final Double RANDOM_PRICE = 10.00;
+    private final Long RANDOM_STOCK = 1000L;
+    private final Long NEGATIVE_STOCK = -10L;
+    private final byte[] RANDOM_IMAGE = new byte[12];
 
     @Mock
     ProductRepository productRepository;
@@ -44,25 +61,198 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfSaveNewProduct() {
+
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
+        when(productRepository.findByEANCode(DIFFERENT_13_SIGN_EAN_CODE)).thenReturn(null);
+
+        ProductModel productModel = ProductModel
+                .builder()
+                .name(RANDOM_PRODUCT_NAME)
+                .EANCode(DIFFERENT_13_SIGN_EAN_CODE)
+                .type(RANDOM_TYPE)
+                .description(RANDOM_DESCRIPTION)
+                .height(RANDOM_HEIGHT)
+                .width(RANDOM_WIDTH)
+                .regularPrice(RANDOM_PRICE)
+                .currentPrice(RANDOM_PRICE)
+                .mainImage(RANDOM_IMAGE)
+                .build();
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.saveNewProduct(null, RANDOM_STOCK);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setEANCode(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setEANCode(WRONG_EAN_CODE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setEANCode(DIFFERENT_8_SIGN_EAN_CODE);
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setName(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setName("");
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setName(RANDOM_PRODUCT_NAME);
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setType(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setType("");
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setType(RANDOM_TYPE);
+
+        Exception eighthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setDescription(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception ninthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setDescription("");
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setDescription(RANDOM_DESCRIPTION);
+
+        Exception tenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setHeight(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception eleventhException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setHeight(NEGATIVE_HEIGHT);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setHeight(RANDOM_HEIGHT);
+
+        Exception twelfthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setWidth(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception thirteenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setWidth(NEGATIVE_WIDTH);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setWidth(RANDOM_WIDTH);
+
+        Exception fourteenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setRegularPrice(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception fifteenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setRegularPrice(NEGATIVE_PRICE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setRegularPrice(RANDOM_PRICE);
+
+        Exception sixteenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setCurrentPrice(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        Exception seventeenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setCurrentPrice(NEGATIVE_PRICE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setCurrentPrice(RANDOM_PRICE);
+
+        Exception eighteenthException = assertThrows(BadArgumentException.class, () -> {
+            productModel.setMainImage(null);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        productModel.setMainImage(RANDOM_IMAGE);
+
+        Exception nineteenthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.saveNewProduct(productModel, null);
+        });
+
+        Exception twentiethException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.saveNewProduct(productModel, NEGATIVE_STOCK);
+        });
+
+        Exception twentyfirstException = assertThrows(ProductNotSavedException.class, () -> {
+            productModel.setEANCode(OCCUPIED_EAN_CODE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        assertDoesNotThrow(() -> {
+            productModel.setEANCode(DIFFERENT_8_SIGN_EAN_CODE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        assertDoesNotThrow(() -> {
+            productModel.setEANCode(DIFFERENT_13_SIGN_EAN_CODE);
+            productDataService.saveNewProduct(productModel, RANDOM_STOCK);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: productModel");
+        assertEquals(secondException.getMessage(), "Incorrect argument field: productModel.EANCode");
+        assertEquals(thirdException.getMessage(), "Incorrect argument field: productModel.EANCode");
+        assertEquals(fourthException.getMessage(), "Incorrect argument field: productModel.name");
+        assertEquals(fifthException.getMessage(), "Incorrect argument field: productModel.name");
+        assertEquals(sixthException.getMessage(), "Incorrect argument field: productModel.type");
+        assertEquals(seventhException.getMessage(), "Incorrect argument field: productModel.type");
+        assertEquals(eighthException.getMessage(), "Incorrect argument field: productModel.description");
+        assertEquals(ninthException.getMessage(), "Incorrect argument field: productModel.description");
+        assertEquals(tenthException.getMessage(), "Incorrect argument field: productModel.height");
+        assertEquals(eleventhException.getMessage(), "Incorrect argument field: productModel.height");
+        assertEquals(twelfthException.getMessage(), "Incorrect argument field: productModel.width");
+        assertEquals(thirteenthException.getMessage(), "Incorrect argument field: productModel.width");
+        assertEquals(fourteenthException.getMessage(), "Incorrect argument field: productModel.regularPrice");
+        assertEquals(fifteenthException.getMessage(), "Incorrect argument field: productModel.regularPrice");
+        assertEquals(sixteenthException.getMessage(), "Incorrect argument field: productModel.currentPrice");
+        assertEquals(seventeenthException.getMessage(), "Incorrect argument field: productModel.currentPrice");
+        assertEquals(eighteenthException.getMessage(), "Incorrect argument field: productModel.mainImage");
+        assertEquals(nineteenthException.getMessage(), "Incorrect argument: stock");
+        assertEquals(twentiethException.getMessage(), "Incorrect argument: stock");
+        assertEquals(twentyfirstException.getMessage(), "Product with ean code " + OCCUPIED_EAN_CODE + " already exists");
+    }
+
+    @Test
     public void testOfGetProductById(){
 
-        when(productRepository.findById(ID_OF_USER_WHICH_EXIST)).thenReturn(Optional.ofNullable(product));
-        when(productRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.ofNullable(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             productDataService.getProductById(null);
         });
 
         Exception secondException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.getProductById(ID_OF_USER_WHICH_NOT_EXIST);
+            productDataService.getProductById(ID_OF_PRODUCT_WHICH_NOT_EXIST);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.getProductById(ID_OF_USER_WHICH_EXIST);
+            productDataService.getProductById(ID_OF_PRODUCT_WHICH_EXIST);
         });
 
         assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Product with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
+        assertEquals(secondException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
     }
 
     @Test

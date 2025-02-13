@@ -10,6 +10,9 @@ import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
+    @Query("SELECT p FROM Product p WHERE p.EANCode = :eanCode")
+    Product findByEANCode(@Param("eanCode") String eanCode);
+
     @Query("SELECT p FROM Product AS p WHERE p.type = :type")
     List<Product> findByType(@Param("type") String type);
 

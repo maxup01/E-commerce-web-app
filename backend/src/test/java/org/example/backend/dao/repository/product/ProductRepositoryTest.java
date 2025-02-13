@@ -88,6 +88,24 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    public void testOfFindByEANCode(){
+
+        productRepository.save(product1);
+
+        Product foundProduct = productRepository.findByEANCode(RANDOM_EAN_CODE);
+
+        assertNotNull(foundProduct);
+        assertEquals(foundProduct.getName(), RANDOM_NAME);
+        assertEquals(foundProduct.getEANCode(), RANDOM_EAN_CODE);
+        assertEquals(foundProduct.getType(), RANDOM_TYPE_LOWER_CASE);
+        assertEquals(foundProduct.getDescription(), RANDOM_DESCRIPTION);
+        assertEquals(foundProduct.getHeight(), RANDOM_HEIGHT);
+        assertEquals(foundProduct.getWidth(), RANDOM_WIDTH);
+        assertEquals(foundProduct.getRegularPrice(), RANDOM_REGULAR_PRICE);
+        assertEquals(foundProduct.getCurrentPrice(), RANDOM_CURRENT_PRICE);
+    }
+
+    @Test
     public void testOffFindByType(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
