@@ -96,6 +96,22 @@ public class ProductDataService {
     }
 
     @Transactional
+    public Product updateProductStockQuantityById(UUID id, Long stock){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((stock == null) || (stock < 0))
+            throw new BadArgumentException("Incorrect argument: stock");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        foundProduct.getStock().setQuantity(stock);
+        return productRepository.save(foundProduct);
+    }
+
+    @Transactional
     public Product getProductById(UUID id){
 
         if(id == null)

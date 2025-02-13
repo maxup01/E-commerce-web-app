@@ -1,6 +1,7 @@
 package org.example.backend.dao.service;
 
 import org.example.backend.dao.entity.product.Product;
+import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -41,6 +42,7 @@ public class ProductDataServiceTest {
     private final Double NEGATIVE_PRICE = -10.00;
     private final Double RANDOM_PRICE = 10.00;
     private final Long RANDOM_STOCK = 1000L;
+    private final Long DIFFERENT_STOCK = 76L;
     private final Long NEGATIVE_STOCK = -10L;
     private final byte[] RANDOM_IMAGE = new byte[12];
 
@@ -56,6 +58,7 @@ public class ProductDataServiceTest {
     @BeforeEach
     public void setUp() {
         product = new Product();
+        product.setStock(new Stock());
         list_of_products = new ArrayList<>();
         list_of_products.add(product);
     }
@@ -234,7 +237,7 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void updateProductDescriptionById(){
+    public void testOfUpdateProductDescriptionById(){
 
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
@@ -262,6 +265,38 @@ public class ProductDataServiceTest {
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Incorrect argument: description");
         assertEquals(thirdException.getMessage(), "Incorrect argument: description");
+        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfUpdateProductStockQuantityById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductStockQuantityById(null, DIFFERENT_STOCK);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+        });
+
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: stock");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: stock");
         assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
     }
 
