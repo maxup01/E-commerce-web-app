@@ -39,7 +39,8 @@ public class OrderTransaction extends Transaction {
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "orderTransaction")
     private List<OrderedProduct> orderedProducts;
 
-    public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider, PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
+    public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider,
+                            PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
         super(transactionDate, TransactionStatus.PAID, user.getFirstName() + user.getLastName(),
                 user.getEmail());
         this.user = user;

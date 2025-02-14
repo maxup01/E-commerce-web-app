@@ -11,7 +11,6 @@ import lombok.NoArgsConstructor;
 @Builder
 public class AddressModel {
 
-    private Long id;
     private String country;
     private String province;
     private String city;

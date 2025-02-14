@@ -1,24 +1,147 @@
 package org.example.backend.dao.service;
 
 import jakarta.transaction.Transactional;
+import org.example.backend.dao.entity.logistic.Address;
+import org.example.backend.dao.entity.logistic.DeliveryProvider;
+import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
+import org.example.backend.dao.entity.transaction.OrderedProduct;
+import org.example.backend.dao.entity.transaction.PaymentMethod;
+import org.example.backend.dao.entity.user.User;
+import org.example.backend.dao.repository.logistic.AddressRepository;
+import org.example.backend.dao.repository.logistic.DeliveryProviderRepository;
+import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.dao.repository.transaction.OrderTransactionRepository;
+import org.example.backend.dao.repository.transaction.OrderedProductRepository;
+import org.example.backend.dao.repository.transaction.PaymentMethodRepository;
+import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
+import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
+import org.example.backend.exception.transaction.PaymentMethodNotFoundException;
+import org.example.backend.exception.user.UserNotFoundException;
+import org.example.backend.model.OrderTransactionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 //TODO change return types to data models
 @Service
 public class OrderTransactionService {
 
+    private final PaymentMethodRepository paymentMethodRepository;
+    private final DeliveryProviderRepository deliveryProviderRepository;
+    private final AddressRepository addressRepository;
+    private final ProductRepository productRepository;
+    private final OrderedProductRepository orderedProductRepository;
     private final OrderTransactionRepository orderTransactionRepository;
+    private final UserRepository userRepository;
+
+    private final Pattern userEmailPattern;
 
     @Autowired
-    public OrderTransactionService(OrderTransactionRepository orderTransactionRepository) {
+    public OrderTransactionService(AddressRepository addressRepository, ProductRepository productRepository,
+                                   OrderedProductRepository orderedProductRepository, OrderTransactionRepository orderTransactionRepository,
+                                   UserRepository userRepository, DeliveryProviderRepository deliveryProviderRepository,
+                                   PaymentMethodRepository paymentMethodRepository) {
+        this.addressRepository = addressRepository;
+        this.productRepository = productRepository;
+        this.orderedProductRepository = orderedProductRepository;
         this.orderTransactionRepository = orderTransactionRepository;
+        this.userRepository = userRepository;
+        this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z0-9]+@[a-zA-Z0-9]+.[a-z]+");
+        this.deliveryProviderRepository = deliveryProviderRepository;
+        this.paymentMethodRepository = paymentMethodRepository;
+    }
+
+    @Transactional
+    public OrderTransaction saveNewOrderTransaction(OrderTransactionModel orderTransactionModel) {
+
+        if(orderTransactionModel == null)
+            throw new BadArgumentException("Null argument: orderTransactionModel");
+        else if((orderTransactionModel.getUserEmail() == null) || (!userEmailPattern.matcher(orderTransactionModel.getUserEmail()).matches()))
+            throw new BadArgumentException("Incorrect argument field: orderTransactionModel.userEmail");
+        else if((orderTransactionModel.getDeliveryProviderName() == null) || (orderTransactionModel.getDeliveryProviderName().isEmpty()))
+            throw new BadArgumentException("Incorrect argument field: orderTransactionModel.deliveryProviderName");
+        else if((orderTransactionModel.getPaymentMethodName() == null) || (orderTransactionModel.getPaymentMethodName().isEmpty()))
+            throw new BadArgumentException("Incorrect argument field: orderTransactionModel.paymentMethodName");
+        else if((orderTransactionModel.getAddressModel() == null) || (orderTransactionModel.getAddressModel().getCountry() == null)
+                || (orderTransactionModel.getAddressModel().getProvince() == null) || (orderTransactionModel.getAddressModel().getCity() == null)
+                || (orderTransactionModel.getAddressModel().getAddress() == null) || (orderTransactionModel.getAddressModel().getCountry().isEmpty())
+                || (orderTransactionModel.getAddressModel().getProvince().isEmpty()) || (orderTransactionModel.getAddressModel().getCity().isEmpty())
+                || (orderTransactionModel.getAddressModel().getAddress().isEmpty()))
+            throw new BadArgumentException("Incorrect argument field: orderTransactionModel.addressModel");
+        else if((orderTransactionModel.getProductsAndOrderedQuantity() == null) || (orderTransactionModel.getProductsAndOrderedQuantity().isEmpty()))
+            throw new BadArgumentException("Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
+
+        ArrayList<OrderedProduct> orderedProducts = new ArrayList<>();
+
+        orderTransactionModel.getProductsAndOrderedQuantity().forEach((productModel, quantity) -> {
+
+            if((productModel == null) || (productModel.getId() == null) || (quantity == null) || (quantity <= 0))
+                throw new BadArgumentException("Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
+
+            Product foundProduct = productRepository.findById(productModel.getId()).orElseThrow(() -> {
+                return new ProductNotFoundException("Product with id " + productModel.getId() + " not found");
+            });
+
+            if(foundProduct.getStock().getQuantity() < quantity){
+                throw new BadArgumentException("There is not enough stock for product with id " + productModel.getId());
+            }
+
+            orderedProducts.add(new OrderedProduct(foundProduct, quantity, foundProduct.getCurrentPrice()));
+        });
+
+        User user = userRepository.findByEmail(orderTransactionModel.getUserEmail());
+
+        if(user == null)
+            throw new UserNotFoundException("User with email " + orderTransactionModel.getUserEmail() + " not found");
+
+        DeliveryProvider deliveryProvider = deliveryProviderRepository.findByName(orderTransactionModel.getDeliveryProviderName());
+
+        if(deliveryProvider == null)
+            throw new DeliveryProviderNotFoundException("Delivery Provider with name " + orderTransactionModel.getDeliveryProviderName() + " not found");
+
+        PaymentMethod paymentMethod = paymentMethodRepository.findByName(orderTransactionModel.getPaymentMethodName());
+
+        if(paymentMethod == null)
+            throw new PaymentMethodNotFoundException("Payment Method with name " + orderTransactionModel.getPaymentMethodName() + " not found");
+
+        Address deliveryAddress = addressRepository.findByCountryAndCityAndProvinceAndAddress(
+                orderTransactionModel.getAddressModel().getCountry(), orderTransactionModel.getAddressModel().getProvince(),
+                orderTransactionModel.getAddressModel().getCity(), orderTransactionModel.getAddressModel().getAddress());
+
+        if(deliveryAddress == null){
+
+            deliveryAddress = new Address(orderTransactionModel.getAddressModel().getCountry(), orderTransactionModel.getAddressModel().getProvince(),
+                    orderTransactionModel.getAddressModel().getCity(), orderTransactionModel.getAddressModel().getAddress());
+
+            deliveryAddress = addressRepository.save(deliveryAddress);
+        }
+
+        orderedProductRepository.saveAll(orderedProducts);
+
+        OrderTransaction orderTransaction = new OrderTransaction(Date.from(Instant.now()), user, deliveryAddress,
+                deliveryProvider, paymentMethod, orderedProducts);
+
+        orderTransactionRepository.save(orderTransaction);
+
+        orderedProducts.forEach(orderedProduct -> {
+            orderedProduct = orderedProductRepository.save(orderedProduct);
+            orderedProduct.setOrderTransaction(orderTransaction);
+        });
+
+        orderedProducts.forEach(orderedProduct -> {
+            orderedProduct.getProduct().getStock().setQuantity(orderedProduct.getProduct().getStock().getQuantity() - orderedProduct.getQuantity());
+        });
+
+        return orderTransaction;
     }
 
     @Transactional
