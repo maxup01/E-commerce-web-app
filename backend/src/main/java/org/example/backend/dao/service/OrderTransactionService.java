@@ -168,4 +168,17 @@ public class OrderTransactionService {
 
         return orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(startingDate, endingDate);
     }
+
+    @Transactional
+    public List<OrderTransaction> getProductsByTimePeriod(Date startingDate, Date endingDate) {
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now()))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now()))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+
+        return orderTransactionRepository.findProductsByTimePeriod(startingDate, endingDate);
+    }
 }
