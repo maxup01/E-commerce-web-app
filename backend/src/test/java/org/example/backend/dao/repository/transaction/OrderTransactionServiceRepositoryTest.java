@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class OrderTransactionRepositoryTest {
+public class OrderTransactionServiceRepositoryTest {
 
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Random delivery provider";
     private final String RANDOM_COUNTRY_NAME = "Random country";
