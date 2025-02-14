@@ -13,7 +13,7 @@ import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.exception.user.UserNotSavedException;
-import org.example.backend.model.user.UserModel;
+import org.example.backend.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

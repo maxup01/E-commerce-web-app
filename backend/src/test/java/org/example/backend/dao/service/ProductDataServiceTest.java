@@ -11,7 +11,7 @@ import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
-import org.example.backend.model.user.ProductModel;
+import org.example.backend.model.ProductModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

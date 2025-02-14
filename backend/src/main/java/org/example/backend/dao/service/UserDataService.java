@@ -16,7 +16,7 @@ import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.role.RoleNotUpdatedException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.exception.user.UserNotSavedException;
-import org.example.backend.model.user.UserModel;
+import org.example.backend.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;

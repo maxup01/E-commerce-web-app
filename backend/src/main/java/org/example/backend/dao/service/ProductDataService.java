@@ -11,7 +11,7 @@ import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
-import org.example.backend.model.user.ProductModel;
+import org.example.backend.model.ProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 

@@ -1,4 +1,4 @@
-package org.example.backend.model.user;
+package org.example.backend.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +23,10 @@ public class ProductModel {
     private Double regularPrice;
     private Double currentPrice;
     private byte[] mainImage;
+
+    @Override
+    public boolean equals(Object o) {
+
+        return (o instanceof ProductModel) && ((ProductModel) o).getId().equals(this.getId());
+    }
 }

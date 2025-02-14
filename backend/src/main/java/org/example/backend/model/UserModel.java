@@ -1,4 +1,4 @@
-package org.example.backend.model.user;
+package org.example.backend.model;
 
 import lombok.*;
 
