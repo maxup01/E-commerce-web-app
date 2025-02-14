@@ -526,4 +526,48 @@ public class OrderTransactionServiceTest {
         assertEquals(sixthException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(seventhException.getMessage(), "Incorrect argument: deliveryProviderName");
     }
+
+    @Test
+    public void testOfGetProductsByTimePeriodAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(null, DATE_NOW, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_AFTER, DATE_NOW, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_BEFORE, null, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_NOW, DATE_BEFORE, RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_NOW, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_NOW, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_NOW, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+    }
 }

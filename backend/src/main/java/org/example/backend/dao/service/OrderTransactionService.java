@@ -24,7 +24,6 @@ import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.OrderTransactionModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
@@ -215,5 +214,20 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         return orderTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
+    }
+
+    @Transactional
+    public List<OrderTransaction> getProductsByTimePeriodAndUserEmail(Date startingDate, Date endingDate, String userEmail) {
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return orderTransactionRepository.findProductsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
     }
 }
