@@ -72,6 +72,7 @@ public class OrderTransactionServiceTest {
     private final Date DATE_BEFORE = new Date(0);
     private final Date DATE_NOW = Date.from(Instant.now());
     private final Date DATE_AFTER = new Date(10000000000000000L);
+    private final String RANDOM_PAYMENT_NAME = "random payment name";
 
     @Mock
     PaymentMethodRepository paymentMethodRepository;
@@ -429,5 +430,49 @@ public class OrderTransactionServiceTest {
         assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
+    }
+
+    @Test
+    public void testOfGetProductsByTimePeriodAndPaymentMethodName(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(null, DATE_NOW, RANDOM_PAYMENT_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_AFTER, DATE_NOW, RANDOM_PAYMENT_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_BEFORE, null, RANDOM_PAYMENT_NAME);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_NOW, DATE_BEFORE, RANDOM_PAYMENT_NAME);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_BEFORE, DATE_NOW, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_BEFORE, DATE_NOW, "");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getProductsByTimePeriodAndPaymentMethodName(DATE_BEFORE, DATE_NOW, RANDOM_PAYMENT_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: paymentMethodName");
     }
 }

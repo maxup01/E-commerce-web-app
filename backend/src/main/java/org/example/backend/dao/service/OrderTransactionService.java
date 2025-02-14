@@ -26,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -159,9 +160,9 @@ public class OrderTransactionService {
     @Transactional
     public Long getCountOfAllOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now()))))
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now()))))
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: endingDate");
         else if(startingDate.after(endingDate))
             throw new BadArgumentException("Argument startingDate is after endingDate");
@@ -172,13 +173,30 @@ public class OrderTransactionService {
     @Transactional
     public List<OrderTransaction> getProductsByTimePeriod(Date startingDate, Date endingDate) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now()))))
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now()))))
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: endingDate");
         else if(startingDate.after(endingDate))
             throw new BadArgumentException("Argument startingDate is after endingDate");
 
         return orderTransactionRepository.findProductsByTimePeriod(startingDate, endingDate);
+    }
+
+    @Transactional
+    public List<OrderTransaction> getProductsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
+                                                                              String paymentMethodName) {
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+        else if((paymentMethodName == null) || (paymentMethodName.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+
+        return orderTransactionRepository
+                .findProductsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
     }
 }
