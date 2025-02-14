@@ -31,6 +31,8 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Optional;
 import java.util.UUID;
@@ -67,6 +69,9 @@ public class OrderTransactionServiceTest {
     private final byte[] RANDOM_IMAGE = new byte[12];
     private final Long RANDOM_QUANTITY = 30L;
     private final Long ORDERED_QUANTITY = 7L;
+    private final Date DATE_BEFORE = new Date(0);
+    private final Date DATE_NOW = Date.from(Instant.now());
+    private final Date DATE_AFTER = new Date(10000000000000000L);
 
     @Mock
     PaymentMethodRepository paymentMethodRepository;
@@ -356,5 +361,39 @@ public class OrderTransactionServiceTest {
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Order transaction with id " + ID_OF_ORDER_TRANSACTION_THAT_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfGetCountOfAllOrderTransactionsByTimePeriod(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(null, DATE_NOW);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(DATE_AFTER, DATE_NOW);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(DATE_BEFORE, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(DATE_NOW, DATE_BEFORE);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getCountOfAllOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
     }
 }

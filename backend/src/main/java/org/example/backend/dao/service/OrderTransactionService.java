@@ -28,6 +28,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
@@ -153,5 +154,18 @@ public class OrderTransactionService {
         return orderTransactionRepository.findById(id).orElseThrow(() -> {
             return new OrderTransactionNotFoundException("Order transaction with id " + id + " not found");
         });
+    }
+
+    @Transactional
+    public Long getCountOfAllOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now()))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now()))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+
+        return orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(startingDate, endingDate);
     }
 }
