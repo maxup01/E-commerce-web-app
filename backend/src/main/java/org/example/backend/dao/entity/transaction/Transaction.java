@@ -42,5 +42,6 @@ public abstract class Transaction {
         this.status = transactionStatus;
         this.firstNameAndLastNameOfUser = firstNameAndLastName;
         this.userEmail = userEmail;
+        this.cost = cost;
     }
 }

@@ -1,6 +1,10 @@
 package org.example.backend.model;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.Date;
@@ -11,7 +15,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OrderTransactionModel {
+public class ReturnTransactionModel {
 
     private UUID id;
     private String  firstNameAndLastName;
@@ -20,6 +24,6 @@ public class OrderTransactionModel {
     private TransactionStatus transactionStatus;
     private Date transactionDate;
     private String deliveryProviderName;
-    private String paymentMethodName;
-    private HashMap<ProductModel, Long> productsAndOrderedQuantity;
+    private ReturnCause returnCause;
+    private HashMap<ProductModel, Long> productsAndReturnedQuantity;
 }

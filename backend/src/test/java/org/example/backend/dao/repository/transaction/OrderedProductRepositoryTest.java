@@ -300,4 +300,27 @@ public class OrderedProductRepositoryTest {
         assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
         assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
     }
+
+    @Test
+    public void testOfGetAllProductsAndTheirOrderedQuantityAndPricePerUnitByTimePeriodAndUserEmail(){
+
+        List<Object[]> result = orderedProductRepository
+                .getAllProductsAndTheirOrderedQuantityAndPricePerUnitByTimePeriodAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+
+        HashMap<String, Long> map1 = new HashMap<>();
+        HashMap<String, Double> map2 = new HashMap<>();
+
+        result.forEach(row -> {
+            Product product = (Product) row[0];
+            map1.put(product.getName(), (Long) row[1]);
+            map2.put(product.getName(), (Double) row[2]);
+        });
+
+        assertEquals(map1.size(), 2);
+        assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
+        assertEquals(map1.get(DIFFERENT_PRODUCT_NAME), DIFFERENT_QUANTITY);
+        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_CURRENT_PRICE);
+        assertEquals(map2.get(DIFFERENT_PRODUCT_NAME), RANDOM_CURRENT_PRICE);
+    }
 }
