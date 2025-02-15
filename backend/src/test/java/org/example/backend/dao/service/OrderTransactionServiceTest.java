@@ -590,4 +590,23 @@ public class OrderTransactionServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
         assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
     }
+
+    @Test
+    public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByType(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByType(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByType(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByType(RANDOM_PRODUCT_TYPE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: type");
+        assertEquals(secondException.getMessage(), "Incorrect argument: type");
+    }
 }

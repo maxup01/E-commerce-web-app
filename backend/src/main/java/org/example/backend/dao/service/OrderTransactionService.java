@@ -249,4 +249,13 @@ public class OrderTransactionService {
 
         return orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(phrase);
     }
+
+    @Transactional
+    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(String type){
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+
+        return orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(type);
+    }
 }
