@@ -167,7 +167,7 @@ public class ReturnTransactionRepositoryTest {
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
-        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(returns.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -181,7 +181,7 @@ public class ReturnTransactionRepositoryTest {
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
-        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(returns.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -195,7 +195,7 @@ public class ReturnTransactionRepositoryTest {
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
-        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(returns.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -209,6 +209,6 @@ public class ReturnTransactionRepositoryTest {
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
-        assertEquals(returns.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(returns.get(0).getDate(), TODAYS_DATE);
     }
 }

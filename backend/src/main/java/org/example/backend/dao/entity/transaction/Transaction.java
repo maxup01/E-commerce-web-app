@@ -31,10 +31,14 @@ public abstract class Transaction {
     private TransactionStatus status;
 
     @Column(nullable = false)
-    private Date transactionDate;
+    private Date date;
 
-    public Transaction(Date transactionDate, TransactionStatus transactionStatus, String firstNameAndLastName, String userEmail) {
-        this.transactionDate = transactionDate;
+    @Column(nullable = false)
+    private Double cost;
+
+    public Transaction(Date date, TransactionStatus transactionStatus, String firstNameAndLastName,
+                       String userEmail, Double cost) {
+        this.date = date;
         this.status = transactionStatus;
         this.firstNameAndLastNameOfUser = firstNameAndLastName;
         this.userEmail = userEmail;

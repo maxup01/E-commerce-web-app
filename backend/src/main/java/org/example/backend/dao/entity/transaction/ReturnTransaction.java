@@ -10,6 +10,7 @@ import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicReference;
 
 //Entity for storing data about returns
 @EqualsAndHashCode(callSuper = true)
@@ -41,8 +42,17 @@ public class ReturnTransaction extends Transaction {
 
     public ReturnTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider,
                              ReturnCause returnCause, List<ReturnedProduct> returnedProducts) {
+
+
+
         super(transactionDate, TransactionStatus.ACCEPTED_RETURN,
-                user.getFirstName() + user.getLastName(), user.getEmail());
+                user.getFirstName() + user.getLastName(), user.getEmail(), 0.00);
+
+        Double moneyAmount = returnedProducts.stream().mapToDouble(returnedProduct -> {
+            return returnedProduct.getQuantity() * returnedProduct.getPricePerUnit();
+        }).sum();
+
+        super.setCost(moneyAmount);
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;

@@ -26,17 +26,17 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
     List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByType(@Param("type") String type);
 
     @Query("SELECT SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
-            "r.returnTransaction.transactionDate >= :startingDate AND r.returnTransaction.transactionDate <= :endingDate")
+            "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                          @Param("endingDate") Date endingDate);
 
     @Query("SELECT r.product.type, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
-            "r.returnTransaction.transactionDate >= :startingDate AND r.returnTransaction.transactionDate <= :endingDate GROUP BY r.product.type")
+            "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate GROUP BY r.product.type")
     List<Object[]> getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                                       @Param("endingDate") Date endingDate);
 
     @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
-            "r.returnTransaction.transactionDate >= :startingDate AND r.returnTransaction.transactionDate <= :endingDate AND " +
+            "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate AND " +
             "LOWER(r.product.name) LIKE %:phrase% GROUP BY r.product")
     List<Object[]> getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);

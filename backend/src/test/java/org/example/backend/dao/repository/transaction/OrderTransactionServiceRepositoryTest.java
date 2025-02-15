@@ -187,7 +187,7 @@ public class OrderTransactionServiceRepositoryTest {
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -201,7 +201,7 @@ public class OrderTransactionServiceRepositoryTest {
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -215,7 +215,7 @@ public class OrderTransactionServiceRepositoryTest {
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
     }
 
     @Test
@@ -229,6 +229,6 @@ public class OrderTransactionServiceRepositoryTest {
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getTransactionDate(), TODAYS_DATE);
+        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
     }
 }

@@ -41,8 +41,15 @@ public class OrderTransaction extends Transaction {
 
     public OrderTransaction(Date transactionDate, User user, Address deliveryAddress, DeliveryProvider deliveryProvider,
                             PaymentMethod paymentMethod, ArrayList<OrderedProduct> orderedProducts) {
+
         super(transactionDate, TransactionStatus.PAID, user.getFirstName() + user.getLastName(),
-                user.getEmail());
+                user.getEmail(), 0.00);
+
+        Double moneyAmount = orderedProducts.stream().mapToDouble(orderedProduct -> {
+            return orderedProduct.getPricePerUnit() * orderedProduct.getQuantity();
+        }).sum();
+
+        super.setCost(moneyAmount);
         this.user = user;
         this.deliveryAddress = deliveryAddress;
         this.deliveryProvider = deliveryProvider;

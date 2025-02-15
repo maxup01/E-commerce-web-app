@@ -2,6 +2,7 @@ package org.example.backend.dao.entity.transaction;
 
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
+import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.user.User;
 import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
@@ -20,7 +21,11 @@ public class ReturnTransactionTest {
     private final Address RANDOM_DELIVERY_ADDRESS = new Address();
     private final DeliveryProvider RANDOM_DELIVERY_PROVIDER = new DeliveryProvider();
     private final ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.CHANGED_MIND;
-    private final List<ReturnedProduct> RANDOM_RETRUNED_PRODUCT_LIST = List.of(new ReturnedProduct(), new ReturnedProduct());
+    private final Long RANDOM_QUANTITY = 1L;
+    private final Double RANDOM_UNIT_PRICE = 100.00;
+    private final List<ReturnedProduct> RANDOM_RETRUNED_PRODUCT_LIST =
+            List.of(new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE),
+                    new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE));
 
     @Test
     public void testOfConstructorWithTransactionDateAndUserAndDeliveryAddressAndDeliveryProviderAndPaymentMethodAndOrderedProductListArguments() {
@@ -29,7 +34,7 @@ public class ReturnTransactionTest {
                 RANDOM_RETURN_CAUSE, RANDOM_RETRUNED_PRODUCT_LIST);
 
         assertNull(returnTransaction.getId());
-        assertEquals(returnTransaction.getTransactionDate(), RANDOM_TRANSACTION_DATE);
+        assertEquals(returnTransaction.getDate(), RANDOM_TRANSACTION_DATE);
         assertEquals(returnTransaction.getUser(), RANDOM_USER);
         assertEquals(returnTransaction.getDeliveryAddress(), RANDOM_DELIVERY_ADDRESS);
         assertEquals(returnTransaction.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);

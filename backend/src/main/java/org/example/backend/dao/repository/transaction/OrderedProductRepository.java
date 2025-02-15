@@ -26,17 +26,17 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(@Param("type") String type);
 
     @Query("SELECT SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
-            "o.orderTransaction.transactionDate >= :startingDate AND o.orderTransaction.transactionDate <= :endingDate")
+            "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                          @Param("endingDate") Date endingDate);
 
     @Query("SELECT o.product.type, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
-            "o.orderTransaction.transactionDate >= :startingDate AND o.orderTransaction.transactionDate <= :endingDate GROUP BY o.product.type")
+            "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate GROUP BY o.product.type")
     List<Object[]> getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                          @Param("endingDate") Date endingDate);
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
-            "o.orderTransaction.transactionDate >= :startingDate AND o.orderTransaction.transactionDate <= :endingDate AND " +
+            "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate AND " +
             "LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product")
     List<Object[]> getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);
