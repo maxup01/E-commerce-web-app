@@ -300,9 +300,9 @@ public class UserDataService {
 
         if(userModel == null)
             throw new BadArgumentException("Null argument: userModel");
-        else if((userModel.getFirstName() == null) || (userModel.getFirstName().isEmpty()))
+        else if((userModel.getFirstName() == null) || (userModel.getFirstName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: userModel.firstName");
-        else if((userModel.getLastName() == null) || (userModel.getLastName().isEmpty()))
+        else if((userModel.getLastName() == null) || (userModel.getLastName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: userModel.lastName");
         else if((userModel.getEmail() == null) || (!userEmailPattern.matcher(userModel.getEmail()).matches()))
             throw new BadArgumentException("Incorrect argument field: userModel.email");
@@ -334,7 +334,7 @@ public class UserDataService {
 
         if((email == null) || (!userEmailPattern.matcher(email).matches()))
             throw new BadArgumentException("Incorrect argument: email");
-        else if((firstName == null) || (firstName.isEmpty()))
+        else if((firstName == null) || (firstName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: firstName");
 
         User foundUser = userRepository.findByEmail(email);
@@ -352,7 +352,7 @@ public class UserDataService {
 
         if((email == null) || (!userEmailPattern.matcher(email).matches()))
             throw new BadArgumentException("Incorrect argument: email");
-        else if((lastName == null) || (lastName.isEmpty()))
+        else if((lastName == null) || (lastName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: lastName");
 
         User foundUser = userRepository.findByEmail(email);

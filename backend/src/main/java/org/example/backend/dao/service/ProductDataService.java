@@ -46,11 +46,11 @@ public class ProductDataService {
         else if((productModel.getEANCode() == null) ||
                 (!((ean8Pattern.matcher(productModel.getEANCode()).matches()) || (ean13Pattern.matcher(productModel.getEANCode()).matches()))))
             throw new BadArgumentException("Incorrect argument field: productModel.EANCode");
-        else if((productModel.getName() == null) || (productModel.getName().isEmpty()))
+        else if((productModel.getName() == null) || (productModel.getName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: productModel.name");
-        else if((productModel.getType() == null) || (productModel.getType().isEmpty()))
+        else if((productModel.getType() == null) || (productModel.getType().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: productModel.type");
-        else if((productModel.getDescription() == null) || (productModel.getDescription().isEmpty()))
+        else if((productModel.getDescription() == null) || (productModel.getDescription().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: productModel.description");
         else if((productModel.getHeight() == null) || (productModel.getHeight() <= 0))
             throw new BadArgumentException("Incorrect argument field: productModel.height");
@@ -86,7 +86,7 @@ public class ProductDataService {
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
-        else if((description == null) || (description.isEmpty()))
+        else if((description == null) || (description.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: description");
 
         Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
@@ -230,7 +230,7 @@ public class ProductDataService {
     @Transactional
     public List<Product> getProductsByPhrase(String phrase){
 
-        if((phrase == null) || (phrase.isEmpty()))
+        if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
         return productRepository.findByPhrase(phrase);
@@ -239,7 +239,7 @@ public class ProductDataService {
     @Transactional
     public List<Product> getProductsByType(String type){
 
-        if((type == null) || (type.isEmpty()))
+        if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
 
         List<Product> foundProducts = productRepository.findByType(type);
@@ -253,9 +253,9 @@ public class ProductDataService {
     @Transactional
     public List<Product> getProductsByTypeAndPhrase(String type, String phrase){
 
-        if((type == null) || (type.isEmpty()))
+        if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
-        else if((phrase == null) || (phrase.isEmpty()))
+        else if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
         return productRepository.findByPhraseAndType(phrase, type);
@@ -278,9 +278,9 @@ public class ProductDataService {
     public List<Product> getProductsByTypeAndPhraseAndPriceRange(String type, String phrase, Double minimalPrice,
                                                                   Double maximalPrice){
 
-        if((type == null) || (type.isEmpty()))
+        if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
-        else if((phrase == null) || (phrase.isEmpty()))
+        else if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
         else if((minimalPrice == null) || (minimalPrice <= 0))
             throw new BadArgumentException("Incorrect argument: minimalPrice");
@@ -310,7 +310,7 @@ public class ProductDataService {
     @Transactional
     public List<Object[]> getProductsAndRelatedToThemQuantityByPhrase(String phrase){
 
-        if((phrase == null) || (phrase.isEmpty()))
+        if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
         return productRepository.getProductsAndRelatedQuantityByPhrase(phrase);

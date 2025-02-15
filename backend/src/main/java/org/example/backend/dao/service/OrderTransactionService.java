@@ -69,15 +69,15 @@ public class OrderTransactionService {
             throw new BadArgumentException("Null argument: orderTransactionModel");
         else if((orderTransactionModel.getUserEmail() == null) || (!userEmailPattern.matcher(orderTransactionModel.getUserEmail()).matches()))
             throw new BadArgumentException("Incorrect argument field: orderTransactionModel.userEmail");
-        else if((orderTransactionModel.getDeliveryProviderName() == null) || (orderTransactionModel.getDeliveryProviderName().isEmpty()))
+        else if((orderTransactionModel.getDeliveryProviderName() == null) || (orderTransactionModel.getDeliveryProviderName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: orderTransactionModel.deliveryProviderName");
-        else if((orderTransactionModel.getPaymentMethodName() == null) || (orderTransactionModel.getPaymentMethodName().isEmpty()))
+        else if((orderTransactionModel.getPaymentMethodName() == null) || (orderTransactionModel.getPaymentMethodName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: orderTransactionModel.paymentMethodName");
         else if((orderTransactionModel.getAddressModel() == null) || (orderTransactionModel.getAddressModel().getCountry() == null)
                 || (orderTransactionModel.getAddressModel().getProvince() == null) || (orderTransactionModel.getAddressModel().getCity() == null)
-                || (orderTransactionModel.getAddressModel().getAddress() == null) || (orderTransactionModel.getAddressModel().getCountry().isEmpty())
-                || (orderTransactionModel.getAddressModel().getProvince().isEmpty()) || (orderTransactionModel.getAddressModel().getCity().isEmpty())
-                || (orderTransactionModel.getAddressModel().getAddress().isEmpty()))
+                || (orderTransactionModel.getAddressModel().getAddress() == null) || (orderTransactionModel.getAddressModel().getCountry().trim().isEmpty())
+                || (orderTransactionModel.getAddressModel().getProvince().trim().isEmpty()) || (orderTransactionModel.getAddressModel().getCity().trim().isEmpty())
+                || (orderTransactionModel.getAddressModel().getAddress().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: orderTransactionModel.addressModel");
         else if((orderTransactionModel.getProductsAndOrderedQuantity() == null) || (orderTransactionModel.getProductsAndOrderedQuantity().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
@@ -193,7 +193,7 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: endingDate");
         else if(startingDate.after(endingDate))
             throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((paymentMethodName == null) || (paymentMethodName.isEmpty()))
+        else if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
         return orderTransactionRepository
@@ -210,7 +210,7 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: endingDate");
         else if(startingDate.after(endingDate))
             throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((deliveryProviderName == null) || (deliveryProviderName.isEmpty()))
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
@@ -239,5 +239,14 @@ public class OrderTransactionService {
     @Transactional
     public List<Object[]> getAllTypesAndTheirOrderedQuantityAndRevenue(){
         return orderedProductRepository.getAllTypesAndTheirOrderedQuantityAndRevenue();
+    }
+
+    @Transactional
+    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        return orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(phrase);
     }
 }

@@ -74,6 +74,7 @@ public class OrderTransactionServiceTest {
     private final Date DATE_AFTER = new Date(10000000000000000L);
     private final String RANDOM_PAYMENT_NAME = "random payment name";
     private final String DELIVERY_PROVIDER_NAME = "delivery provider name";
+    private final String RANDOM_PHRASE = "random phrase";
 
     @Mock
     PaymentMethodRepository paymentMethodRepository;
@@ -569,5 +570,24 @@ public class OrderTransactionServiceTest {
         assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
         assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByPhrase("");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
     }
 }
