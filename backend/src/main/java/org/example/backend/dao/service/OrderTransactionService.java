@@ -121,8 +121,9 @@ public class OrderTransactionService {
 
         if(deliveryAddress == null){
 
-            deliveryAddress = new Address(orderTransactionModel.getAddressModel().getCountry(), orderTransactionModel.getAddressModel().getProvince(),
-                    orderTransactionModel.getAddressModel().getCity(), orderTransactionModel.getAddressModel().getAddress());
+            deliveryAddress = new Address(orderTransactionModel.getAddressModel().getCountry(),
+                    orderTransactionModel.getAddressModel().getProvince(), orderTransactionModel.getAddressModel().getCity(),
+                    orderTransactionModel.getAddressModel().getAddress());
 
             deliveryAddress = addressRepository.save(deliveryAddress);
         }
@@ -140,7 +141,8 @@ public class OrderTransactionService {
         });
 
         orderedProducts.forEach(orderedProduct -> {
-            orderedProduct.getProduct().getStock().setQuantity(orderedProduct.getProduct().getStock().getQuantity() - orderedProduct.getQuantity());
+            orderedProduct.getProduct().getStock()
+                    .setQuantity(orderedProduct.getProduct().getStock().getQuantity() - orderedProduct.getQuantity());
         });
 
         return orderTransaction;
@@ -213,11 +215,13 @@ public class OrderTransactionService {
         else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
-        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
+        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate,
+                deliveryProviderName);
     }
 
     @Transactional
-    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate, String userEmail) {
+    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate,
+                                                                               String userEmail) {
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -260,7 +264,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
+    List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -273,7 +277,8 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getAllProductTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
+    List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
+                                                                                Date endingDate){
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -284,5 +289,22 @@ public class OrderTransactionService {
 
         return orderedProductRepository
                 .getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
+    }
+
+    @Transactional
+    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
+            Date startingDate, Date endingDate, String phrase){
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+        else if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        return orderedProductRepository
+                .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
     }
 }
