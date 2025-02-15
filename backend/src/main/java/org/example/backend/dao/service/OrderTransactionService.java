@@ -230,4 +230,14 @@ public class OrderTransactionService {
 
         return orderTransactionRepository.findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
     }
+
+    @Transactional
+    public List<Object[]> getAllQuantityOfOrderedProductsAndRevenue(){
+        return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenue();
+    }
+
+    @Transactional
+    public List<Object[]> getAllTypesAndTheirOrderedQuantityAndRevenue(){
+        return orderedProductRepository.getAllTypesAndTheirOrderedQuantityAndRevenue();
+    }
 }
