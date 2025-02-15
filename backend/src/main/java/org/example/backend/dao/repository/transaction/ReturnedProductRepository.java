@@ -40,4 +40,10 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
             "LOWER(r.product.name) LIKE %:phrase% GROUP BY r.product")
     List<Object[]> getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);
+
+    @Query("SELECT r.product, SUM(r.quantity), r.pricePerUnit FROM ReturnedProduct AS r WHERE " +
+            "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate AND " +
+            "r.returnTransaction.userEmail = :email GROUP BY r.product")
+    List<Object[]> getAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndUserEmail(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("email") String userEmail);
 }
