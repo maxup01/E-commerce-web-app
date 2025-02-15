@@ -171,7 +171,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransaction> getProductsByTimePeriod(Date startingDate, Date endingDate) {
+    public List<OrderTransaction> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -180,12 +180,12 @@ public class OrderTransactionService {
         else if(startingDate.after(endingDate))
             throw new BadArgumentException("Argument startingDate is after endingDate");
 
-        return orderTransactionRepository.findProductsByTimePeriod(startingDate, endingDate);
+        return orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
     }
 
     @Transactional
-    public List<OrderTransaction> getProductsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
-                                                                              String paymentMethodName) {
+    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
+                                                                                       String paymentMethodName) {
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -197,12 +197,12 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
         return orderTransactionRepository
-                .findProductsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
+                .findOrderTransactionsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
     }
 
     @Transactional
-    public List<OrderTransaction> getProductsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
-                                                                                 String deliveryProviderName) {
+    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
+                                                                                          String deliveryProviderName) {
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -213,11 +213,11 @@ public class OrderTransactionService {
         else if((deliveryProviderName == null) || (deliveryProviderName.isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
-        return orderTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
+        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
     }
 
     @Transactional
-    public List<OrderTransaction> getProductsByTimePeriodAndUserEmail(Date startingDate, Date endingDate, String userEmail) {
+    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate, String userEmail) {
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -228,6 +228,6 @@ public class OrderTransactionService {
         else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
 
-        return orderTransactionRepository.findProductsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
+        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
     }
 }

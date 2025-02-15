@@ -66,8 +66,6 @@ public class ReturnedProductRepositoryTest {
     private final String RANDOM_ADDRESS = "XYZ 17/A";
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Credit card";
     private final boolean RANDOM_ENABLED_VALUE = true;
-    private final String RANDOM_RETURN_CAUSE_LOWER_CASE = "random return cause";
-    private final String DIFFERENT_RETURN_CAUSE_LOWER_CASE = "different return cause";
     private final Integer RANDOM_HEIGHT = 100;
     private final Integer RANDOM_WIDTH = 100;
     private ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.DAMAGED;

@@ -16,20 +16,20 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     Long getCountOfAllReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate")
-    List<ReturnTransaction> findProductsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+    List<ReturnTransaction> findReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate AND " +
             " r.returnCause = :returnCause")
-    List<ReturnTransaction> findProductsByTimePeriodAndReturnCauseName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-                                                                        @Param("returnCause") ReturnCause returnCause);
+    List<ReturnTransaction> findReturnTransactionsByTimePeriodAndReturnCauseName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                                                 @Param("returnCause") ReturnCause returnCause);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate AND " +
             " r.deliveryProvider.name = :deliveryProviderName")
-    List<ReturnTransaction> findProductsByTimePeriodAndDeliveryProviderName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-                                                                           @Param("deliveryProviderName") String deliveryProviderName);
+    List<ReturnTransaction> findReturnTransactionsByTimePeriodAndDeliveryProviderName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                                                      @Param("deliveryProviderName") String deliveryProviderName);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate AND " +
             " r.user.email = :userEmail")
-    List<ReturnTransaction> findProductsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-                                                                @Param("userEmail") String userEmail);
+    List<ReturnTransaction> findReturnTransactionsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+                                                                           @Param("userEmail") String userEmail);
 }

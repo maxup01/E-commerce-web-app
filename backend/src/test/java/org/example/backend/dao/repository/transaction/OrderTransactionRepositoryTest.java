@@ -35,7 +35,7 @@ import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @DataJpaTest
-public class OrderTransactionServiceRepositoryTest {
+public class OrderTransactionRepositoryTest {
 
     private final String RANDOM_DELIVERY_PROVIDER_NAME = "Random delivery provider";
     private final String RANDOM_COUNTRY_NAME = "Random country";
@@ -178,11 +178,11 @@ public class OrderTransactionServiceRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriod(){
+    public void testOfFindOrderTransactionByTimePeriod(){
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -191,11 +191,11 @@ public class OrderTransactionServiceRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndPaymentMethodName(){
+    public void testOfFindOrderTransactionByTimePeriodAndPaymentMethodName(){
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriodAndPaymentMethodName(
+        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByTimePeriodAndPaymentMethodName(
                 DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD);
 
         assertEquals(orders.size(), 1);
@@ -205,11 +205,11 @@ public class OrderTransactionServiceRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndDeliveryProviderName(){
+    public void testOfFindOrderTransactionByTimePeriodAndDeliveryProviderName(){
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(
+        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(
                 DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(orders.size(), 1);
@@ -219,12 +219,12 @@ public class OrderTransactionServiceRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndUserEmail(){
+    public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
 
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+                .findOrderTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);

@@ -158,11 +158,11 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriod(){
+    public void testOfFindReturnTransactionsByTimePeriod(){
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
@@ -171,11 +171,11 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndPaymentMethodName(){
+    public void testOfFindReturnTransactionsByTimePeriodAndPaymentMethodName(){
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriodAndReturnCauseName(
+        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriodAndReturnCauseName(
                 DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 1);
@@ -185,11 +185,11 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndDeliveryProviderName(){
+    public void testOfFindReturnTransactionsByTimePeriodAndDeliveryProviderName(){
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findProductsByTimePeriodAndDeliveryProviderName(
+        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriodAndDeliveryProviderName(
                 DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(returns.size(), 1);
@@ -199,12 +199,12 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindProductsByTimePeriodAndUserEmail(){
+    public void testOfFindReturnTransactionsByTimePeriodAndUserEmail(){
 
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findProductsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+                .findReturnTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);

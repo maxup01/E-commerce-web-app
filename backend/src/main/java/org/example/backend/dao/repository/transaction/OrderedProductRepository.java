@@ -14,7 +14,8 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     @Query("SELECT SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o")
     List<Object[]> getAllQuantityOfOrderedProductsAndRevenue();
 
-    @Query("SELECT o.product.type, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o GROUP BY o.product.type")
+    @Query("SELECT o.product.type, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit)" +
+            " FROM OrderedProduct AS o GROUP BY o.product.type")
     List<Object[]> getAllTypesAndTheirOrderedQuantityAndRevenue();
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o" +
