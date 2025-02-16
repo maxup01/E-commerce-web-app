@@ -17,7 +17,6 @@ import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
-import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.exception.transaction.ReturnedProductNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
@@ -31,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -69,6 +69,9 @@ public class ReturnTransactionServiceTest {
     private final String RANDOM_PHRASE = "randomPhrase";
     private final String TYPE_THAT_NOT_EXIST = "differentType";
     private final String TYPE_THAT_EXIST = "randomType";
+    private final Date DATE_BEFORE = new Date(0);
+    private final Date DATE_NOW = Date.from(Instant.now());
+    private final Date DATE_AFTER = new Date(10000000000000000L);
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -436,15 +439,15 @@ public class ReturnTransactionServiceTest {
     public void testOfGetQuantityOfAllReturnedProductsAndRevenue(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(null);
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(null);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase("");
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod("");
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(RANDOM_PHRASE);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
@@ -484,5 +487,45 @@ public class ReturnTransactionServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: type");
         assertEquals(secondException.getMessage(), "Incorrect argument: type");
         assertEquals(thirdException.getMessage(), "Returned product with type " + TYPE_THAT_NOT_EXIST + " not exist");
+    }
+
+    @Test
+    public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    null, DATE_NOW);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    DATE_AFTER, DATE_NOW);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, DATE_AFTER);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    DATE_NOW, DATE_BEFORE);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, DATE_NOW);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
     }
 }
