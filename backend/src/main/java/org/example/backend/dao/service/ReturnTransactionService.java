@@ -181,4 +181,14 @@ public class ReturnTransactionService {
             return new ReturnTransactionNotFoundException("Return transaction with id " + id + " not found");
         });
     }
+
+    @Transactional
+    public List<Object[]> getQuantityOfAllReturnedProductsAndRevenue(){
+        return returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenue();
+    }
+
+    @Transactional
+    public List<Object[]> getAllTypesAndTheirReturnedQuantityAndRevenue(){
+        return returnedProductRepository.getAllTypesAndTheirReturnedQuantityAndRevenue();
+    }
 }
