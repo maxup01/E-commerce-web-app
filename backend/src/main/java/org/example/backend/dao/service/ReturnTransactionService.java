@@ -231,4 +231,19 @@ public class ReturnTransactionService {
         return returnedProductRepository
                 .getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
     }
+
+    @Transactional
+    public List<Object[]> getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(Date startingDate,
+                                                                                              Date endingDate){
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+
+        return  returnedProductRepository
+                .getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
+    }
 }

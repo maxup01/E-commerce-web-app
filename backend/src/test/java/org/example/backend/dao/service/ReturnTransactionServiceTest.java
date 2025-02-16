@@ -528,4 +528,44 @@ public class ReturnTransactionServiceTest {
         assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
     }
+
+    @Test
+    public void testOfGetAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    null, DATE_NOW);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    DATE_AFTER, DATE_NOW);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, DATE_AFTER);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    DATE_NOW, DATE_BEFORE);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(
+                    DATE_BEFORE, DATE_NOW);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(fifthException.getMessage(), "Argument startingDate is after endingDate");
+    }
 }
