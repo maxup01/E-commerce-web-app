@@ -15,6 +15,7 @@ import org.example.backend.dao.repository.transaction.OrderTransactionRepository
 import org.example.backend.dao.repository.transaction.OrderedProductRepository;
 import org.example.backend.dao.repository.transaction.PaymentMethodRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -75,6 +76,8 @@ public class OrderTransactionServiceTest {
     private final String RANDOM_PAYMENT_NAME = "random payment name";
     private final String DELIVERY_PROVIDER_NAME = "delivery provider name";
     private final String RANDOM_PHRASE = "random phrase";
+    private final TransactionStatus RANDOM_STATUS = TransactionStatus.DELIVERED;
+    private final TransactionStatus WRONG_STATUS_FOR_ORDER_TRANSACTION = TransactionStatus.ACCEPTED_RETURN;
 
     @Mock
     PaymentMethodRepository paymentMethodRepository;
@@ -340,6 +343,43 @@ public class OrderTransactionServiceTest {
         assertEquals(twentySecondException.getMessage(), "Payment Method with name " + NAME_OF_PAYMENT_METHOD_THAT_NOT_EXIST + " not found");
         assertEquals(twentyThirdException.getMessage(), "There is not enough stock for product with id " + ID_OF_PRODUCT_THAT_EXIST);
         assertEquals(product.getStock().getQuantity(), RANDOM_QUANTITY - ORDERED_QUANTITY);
+    }
+
+    @Test
+    public void testOfUpdateOrderTransactionStatusById(){
+
+        when(orderTransactionRepository.findById(ID_OF_ORDER_TRANSACTION_THAT_EXIST))
+                .thenReturn(Optional.of(orderTransaction));
+        when(orderTransactionRepository.findById(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXIST))
+                .thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.updateOrderTransactionStatusById(null, RANDOM_STATUS);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.updateOrderTransactionStatusById(ID_OF_ORDER_TRANSACTION_THAT_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.updateOrderTransactionStatusById(ID_OF_ORDER_TRANSACTION_THAT_EXIST,
+                    WRONG_STATUS_FOR_ORDER_TRANSACTION);
+        });
+
+        Exception fourthException = assertThrows(OrderTransactionNotFoundException.class, () -> {
+            orderTransactionService.updateOrderTransactionStatusById(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXIST,
+                    RANDOM_STATUS);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.updateOrderTransactionStatusById(ID_OF_ORDER_TRANSACTION_THAT_EXIST,
+                    RANDOM_STATUS);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: status");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: status");
+        assertEquals(fourthException.getMessage(), "Order transaction with id " + ID_OF_ORDER_TRANSACTION_THAT_NOT_EXIST + " not found");
     }
 
     @Test

@@ -15,6 +15,7 @@ import org.example.backend.dao.repository.transaction.OrderTransactionRepository
 import org.example.backend.dao.repository.transaction.OrderedProductRepository;
 import org.example.backend.dao.repository.transaction.PaymentMethodRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -146,6 +147,23 @@ public class OrderTransactionService {
         });
 
         return orderTransaction;
+    }
+
+    @Transactional
+    public OrderTransaction updateOrderTransactionStatusById(UUID id, TransactionStatus status) {
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((status == null) || (status == TransactionStatus.ACCEPTED_RETURN))
+            throw new BadArgumentException("Incorrect argument: status");
+
+        OrderTransaction orderTransaction = orderTransactionRepository.findById(id).orElseThrow(() -> {
+            return new OrderTransactionNotFoundException("Order transaction with id " + id + " not found");
+        });
+
+        orderTransaction.setStatus(status);
+
+        return orderTransactionRepository.save(orderTransaction);
     }
 
     @Transactional
