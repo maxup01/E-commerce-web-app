@@ -65,6 +65,7 @@ public class ReturnTransactionServiceTest {
     private final TransactionStatus RANDOM_STATUS = TransactionStatus.DELIVERED;
     private final TransactionStatus WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PAID;
     private final TransactionStatus SECOND_WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PREPARED;
+    private final String RANDOM_PHRASE = "randomPhrase";
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -426,5 +427,24 @@ public class ReturnTransactionServiceTest {
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Return transaction with id " + ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS + " not found");
+    }
+
+    @Test
+    public void testOfGetQuantityOfAllReturnedProductsAndRevenue(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase("");
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
     }
 }

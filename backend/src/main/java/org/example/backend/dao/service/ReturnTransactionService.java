@@ -191,4 +191,13 @@ public class ReturnTransactionService {
     public List<Object[]> getAllTypesAndTheirReturnedQuantityAndRevenue(){
         return returnedProductRepository.getAllTypesAndTheirReturnedQuantityAndRevenue();
     }
+
+    @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhrase(String phrase){
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        return returnedProductRepository.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(phrase);
+    }
 }
