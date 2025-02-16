@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
@@ -23,9 +24,10 @@ public class ReturnTransactionTest {
     private final ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.CHANGED_MIND;
     private final Long RANDOM_QUANTITY = 1L;
     private final Double RANDOM_UNIT_PRICE = 100.00;
+    private final UUID RANDOM_ORDER_TRANSACTION_ID = UUID.randomUUID();
     private final List<ReturnedProduct> RANDOM_RETRUNED_PRODUCT_LIST =
-            List.of(new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE),
-                    new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE));
+            List.of(new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE, RANDOM_ORDER_TRANSACTION_ID),
+                    new ReturnedProduct(new Product(), RANDOM_QUANTITY, RANDOM_UNIT_PRICE, RANDOM_ORDER_TRANSACTION_ID));
 
     @Test
     public void testOfConstructorWithTransactionDateAndUserAndDeliveryAddressAndDeliveryProviderAndPaymentMethodAndOrderedProductListArguments() {

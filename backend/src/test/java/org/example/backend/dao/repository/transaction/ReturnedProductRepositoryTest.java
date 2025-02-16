@@ -26,6 +26,7 @@ import java.time.LocalDate;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -106,6 +107,7 @@ public class ReturnedProductRepositoryTest {
     private ReturnedProduct returnedProduct2;
     private ReturnTransaction returnTransaction1;
     private ReturnTransaction returnTransaction2;
+    private final UUID RANDOM_ORDER_TRANSACTION_ID = UUID.randomUUID();
 
     @BeforeEach
     public void setUp() {
@@ -134,18 +136,22 @@ public class ReturnedProductRepositoryTest {
         deliveryProvider = new DeliveryProvider(RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_ENABLED_VALUE);
         deliveryProviderRepository.save(deliveryProvider);
 
-        returnedProduct1 = new ReturnedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
+        returnedProduct1 = new ReturnedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice(),
+                RANDOM_ORDER_TRANSACTION_ID);
         returnedProductRepository.save(returnedProduct1);
 
-        returnTransaction1 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, RANDOM_RETURN_CAUSE, List.of(returnedProduct1));
+        returnTransaction1 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, RANDOM_RETURN_CAUSE,
+                List.of(returnedProduct1));
         returnTransactionRepository.save(returnTransaction1);
 
         returnedProduct1.setReturnTransaction(returnTransaction1);
 
-        returnedProduct2 = new ReturnedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice());
+        returnedProduct2 = new ReturnedProduct(product2, DIFFERENT_QUANTITY, product2.getCurrentPrice(),
+                RANDOM_ORDER_TRANSACTION_ID);
         returnedProductRepository.save(returnedProduct2);
 
-        returnTransaction2 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, DIFFERENT_RETURN_CAUSE, List.of(returnedProduct2));
+        returnTransaction2 = new ReturnTransaction(DATE_NOW, user, address, deliveryProvider, DIFFERENT_RETURN_CAUSE,
+                List.of(returnedProduct2));
         returnTransactionRepository.save(returnTransaction2);
 
         returnedProduct2.setReturnTransaction(returnTransaction2);
@@ -154,7 +160,8 @@ public class ReturnedProductRepositoryTest {
     @Test
     public void testOfSave(){
 
-        ReturnedProduct returnedProduct = new ReturnedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice());
+        ReturnedProduct returnedProduct = new ReturnedProduct(product1, RANDOM_QUANTITY, product1.getCurrentPrice(),
+                RANDOM_ORDER_TRANSACTION_ID);
 
         assertDoesNotThrow(() -> returnedProductRepository.save(returnedProduct));
     }
@@ -288,28 +295,5 @@ public class ReturnedProductRepositoryTest {
         assertEquals(map1.size(), 1);
         assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
         assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * returnedProduct1.getPricePerUnit());
-    }
-
-    @Test
-    public void testOfGetAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndUserEmail(){
-
-        List<Object[]> result = returnedProductRepository
-                .getAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
-
-        HashMap<String, Long> map1 = new HashMap<>();
-        HashMap<String, Double> map2 = new HashMap<>();
-
-        result.forEach(row -> {
-            Product product = (Product) row[0];
-            map1.put(product.getName(), (Long) row[1]);
-            map2.put(product.getName(), (Double) row[2]);
-        });
-
-        assertEquals(map1.size(), 2);
-        assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
-        assertEquals(map1.get(DIFFERENT_PRODUCT_NAME), DIFFERENT_QUANTITY);
-        assertEquals(map2.get(RANDOM_PRODUCT_NAME), returnedProduct1.getPricePerUnit());
-        assertEquals(map2.get(DIFFERENT_PRODUCT_NAME), returnedProduct2.getPricePerUnit());
     }
 }

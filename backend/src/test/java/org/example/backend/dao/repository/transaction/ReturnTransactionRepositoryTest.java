@@ -27,6 +27,7 @@ import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -63,6 +64,7 @@ public class ReturnTransactionRepositoryTest {
     private final Integer RANDOM_HEIGHT = 100;
     private final Integer RANDOM_WIDTH = 100;
     private ReturnCause RANDOM_RETURN_CAUSE = ReturnCause.MISLEADING_DATA;
+    private final UUID RANDOM_ORDER_TRANSACTION_ID = UUID.randomUUID();
 
     @Autowired
     private ProductRepository productRepository;
@@ -125,13 +127,13 @@ public class ReturnTransactionRepositoryTest {
                 role);
         userRepository.save(user);
 
-        returnedProduct = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
+        returnedProduct = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE, RANDOM_ORDER_TRANSACTION_ID);
         returnedProductRepository.save(returnedProduct);
 
         returnTransaction = new ReturnTransaction(TODAYS_DATE, user, address,
                 deliveryProvider, RANDOM_RETURN_CAUSE, List.of(returnedProduct));
 
-        returnedProduct2 = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE);
+        returnedProduct2 = new ReturnedProduct(product, RANDOM_QUANTITY, RANDOM_PRICE, RANDOM_ORDER_TRANSACTION_ID);
         returnedProductRepository.save(returnedProduct2);
 
         returnTransaction2 = new ReturnTransaction(DATE_NOT_IN_RANGE, user, address,
