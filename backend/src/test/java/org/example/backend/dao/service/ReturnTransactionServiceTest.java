@@ -19,6 +19,7 @@ import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
+import org.example.backend.exception.transaction.ReturnedProductNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.AddressModel;
 import org.example.backend.model.ProductModel;
@@ -66,6 +67,8 @@ public class ReturnTransactionServiceTest {
     private final TransactionStatus WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PAID;
     private final TransactionStatus SECOND_WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PREPARED;
     private final String RANDOM_PHRASE = "randomPhrase";
+    private final String TYPE_THAT_NOT_EXIST = "differentType";
+    private final String TYPE_THAT_EXIST = "randomType";
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -446,5 +449,40 @@ public class ReturnTransactionServiceTest {
 
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
         assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByType(){
+
+        ArrayList<Object[]> arrayList = new ArrayList<>();
+        arrayList.add(new Object[12]);
+
+        when(returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByType(TYPE_THAT_EXIST))
+                .thenReturn(arrayList);
+
+        when(returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByType(TYPE_THAT_NOT_EXIST))
+                .thenReturn(new ArrayList<>());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByType(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByType("");
+        });
+
+        Exception thirdException = assertThrows(ReturnedProductNotFoundException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByType(TYPE_THAT_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByType(TYPE_THAT_EXIST);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: type");
+        assertEquals(secondException.getMessage(), "Incorrect argument: type");
+        assertEquals(thirdException.getMessage(), "Returned product with type " + TYPE_THAT_NOT_EXIST + " not exist");
     }
 }

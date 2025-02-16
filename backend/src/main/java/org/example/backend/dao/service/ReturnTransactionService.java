@@ -20,6 +20,7 @@ import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
+import org.example.backend.exception.transaction.ReturnedProductNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.AddressModel;
 import org.example.backend.model.ReturnTransactionModel;
@@ -199,5 +200,20 @@ public class ReturnTransactionService {
             throw new BadArgumentException("Incorrect argument: phrase");
 
         return returnedProductRepository.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(phrase);
+    }
+
+    @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByType(String type){
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByType(type);
+
+        if(resultList.isEmpty())
+            throw new ReturnedProductNotFoundException("Returned product with type " + type + " not exist");
+
+        return resultList;
     }
 }
