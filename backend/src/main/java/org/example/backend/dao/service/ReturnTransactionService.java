@@ -104,7 +104,7 @@ public class ReturnTransactionService {
                             Date.from(Instant.now()), productModel.getOrderTransactionId());
 
             List<ReturnedProduct> returnedProducts = returnedProductRepository
-                    .getAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndTransactionId(
+                    .getReturnedProductByTimePeriodAndTransactionId(
                             Date.from(Instant.now().minus(14, ChronoUnit.DAYS)),
                             Date.from(Instant.now()), productModel.getOrderTransactionId());
 
@@ -233,8 +233,8 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(Date startingDate,
-                                                                                              Date endingDate){
+    public List<Object[]> getAllTypesAndTheirReturnedQuantityAndRevenueByTimePeriod(Date startingDate,
+                                                                                    Date endingDate){
 
         if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
             throw new BadArgumentException("Incorrect argument: startingDate");
@@ -245,5 +245,23 @@ public class ReturnTransactionService {
 
         return  returnedProductRepository
                 .getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
+    }
+
+    @Transactional
+    public List<Object[]> getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(Date startingDate,
+                                                                                                Date endingDate, String phrase){
+
+        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: startingDate");
+        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
+            throw new BadArgumentException("Incorrect argument: endingDate");
+        else if(startingDate.after(endingDate))
+            throw new BadArgumentException("Argument startingDate is after endingDate");
+        else if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        return returnedProductRepository
+                .getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(
+                        startingDate, endingDate, phrase);
     }
 }

@@ -44,7 +44,7 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
     @Query("SELECT r FROM ReturnedProduct AS r WHERE " +
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate AND " +
             "r.orderTransactionId = :transactionId")
-    List<ReturnedProduct> getAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndTransactionId(
+    List<ReturnedProduct> getReturnedProductByTimePeriodAndTransactionId(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("transactionId") UUID transactionId);
 }
