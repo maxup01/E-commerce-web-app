@@ -13,9 +13,11 @@ import org.example.backend.dao.repository.transaction.ReturnTransactionRepositor
 import org.example.backend.dao.repository.transaction.ReturnedProductRepository;
 import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.enumerated.ReturnCause;
+import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
+import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.AddressModel;
@@ -60,6 +62,9 @@ public class ReturnTransactionServiceTest {
     private final Double RANDOM_PRICE = 10.00;
     private final Long GREATER_QUANTITY = 1000L;
     private final String PRODUCT_NAME = "productName";
+    private final TransactionStatus RANDOM_STATUS = TransactionStatus.DELIVERED;
+    private final TransactionStatus WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PAID;
+    private final TransactionStatus SECOND_WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PREPARED;
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -116,30 +121,6 @@ public class ReturnTransactionServiceTest {
                 product, RANDOM_QUANTITY, RANDOM_PRICE);
 
         user = new User();
-    }
-
-    @Test
-    public void testOfGetReturnTransactionById(){
-
-        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS))
-                .thenReturn(Optional.ofNullable(returnTransaction));
-        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS))
-                .thenReturn(Optional.empty());
-
-        Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionById(null);
-        });
-
-        Exception secondException = assertThrows(ReturnTransactionNotFoundException.class, () -> {
-            returnTransactionService.getReturnTransactionById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS);
-        });
-
-        assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS);
-        });
-
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Return transaction with id " + ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS + " not found");
     }
 
     @Test
@@ -377,5 +358,73 @@ public class ReturnTransactionServiceTest {
         assertEquals(twentySecondException.getMessage(), "One of products can't be returned cause of too big quantity");
         assertEquals(twentyThirdException.getMessage(), "User with email" + DIFFERENT_EMAIL + " not found");
         assertEquals(twentyFourthException.getMessage(), "Delivery Provider with name " + DIFFERENT_DELIVERY_PROVIDER_NAME + " not found");
+    }
+
+    @Test
+    public void testOfUpdateReturnTransactionStatusById(){
+
+        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS))
+                .thenReturn(Optional.ofNullable(returnTransaction));
+        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS))
+                .thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.updateReturnTransactionStatusById(null, RANDOM_STATUS);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.updateReturnTransactionStatusById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS,
+                    null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.updateReturnTransactionStatusById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS,
+                    WRONG_STATUS_FOR_RETURN_TRANSACTION);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.updateReturnTransactionStatusById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS,
+                    SECOND_WRONG_STATUS_FOR_RETURN_TRANSACTION);
+        });
+
+            Exception fifthException = assertThrows(ReturnTransactionNotFoundException.class, () -> {
+            returnTransactionService.updateReturnTransactionStatusById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS,
+                    RANDOM_STATUS);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.updateReturnTransactionStatusById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS,
+                    RANDOM_STATUS);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: status");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: status");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: status");
+        assertEquals(fifthException.getMessage(), "Return transaction with id " + ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS + " not found");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionById(){
+
+        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS))
+                .thenReturn(Optional.ofNullable(returnTransaction));
+        when(returnTransactionRepository.findById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS))
+                .thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionById(null);
+        });
+
+        Exception secondException = assertThrows(ReturnTransactionNotFoundException.class, () -> {
+            returnTransactionService.getReturnTransactionById(ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionById(ID_OF_RETURN_TRANSACTION_THAT_EXISTS);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Return transaction with id " + ID_OF_RETURN_TRANSACTION_THAT_NOT_EXISTS + " not found");
     }
 }

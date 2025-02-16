@@ -15,6 +15,7 @@ import org.example.backend.dao.repository.transaction.OrderedProductRepository;
 import org.example.backend.dao.repository.transaction.ReturnTransactionRepository;
 import org.example.backend.dao.repository.transaction.ReturnedProductRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -152,6 +153,22 @@ public class ReturnTransactionService {
 
         return new ReturnTransaction(Date.from(Instant.now()), user, entityAddress, deliveryProvider,
                 returnTransactionModel.getReturnCause(), returnedProductData);
+    }
+
+    @Transactional
+    public ReturnTransaction updateReturnTransactionStatusById(UUID id, TransactionStatus status) {
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((status == null) || (status == TransactionStatus.PAID) || (status == TransactionStatus.PREPARED))
+            throw new BadArgumentException("Incorrect argument: status");
+
+        ReturnTransaction returnTransaction = returnTransactionRepository.findById(id).orElseThrow(() -> {
+            return new ReturnTransactionNotFoundException("Return transaction with id " + id + " not found");
+        });
+
+        returnTransaction.setStatus(status);
+        return returnTransactionRepository.save(returnTransaction);
     }
 
     @Transactional
