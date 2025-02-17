@@ -209,7 +209,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
                                                                                        String paymentMethodName) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -217,8 +217,16 @@ public class OrderTransactionService {
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
-        return orderTransactionRepository
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orderTransactions.forEach(orderTransaction -> {
+            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+        });
+
+        return orderTransactionModels;
     }
 
     @Transactional
