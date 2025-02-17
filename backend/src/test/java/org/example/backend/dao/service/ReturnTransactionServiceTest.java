@@ -152,7 +152,7 @@ public class ReturnTransactionServiceTest {
                 )).thenReturn(list);
 
         when(returnedProductRepository
-                .getAllProductsAndTheirReturnedQuantityAndPricePerUnitByTimePeriodAndTransactionId(
+                .getReturnedProductByTimePeriodAndTransactionId(
                         any(Date.class), any(Date.class), any(UUID.class)
                 )).thenReturn(new ArrayList<>());
 

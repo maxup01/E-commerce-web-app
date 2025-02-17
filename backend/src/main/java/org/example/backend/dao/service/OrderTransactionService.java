@@ -23,6 +23,7 @@ import org.example.backend.exception.transaction.OrderTransactionNotFoundExcepti
 import org.example.backend.exception.transaction.PaymentMethodNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.OrderTransactionModel;
+import org.example.backend.validator.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -180,12 +181,7 @@ public class OrderTransactionService {
     @Transactional
     public Long getCountOfAllOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         return orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(startingDate, endingDate);
     }
@@ -193,12 +189,7 @@ public class OrderTransactionService {
     @Transactional
     public List<OrderTransaction> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         return orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
     }
@@ -207,13 +198,9 @@ public class OrderTransactionService {
     public List<OrderTransaction> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
                                                                                        String paymentMethodName) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
         return orderTransactionRepository
@@ -224,13 +211,9 @@ public class OrderTransactionService {
     public List<OrderTransaction> getOrderTransactionsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
                                                                                           String deliveryProviderName) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate,
@@ -241,13 +224,9 @@ public class OrderTransactionService {
     public List<OrderTransaction> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate,
                                                                                String userEmail) {
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         return orderTransactionRepository.findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
@@ -284,12 +263,7 @@ public class OrderTransactionService {
     @Transactional
     List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
     }
@@ -298,12 +272,7 @@ public class OrderTransactionService {
     List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
                                                                                 Date endingDate){
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         return orderedProductRepository
                 .getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
@@ -313,13 +282,9 @@ public class OrderTransactionService {
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
             Date startingDate, Date endingDate, String phrase){
 
-        if((startingDate == null) || (!startingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: startingDate");
-        else if((endingDate == null) || (!endingDate.before(Date.from(Instant.now().plus(30, ChronoUnit.SECONDS)))))
-            throw new BadArgumentException("Incorrect argument: endingDate");
-        else if(startingDate.after(endingDate))
-            throw new BadArgumentException("Argument startingDate is after endingDate");
-        else if((phrase == null) || (phrase.trim().isEmpty()))
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
         return orderedProductRepository
