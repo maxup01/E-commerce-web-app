@@ -1,12 +1,15 @@
 package org.example.backend.dao.service;
 
 import org.example.backend.dao.entity.image.ProductMainImage;
+import org.example.backend.dao.entity.image.UserImage;
+import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.entity.transaction.PaymentMethod;
+import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.logistic.AddressRepository;
 import org.example.backend.dao.repository.logistic.DeliveryProviderRepository;
@@ -24,21 +27,23 @@ import org.example.backend.exception.transaction.PaymentMethodNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.AddressModel;
 import org.example.backend.model.OrderTransactionModel;
+import org.example.backend.model.OrderedProductModel;
 import org.example.backend.model.ProductModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.time.LocalDate;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,6 +83,14 @@ public class OrderTransactionServiceTest {
     private final String RANDOM_PHRASE = "random phrase";
     private final TransactionStatus RANDOM_STATUS = TransactionStatus.DELIVERED;
     private final TransactionStatus WRONG_STATUS_FOR_ORDER_TRANSACTION = TransactionStatus.ACCEPTED_RETURN;
+    private final String RANDOM_FIRST_NAME = "random first name";
+    private final String RANDOM_LAST_NAME = "random last name";
+    private final String RANDOM_PASSWORD = "random password";
+    private final Role RANDOM_ROLE = new Role();
+    private final UserImage USER_IMAGE = new UserImage(new byte[12]);
+    private final LocalDate BIRTH_DATE = LocalDate.of(2020, 1, 1);
+    private final Double RANDOM_PRICE = 15.00;
+
 
     @Mock
     PaymentMethodRepository paymentMethodRepository;
@@ -106,16 +119,28 @@ public class OrderTransactionServiceTest {
     private OrderTransaction orderTransaction;
     private Product product;
     private User user;
+    private OrderedProduct orderedProduct;
 
     @BeforeEach
     public void setUp() {
 
-        orderTransaction = new OrderTransaction();
         product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_PRODUCT_TYPE, RANDOM_PRODUCT_DESCRIPTION,
                 RANDOM_PRODUCT_HEIGHT, RANDOM_PRODUCT_WIDTH, GREATER_PRODUCT_PRICE,
                 RANDOM_PRODUCT_PRICE, new Stock(RANDOM_QUANTITY), new ProductMainImage(RANDOM_IMAGE));
-        user = new User();
-        user.setEmail(RANDOM_EMAIL);
+
+
+        user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD,
+                BIRTH_DATE, RANDOM_ROLE, USER_IMAGE);
+
+        orderTransaction = OrderTransaction
+                .builder()
+                .user(user)
+                .deliveryAddress(new Address())
+                .deliveryProvider(new DeliveryProvider())
+                .paymentMethod(new PaymentMethod())
+                .build();
+
+        orderedProduct = new OrderedProduct(product, ORDERED_QUANTITY, RANDOM_PRICE);
     }
 
     @Test
@@ -124,8 +149,14 @@ public class OrderTransactionServiceTest {
         ProductModel productModel = new ProductModel();
         productModel.setId(ID_OF_PRODUCT_THAT_EXIST);
 
-        HashMap<ProductModel, Long> products = new HashMap<>();
-        products.put(productModel, ORDERED_QUANTITY);
+        OrderedProductModel orderedProductModel = OrderedProductModel
+                .builder()
+                .quantity(RANDOM_QUANTITY)
+                .product(productModel)
+                .build();
+
+        ArrayList<OrderedProductModel> products = new ArrayList<>();
+        products.add(orderedProductModel);
 
         when(productRepository.findById(ID_OF_PRODUCT_THAT_EXIST)).thenReturn(Optional.of(product));
         when(productRepository.findById(ID_OF_PRODUCT_THAT_NOT_EXIST)).thenReturn(Optional.empty());
@@ -143,14 +174,17 @@ public class OrderTransactionServiceTest {
         when(orderedProductRepository.save(new OrderedProduct(product, ORDERED_QUANTITY, product.getCurrentPrice())))
                 .thenReturn(new OrderedProduct(product, ORDERED_QUANTITY, product.getCurrentPrice()));
 
+        when(orderTransactionRepository.save(any(OrderTransaction.class))).thenReturn(orderTransaction);
+        when(orderedProductRepository.saveAll(anyList())).thenReturn(List.of(orderedProduct));
+
         AddressModel addressModel = new AddressModel(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS);
         OrderTransactionModel orderTransactionModel = OrderTransactionModel
                 .builder()
-                .addressModel(addressModel)
+                .address(addressModel)
                 .userEmail(RANDOM_EMAIL)
                 .deliveryProviderName(NAME_OF_DELIVERY_PROVIDER_THAT_EXIST)
                 .paymentMethodName(NAME_OF_PAYMENT_METHOD_THAT_EXIST)
-                .productsAndOrderedQuantity(products)
+                .orderedProducts(products)
                 .build();
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
@@ -196,76 +230,82 @@ public class OrderTransactionServiceTest {
         });
 
         orderTransactionModel.setPaymentMethodName(NAME_OF_PAYMENT_METHOD_THAT_EXIST);
-        orderTransactionModel.getAddressModel().setCountry(null);
+        orderTransactionModel.getAddress().setCountry(null);
 
         Exception eighthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setCountry("");
+        orderTransactionModel.getAddress().setCountry("");
 
         Exception ninthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setCountry(COUNTRY_NAME);
-        orderTransactionModel.getAddressModel().setProvince(null);
+        orderTransactionModel.getAddress().setCountry(COUNTRY_NAME);
+        orderTransactionModel.getAddress().setProvince(null);
 
         Exception tenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setProvince("");
+        orderTransactionModel.getAddress().setProvince("");
 
         Exception eleventhException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setProvince(PROVINCE_NAME);
-        orderTransactionModel.getAddressModel().setCity(null);
+        orderTransactionModel.getAddress().setProvince(PROVINCE_NAME);
+        orderTransactionModel.getAddress().setCity(null);
 
         Exception twelthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setCity("");
+        orderTransactionModel.getAddress().setCity("");
 
         Exception thirteenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setCity(CITY_NAME);
-        orderTransactionModel.getAddressModel().setAddress(null);
+        orderTransactionModel.getAddress().setCity(CITY_NAME);
+        orderTransactionModel.getAddress().setAddress(null);
 
         Exception fourteenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setAddress("");
+        orderTransactionModel.getAddress().setAddress("");
 
         Exception fifteenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.getAddressModel().setAddress(ADDRESS);
-        orderTransactionModel.setProductsAndOrderedQuantity(null);
+        orderTransactionModel.getAddress().setAddress(ADDRESS);
+        orderTransactionModel.setOrderedProducts(null);
 
         Exception sixteenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setProductsAndOrderedQuantity(new HashMap<>());
+        orderTransactionModel.setOrderedProducts(new ArrayList<>());
 
         Exception seventeenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setProductsAndOrderedQuantity(products);
+        orderTransactionModel.setOrderedProducts(products);
 
-        HashMap<ProductModel, Long> map = new HashMap<>();
-        map.put(null, null);
+        OrderedProductModel pom = OrderedProductModel
+                .builder()
+                .product(null)
+                .quantity(null)
+                .build();
 
-        orderTransactionModel.setProductsAndOrderedQuantity(map);
+        ArrayList<OrderedProductModel> orderedProducts = new ArrayList<>();
+        orderedProducts.add(pom);
+
+        orderTransactionModel.setOrderedProducts(orderedProducts);
 
         Exception eighteenthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
@@ -273,15 +313,22 @@ public class OrderTransactionServiceTest {
 
         ProductModel productModel2 = new ProductModel();
         productModel2.setId(ID_OF_PRODUCT_THAT_NOT_EXIST);
-        HashMap<ProductModel, Long> map2 = new HashMap<>();
-        map2.put(productModel2, ORDERED_QUANTITY);
-        orderTransactionModel.setProductsAndOrderedQuantity(map2);
+
+        OrderedProductModel orderedProductModel2 = OrderedProductModel
+                .builder()
+                .product(productModel2)
+                .quantity(ORDERED_QUANTITY)
+                .build();
+
+        ArrayList<OrderedProductModel> orderedProducts2 = new ArrayList<>();
+        orderedProducts2.add(orderedProductModel2);
+        orderTransactionModel.setOrderedProducts(orderedProducts2);
 
         Exception nineteenthException = assertThrows(ProductNotFoundException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setProductsAndOrderedQuantity(products);
+        orderTransactionModel.setOrderedProducts(products);
         orderTransactionModel.setUserEmail(EMAIL_OF_USER_THAT_NOT_EXIST);
 
         Exception twentiethException = assertThrows(UserNotFoundException.class, () -> {
@@ -304,16 +351,23 @@ public class OrderTransactionServiceTest {
 
         orderTransactionModel.setPaymentMethodName(NAME_OF_PAYMENT_METHOD_THAT_EXIST);
 
-        HashMap<ProductModel, Long> products2 = new HashMap<>();
-        products2.put(productModel, RANDOM_QUANTITY + 10L);
+        OrderedProductModel orderedProductModelPom = OrderedProductModel
+                .builder()
+                .product(productModel)
+                .quantity(RANDOM_QUANTITY + 10L)
+                .build();
 
-        orderTransactionModel.setProductsAndOrderedQuantity(products2);
+        ArrayList<OrderedProductModel> orderedProducts3 = new ArrayList<>();
+        orderedProducts3.add(orderedProductModelPom);
+        orderTransactionModel.setOrderedProducts(orderedProducts3);
 
         Exception twentyThirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setProductsAndOrderedQuantity(products);
+        orderTransactionModel.setOrderedProducts(products);
+
+        orderTransaction.setOrderedProducts(new ArrayList<>());
 
         assertDoesNotThrow(() -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);

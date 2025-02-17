@@ -23,6 +23,7 @@ import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.AddressModel;
 import org.example.backend.model.ProductModel;
 import org.example.backend.model.ReturnTransactionModel;
+import org.example.backend.model.ReturnedProductModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -116,9 +117,8 @@ public class ReturnTransactionServiceTest {
 
         productModel = ProductModel
                 .builder()
-                .id(ID_OF_RETURN_TRANSACTION_THAT_EXISTS)
+                .id(ID_OF_PRODUCT_THAT_EXISTS)
                 .name(PRODUCT_NAME)
-                .orderTransactionId(ID_OF_RETURN_TRANSACTION_THAT_EXISTS)
                 .build();
 
         product = new Product();
@@ -254,23 +254,34 @@ public class ReturnTransactionServiceTest {
         });
 
         returnTransactionModel.setReturnCause(RETURN_CAUSE);
-        returnTransactionModel.setProductsAndReturnedQuantity(null);
+        returnTransactionModel.setReturnedProducts(null);
 
         Exception fifteenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        HashMap<ProductModel, Long> pomMap = new HashMap<>();
-        pomMap.put(null, RETURNED_QUANTITY);
-        returnTransactionModel.setProductsAndReturnedQuantity(pomMap);
+        ReturnedProductModel returnedProductModel = ReturnedProductModel
+                .builder()
+                .product(null)
+                .quantity(RETURNED_QUANTITY)
+                .transactionInWhichThisProductWasOrdered(ID_OF_RETURN_TRANSACTION_THAT_EXISTS)
+                .build();
+
+        ArrayList<ReturnedProductModel> returnedProductModels = new ArrayList<>();
+        returnedProductModels.add(returnedProductModel);
+
+        returnTransactionModel.setReturnedProducts(returnedProductModels);
 
         Exception sixteenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        pomMap.clear();
         productModel.setId(null);
-        pomMap.put(productModel, RETURNED_QUANTITY);
+
+        returnedProductModel.setProduct(productModel);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception seventeenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
@@ -278,15 +289,20 @@ public class ReturnTransactionServiceTest {
 
         productModel.setId(ID_OF_PRODUCT_THAT_EXISTS);
 
-        pomMap.clear();
-        pomMap.put(productModel, null);
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setQuantity(null);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception eighteenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        pomMap.clear();
-        pomMap.put(productModel, NEGATIVE_QUANTITY);
+        returnedProductModel.setQuantity(NEGATIVE_QUANTITY);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception nineteenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
@@ -294,35 +310,44 @@ public class ReturnTransactionServiceTest {
 
         productModel.setId(ID_OF_PRODUCT_THAT_NOT_EXISTS);
 
-        pomMap.clear();
-        pomMap.put(productModel, RETURNED_QUANTITY);
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setQuantity(RETURNED_QUANTITY);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception twentiethException = assertThrows(ProductNotFoundException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
         productModel.setId(ID_OF_PRODUCT_THAT_EXISTS);
-        productModel.setOrderTransactionId(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS);
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setTransactionInWhichThisProductWasOrdered(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS);
 
-        pomMap.clear();
-        pomMap.put(productModel, RETURNED_QUANTITY);
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception twentyFirstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        productModel.setOrderTransactionId(ID_OF_ORDER_TRANSACTION_THAT_EXISTS);
+        returnedProductModel.setTransactionInWhichThisProductWasOrdered(ID_OF_ORDER_TRANSACTION_THAT_EXISTS);
+        returnedProductModel.setQuantity(GREATER_QUANTITY);
 
-        pomMap.clear();
-        pomMap.put(productModel, GREATER_QUANTITY);
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception twentySecondException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
         returnTransactionModel.setUserEmail(DIFFERENT_EMAIL);
-        pomMap.clear();
-        pomMap.put(productModel, RANDOM_QUANTITY);
+
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setQuantity(RANDOM_QUANTITY);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
 
         Exception twentyThirdException = assertThrows(UserNotFoundException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);

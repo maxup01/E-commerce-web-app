@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.UUID;
@@ -25,5 +26,5 @@ public class ReturnTransactionModel {
     private Date transactionDate;
     private String deliveryProviderName;
     private ReturnCause returnCause;
-    private HashMap<ProductModel, Long> productsAndReturnedQuantity;
+    private ArrayList<ReturnedProductModel> returnedProducts;
 }

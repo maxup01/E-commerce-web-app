@@ -23,7 +23,6 @@ public class ProductModel {
     private Double regularPrice;
     private Double currentPrice;
     private byte[] mainImage;
-    private UUID orderTransactionId;
 
     @Override
     public boolean equals(Object o) {

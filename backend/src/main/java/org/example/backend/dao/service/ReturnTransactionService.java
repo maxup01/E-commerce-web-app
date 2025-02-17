@@ -82,32 +82,33 @@ public class ReturnTransactionService {
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.deliveryProviderName");
         else if(returnTransactionModel.getReturnCause() == null)
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.returnCause");
-        else if(returnTransactionModel.getProductsAndReturnedQuantity() == null)
+        else if(returnTransactionModel.getReturnedProducts() == null)
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
 
         List<ReturnedProduct> productsToReturn = new ArrayList<>();
 
-        returnTransactionModel.getProductsAndReturnedQuantity().forEach((productModel, quantity) -> {
+        returnTransactionModel.getReturnedProducts().forEach(returnedProductModel -> {
 
             Long quantityNotReturned = 0L;
 
-            if((productModel == null) || (productModel.getId() == null) || (quantity == null) || (quantity <= 0)
-                    || (productModel.getOrderTransactionId() == null))
+            if((returnedProductModel.getProduct() == null) || (returnedProductModel.getProduct().getId() == null)
+                    || (returnedProductModel.getQuantity() == null) || (returnedProductModel.getQuantity() <= 0)
+                    || (returnedProductModel.getTransactionInWhichThisProductWasOrdered() == null))
                 throw new BadArgumentException("Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
 
-            Product foundProduct = productRepository.findById(productModel.getId()).orElseThrow(() -> {
-                return new ProductNotFoundException("Product with id " + productModel.getId() + " not found");
+            Product foundProduct = productRepository.findById(returnedProductModel.getProduct().getId()).orElseThrow(() -> {
+                return new ProductNotFoundException("Product with id " + returnedProductModel.getProduct().getId() + " not found");
             });
 
             List<OrderedProduct> orderedProducts = orderedProductRepository
                     .getAllProductsAndTheirOrderedQuantityAndPricePerUnitByTimePeriodAndTransactionId(
                             Date.from(Instant.now().minus(14, ChronoUnit.DAYS)),
-                            Date.from(Instant.now()), productModel.getOrderTransactionId());
+                            Date.from(Instant.now()), returnedProductModel.getTransactionInWhichThisProductWasOrdered());
 
             List<ReturnedProduct> returnedProducts = returnedProductRepository
                     .getReturnedProductByTimePeriodAndTransactionId(
                             Date.from(Instant.now().minus(14, ChronoUnit.DAYS)),
-                            Date.from(Instant.now()), productModel.getOrderTransactionId());
+                            Date.from(Instant.now()), returnedProductModel.getTransactionInWhichThisProductWasOrdered());
 
             orderedProducts.removeIf(orderedProduct -> {
                 return (!orderedProduct.getProduct().getName().equals(foundProduct.getName()));
@@ -118,18 +119,19 @@ public class ReturnTransactionService {
             });
 
             if(orderedProducts.isEmpty())
-                throw new BadArgumentException("Transaction with id " + productModel.getOrderTransactionId() + " doesn't have product which you want to return");
+                throw new BadArgumentException("Transaction with id " +
+                        returnedProductModel.getTransactionInWhichThisProductWasOrdered() + " doesn't have product which you want to return");
 
             quantityNotReturned += orderedProducts.get(0).getQuantity();
 
             quantityNotReturned -= returnedProducts.stream()
                     .mapToLong(ReturnedProduct::getQuantity).sum();
 
-            if(quantity > quantityNotReturned)
+            if(returnedProductModel.getQuantity() > quantityNotReturned)
                 throw new BadArgumentException("One of products can't be returned cause of too big quantity");
 
-            productsToReturn.add(new ReturnedProduct(foundProduct, quantity, orderedProducts.get(0).getPricePerUnit(),
-                    productModel.getOrderTransactionId()));
+            productsToReturn.add(new ReturnedProduct(foundProduct, returnedProductModel.getQuantity(),
+                    orderedProducts.get(0).getPricePerUnit(), returnedProductModel.getTransactionInWhichThisProductWasOrdered()));
         });
 
         User user = userRepository.findByEmail(returnTransactionModel.getUserEmail());
