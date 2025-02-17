@@ -192,11 +192,20 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransaction> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
-        return orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
+        List<OrderTransaction> orderTransactions =
+                orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orderTransactions.forEach(orderTransaction -> {
+            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+        });
+
+        return orderTransactionModels;
     }
 
     @Transactional
