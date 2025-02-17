@@ -135,9 +135,10 @@ public class OrderTransactionServiceTest {
         orderTransaction = OrderTransaction
                 .builder()
                 .user(user)
-                .deliveryAddress(new Address())
-                .deliveryProvider(new DeliveryProvider())
-                .paymentMethod(new PaymentMethod())
+                .deliveryAddress(new Address(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS))
+                .deliveryProvider(new DeliveryProvider(DELIVERY_PROVIDER_NAME, true))
+                .orderedProducts(new ArrayList<>())
+                .paymentMethod(new PaymentMethod(RANDOM_PAYMENT_NAME, true))
                 .build();
 
         orderedProduct = new OrderedProduct(product, ORDERED_QUANTITY, RANDOM_PRICE);
@@ -176,6 +177,7 @@ public class OrderTransactionServiceTest {
 
         when(orderTransactionRepository.save(any(OrderTransaction.class))).thenReturn(orderTransaction);
         when(orderedProductRepository.saveAll(anyList())).thenReturn(List.of(orderedProduct));
+        when(addressRepository.save(any(Address.class))).thenReturn(orderTransaction.getDeliveryAddress());
 
         AddressModel addressModel = new AddressModel(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS);
         OrderTransactionModel orderTransactionModel = OrderTransactionModel

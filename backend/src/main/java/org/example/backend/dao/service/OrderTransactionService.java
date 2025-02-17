@@ -150,43 +150,11 @@ public class OrderTransactionService {
                     .setQuantity(orderedProduct.getProduct().getStock().getQuantity() - orderedProduct.getQuantity());
         });
 
-        OrderTransactionModel orderTransactionReturnModel = OrderTransactionModel
-                .builder()
-                .id(finalOrderTransaction.getId())
-                .firstNameAndLastName(user.getFirstName() + " " + user.getLastName())
-                .userEmail(user.getEmail())
-                .transactionDate(finalOrderTransaction.getDate())
-                .deliveryProviderName(finalOrderTransaction.getDeliveryProvider().getName())
-                .paymentMethodName(finalOrderTransaction.getPaymentMethod().getName())
-                .build();
-
-        AddressModel addressModel = new AddressModel(finalOrderTransaction.getDeliveryAddress().getCountry(),
-                finalOrderTransaction.getDeliveryAddress().getProvince(), finalOrderTransaction.getDeliveryAddress().getCity(),
-                finalOrderTransaction.getDeliveryAddress().getAddress());
-
-        orderTransactionReturnModel.setAddress(addressModel);
-
-        ArrayList<OrderedProductModel> orderedProductModels = new ArrayList<>();
-
-        finalOrderTransaction.getOrderedProducts().forEach(orderedProduct -> {
-
-            Product product = orderedProduct.getProduct();
-
-            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
-                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
-                    product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
-
-            orderedProductModels.add(new OrderedProductModel(orderedProduct.getId(), productModel,
-                    orderedProduct.getQuantity()));
-        });
-
-        orderTransactionModel.setOrderedProducts(orderedProductModels);
-
-        return orderTransactionModel;
+        return mapOrderTransactionEntityToModel(orderTransaction);
     }
 
     @Transactional
-    public OrderTransaction updateOrderTransactionStatusById(UUID id, TransactionStatus status) {
+    public OrderTransactionModel updateOrderTransactionStatusById(UUID id, TransactionStatus status) {
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -199,7 +167,7 @@ public class OrderTransactionService {
 
         orderTransaction.setStatus(status);
 
-        return orderTransactionRepository.save(orderTransaction);
+        return mapOrderTransactionEntityToModel(orderTransaction);
     }
 
     @Transactional
@@ -324,5 +292,42 @@ public class OrderTransactionService {
 
         return orderedProductRepository
                 .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
+    }
+
+    private OrderTransactionModel mapOrderTransactionEntityToModel(OrderTransaction orderTransaction){
+
+        OrderTransactionModel orderTransactionReturnModel = OrderTransactionModel
+                .builder()
+                .id(orderTransaction.getId())
+                .firstNameAndLastName(orderTransaction.getUser().getFirstName() + " " + orderTransaction.getUser().getLastName())
+                .userEmail(orderTransaction.getUser().getEmail())
+                .transactionDate(orderTransaction.getDate())
+                .deliveryProviderName(orderTransaction.getDeliveryProvider().getName())
+                .paymentMethodName(orderTransaction.getPaymentMethod().getName())
+                .build();
+
+        AddressModel addressModel = new AddressModel(orderTransaction.getDeliveryAddress().getCountry(),
+                orderTransaction.getDeliveryAddress().getProvince(), orderTransaction.getDeliveryAddress().getCity(),
+                orderTransaction.getDeliveryAddress().getAddress());
+
+        orderTransactionReturnModel.setAddress(addressModel);
+
+        ArrayList<OrderedProductModel> orderedProductModels = new ArrayList<>();
+
+        orderTransaction.getOrderedProducts().forEach(orderedProduct -> {
+
+            Product product = orderedProduct.getProduct();
+
+            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
+                    product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
+
+            orderedProductModels.add(new OrderedProductModel(orderedProduct.getId(), productModel,
+                    orderedProduct.getQuantity()));
+        });
+
+        orderTransactionReturnModel.setOrderedProducts(orderedProductModels);
+
+        return orderTransactionReturnModel;
     }
 }
