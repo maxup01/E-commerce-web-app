@@ -230,7 +230,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
                                                                                           String deliveryProviderName) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -238,8 +238,16 @@ public class OrderTransactionService {
         if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
-        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate,
-                deliveryProviderName);
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orderTransactions.forEach(orderTransaction -> {
+            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+        });
+
+        return orderTransactionModels;
     }
 
     @Transactional
