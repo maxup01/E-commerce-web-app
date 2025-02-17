@@ -171,14 +171,16 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public OrderTransaction getOrderTransactionById(UUID id) {
+    public OrderTransactionModel getOrderTransactionById(UUID id) {
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
 
-        return orderTransactionRepository.findById(id).orElseThrow(() -> {
+        OrderTransaction orderTransaction = orderTransactionRepository.findById(id).orElseThrow(() -> {
             return new OrderTransactionNotFoundException("Order transaction with id " + id + " not found");
         });
+
+        return mapOrderTransactionEntityToModel(orderTransaction);
     }
 
     @Transactional
