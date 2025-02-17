@@ -251,7 +251,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransaction> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate,
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate,
                                                                                String userEmail) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -259,7 +259,16 @@ public class OrderTransactionService {
         if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
 
-        return orderTransactionRepository.findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orderTransactions.forEach(orderTransaction -> {
+            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+        });
+
+        return orderTransactionModels;
     }
 
     @Transactional
