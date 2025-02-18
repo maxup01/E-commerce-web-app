@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
-//TODO change return value types to data models in all methods
 @Service
 public class ProductDataService {
 
@@ -350,8 +349,17 @@ public class ProductDataService {
     }
 
     @Transactional
-    public List<Product> getProductsOnSale(){
-        return productRepository.showOnSale();
+    public List<ProductModel> getProductsOnSale(){
+
+        List<Product> foundProducts = productRepository.showOnSale();
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
@@ -370,6 +378,19 @@ public class ProductDataService {
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return productRepository.getProductsAndRelatedQuantityByPhrase(phrase);
+        ArrayList<Object[]> rowsWithProductModel = new ArrayList<>();
+
+        List<Object[]> resultList = productRepository.getProductsAndRelatedQuantityByPhrase(phrase);
+
+        resultList.forEach(row -> {
+
+            Object[] newRow = new Object[2];
+            newRow[0] = ProductModel.fromProduct((Product) row[0]);
+            newRow[1] = row[1];
+
+            rowsWithProductModel.add(newRow);
+        });
+
+        return rowsWithProductModel;
     }
 }
