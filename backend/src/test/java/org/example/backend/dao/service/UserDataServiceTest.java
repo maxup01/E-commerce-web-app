@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -116,6 +117,8 @@ public class UserDataServiceTest {
     @Test
     public void testOfSaveNewPrivilege(){
 
+        when(privilegeRepository.save(any())).thenReturn(existingPrivilege);
+
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.saveNewPrivilege(null);
         });
@@ -147,6 +150,8 @@ public class UserDataServiceTest {
                 .thenReturn(Optional.ofNullable(existingPrivilege));
 
         when(privilegeRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
+
+        when(privilegeRepository.save(any())).thenReturn(existingPrivilege);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.updateNameOfPrivilegeById(null, RANDOM_WRONG_PRIVILEGE_NAME);
@@ -278,10 +283,13 @@ public class UserDataServiceTest {
                 .builder()
                 .id(ID_OF_FIRST_CREATED_ENTITY)
                 .name(RANDOM_ROLE_NAME)
+                .privileges(new ArrayList<>())
                 .build();
 
         when(roleRepository.findByName(RANDOM_ROLE_NAME)).thenReturn(role);
         when(roleRepository.findByName(ROLE_NAME_WHICH_NOT_EXIST)).thenReturn(null);
+
+        when(roleRepository.save(any())).thenReturn(role);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.saveNewRole(null, List.of(RANDOM_PRIVILEGE_NAME));
@@ -413,6 +421,7 @@ public class UserDataServiceTest {
                 .builder()
                 .id(ID_OF_FIRST_CREATED_ENTITY)
                 .name(RANDOM_ROLE_NAME)
+                .privileges(new ArrayList<>())
                 .build();
 
         when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
@@ -513,7 +522,7 @@ public class UserDataServiceTest {
     public void testOfSaveNewUser(){
 
         UserModel userModel = new UserModel(null, RANDOM_FIRST_NAME, RANDOM_LAST_NAME, EMAIL_OF_USER_WHICH_NOT_EXIST
-                , RANDOM_PASSWORD, RANDOM_BIRTH_DATE);
+                , RANDOM_PASSWORD, RANDOM_BIRTH_DATE, null);
 
         when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
         when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
@@ -522,6 +531,8 @@ public class UserDataServiceTest {
         when(roleRepository.findByName(ROLE_NAME_WHICH_NOT_EXIST)).thenReturn(null);
 
         when(bCryptPasswordEncoder.encode(RANDOM_PASSWORD)).thenReturn(RANDOM_PASSWORD);
+
+        when(userRepository.save(any())).thenReturn(firstUser);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.saveNewUser(null, RANDOM_ROLE_NAME);
