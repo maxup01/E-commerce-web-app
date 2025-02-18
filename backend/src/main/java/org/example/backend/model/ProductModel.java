@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.example.backend.dao.entity.product.Product;
 
 import java.util.UUID;
 
@@ -28,5 +29,12 @@ public class ProductModel {
     public boolean equals(Object o) {
 
         return (o instanceof ProductModel) && ((ProductModel) o).getId().equals(this.getId());
+    }
+
+    public static ProductModel fromProduct(Product product) {
+
+        return new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+                product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
+                product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
     }
 }

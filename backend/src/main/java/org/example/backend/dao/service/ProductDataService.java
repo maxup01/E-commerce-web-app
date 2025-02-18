@@ -96,9 +96,7 @@ public class ProductDataService {
         foundProduct.setDescription(description);
         productRepository.save(foundProduct);
 
-        return new ProductModel(foundProduct.getId(), foundProduct.getEANCode(), foundProduct.getName(),
-                foundProduct.getType(), foundProduct.getDescription(), foundProduct.getHeight(), foundProduct.getWidth(),
-                foundProduct.getRegularPrice(), foundProduct.getCurrentPrice(), foundProduct.getMainImage().getImage());
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
@@ -116,13 +114,11 @@ public class ProductDataService {
         foundProduct.getStock().setQuantity(stock);
         productRepository.save(foundProduct);
 
-        return new ProductModel(foundProduct.getId(), foundProduct.getEANCode(), foundProduct.getName(),
-                foundProduct.getType(), foundProduct.getDescription(), foundProduct.getHeight(), foundProduct.getWidth(),
-                foundProduct.getRegularPrice(), foundProduct.getCurrentPrice(), foundProduct.getMainImage().getImage());
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
-    public Product updateProductSizeById(UUID id, Integer height, Integer width){
+    public ProductModel updateProductSizeById(UUID id, Integer height, Integer width){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -137,7 +133,10 @@ public class ProductDataService {
 
         foundProduct.setHeight(height);
         foundProduct.setWidth(width);
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
+
+
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
