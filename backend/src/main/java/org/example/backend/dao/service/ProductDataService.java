@@ -283,18 +283,26 @@ public class ProductDataService {
     }
 
     @Transactional
-    public List<Product> getProductsByTypeAndPhrase(String type, String phrase){
+    public List<ProductModel> getProductsByTypeAndPhrase(String type, String phrase){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
         else if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return productRepository.findByPhraseAndType(phrase, type);
+        List<Product> foundProducts = productRepository.findByPhraseAndType(phrase, type);
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
-    public List<Product> getProductsByPriceRange(Double minimalPrice, Double maximalPrice){
+    public List<ProductModel> getProductsByPriceRange(Double minimalPrice, Double maximalPrice){
 
         if((minimalPrice == null) || (minimalPrice <= 0))
             throw new BadArgumentException("Incorrect argument: minimalPrice");
@@ -303,11 +311,19 @@ public class ProductDataService {
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
 
-        return productRepository.findByPriceRange(minimalPrice, maximalPrice);
+        List<Product> foundProducts = productRepository.findByPriceRange(minimalPrice, maximalPrice);
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
-    public List<Product> getProductsByTypeAndPhraseAndPriceRange(String type, String phrase, Double minimalPrice,
+    public List<ProductModel> getProductsByTypeAndPhraseAndPriceRange(String type, String phrase, Double minimalPrice,
                                                                   Double maximalPrice){
 
         if((type == null) || (type.trim().isEmpty()))
@@ -321,7 +337,16 @@ public class ProductDataService {
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
 
-        return productRepository.findByPhraseAndTypeAndPriceRanges(phrase, type, minimalPrice, maximalPrice);
+        List<Product> foundProducts = productRepository
+                .findByPhraseAndTypeAndPriceRanges(phrase, type, minimalPrice, maximalPrice);
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
