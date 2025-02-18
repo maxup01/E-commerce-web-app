@@ -82,19 +82,23 @@ public class ProductDataService {
     }
 
     @Transactional
-    public Product updateProductDescriptionById(UUID id, String description){
+    public ProductModel updateProductDescriptionById(UUID id, String description){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
         else if((description == null) || (description.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: description");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+        Product product = productRepository.findById(id).orElseThrow(() -> {
             return new ProductNotFoundException("Product with id " + id + " not found");
         });
 
-        foundProduct.setDescription(description);
-        return productRepository.save(foundProduct);
+        product.setDescription(description);
+        productRepository.save(product);
+
+        return new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+                product.getType(), product.getDescription(), product.getHeight(), product.getWidth(), product.getRegularPrice(),
+                product.getCurrentPrice(), product.getMainImage().getImage());
     }
 
     @Transactional
