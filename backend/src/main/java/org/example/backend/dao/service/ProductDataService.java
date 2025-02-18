@@ -140,7 +140,7 @@ public class ProductDataService {
     }
 
     @Transactional
-    public Product updateProductRegularPriceAndCurrentPriceById(UUID id, Double regularPrice, Double currentPrice){
+    public ProductModel updateProductRegularPriceAndCurrentPriceById(UUID id, Double regularPrice, Double currentPrice){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -157,11 +157,13 @@ public class ProductDataService {
 
         foundProduct.setRegularPrice(regularPrice);
         foundProduct.setCurrentPrice(currentPrice);
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
+
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
-    public Product updateProductMainImageById(UUID id, byte[] newMainImage){
+    public ProductModel updateProductMainImageById(UUID id, byte[] newMainImage){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -182,11 +184,13 @@ public class ProductDataService {
             product.setMainImage(productMainImage);
         }
 
-        return productRepository.save(product);
+        productRepository.save(product);
+
+        return ProductModel.fromProduct(product);
     }
 
     @Transactional
-    public Product addProductPageImageById(UUID id, byte[] newPageImage){
+    public ProductModel addProductPageImageById(UUID id, byte[] newPageImage){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -198,7 +202,9 @@ public class ProductDataService {
         });
 
         foundProduct.getPageImages().add(new ProductPageImage(newPageImage));
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
+
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
