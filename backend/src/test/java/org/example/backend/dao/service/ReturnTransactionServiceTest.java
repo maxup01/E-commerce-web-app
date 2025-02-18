@@ -111,7 +111,7 @@ public class ReturnTransactionServiceTest {
         AddressModel addressModel = new AddressModel(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS);
         returnTransactionModel = new ReturnTransactionModel();
         returnTransactionModel.setUserEmail(RANDOM_EMAIL);
-        returnTransactionModel.setAddressModel(addressModel);
+        returnTransactionModel.setAddress(addressModel);
         returnTransactionModel.setDeliveryProviderName(DELIVERY_PROVIDER_NAME);
         returnTransactionModel.setReturnCause(RETURN_CAUSE);
 
@@ -182,58 +182,58 @@ public class ReturnTransactionServiceTest {
         });
 
         returnTransactionModel.setUserEmail(RANDOM_EMAIL);
-        returnTransactionModel.getAddressModel().setCountry(null);
+        returnTransactionModel.getAddress().setCountry(null);
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setCountry("");
+        returnTransactionModel.getAddress().setCountry("");
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setCountry(COUNTRY_NAME);
-        returnTransactionModel.getAddressModel().setProvince(null);
+        returnTransactionModel.getAddress().setCountry(COUNTRY_NAME);
+        returnTransactionModel.getAddress().setProvince(null);
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setProvince("");
+        returnTransactionModel.getAddress().setProvince("");
 
         Exception seventhException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setProvince(PROVINCE_NAME);
-        returnTransactionModel.getAddressModel().setCity(null);
+        returnTransactionModel.getAddress().setProvince(PROVINCE_NAME);
+        returnTransactionModel.getAddress().setCity(null);
 
         Exception eighthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setCity("");
+        returnTransactionModel.getAddress().setCity("");
 
         Exception ninthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setCity(CITY_NAME);
-        returnTransactionModel.getAddressModel().setAddress(null);
+        returnTransactionModel.getAddress().setCity(CITY_NAME);
+        returnTransactionModel.getAddress().setAddress(null);
 
         Exception tenthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setAddress("");
+        returnTransactionModel.getAddress().setAddress("");
 
         Exception eleventhException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        returnTransactionModel.getAddressModel().setAddress(ADDRESS);
+        returnTransactionModel.getAddress().setAddress(ADDRESS);
         returnTransactionModel.setDeliveryProviderName(null);
 
         Exception twelfthException = assertThrows(BadArgumentException.class, () -> {

@@ -149,7 +149,7 @@ public class OrderTransactionService {
                     .setQuantity(orderedProduct.getProduct().getStock().getQuantity() - orderedProduct.getQuantity());
         });
 
-        return mapOrderTransactionEntityToModel(orderTransaction);
+        return OrderTransactionModel.fromOrderTransaction(orderTransaction);
     }
 
     @Transactional
@@ -166,7 +166,7 @@ public class OrderTransactionService {
 
         orderTransaction.setStatus(status);
 
-        return mapOrderTransactionEntityToModel(orderTransaction);
+        return OrderTransactionModel.fromOrderTransaction(orderTransaction);
     }
 
     @Transactional
@@ -179,7 +179,7 @@ public class OrderTransactionService {
             return new OrderTransactionNotFoundException("Order transaction with id " + id + " not found");
         });
 
-        return mapOrderTransactionEntityToModel(orderTransaction);
+        return OrderTransactionModel.fromOrderTransaction(orderTransaction);
     }
 
     @Transactional
@@ -201,7 +201,7 @@ public class OrderTransactionService {
         ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
 
         orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
         });
 
         return orderTransactionModels;
@@ -222,7 +222,7 @@ public class OrderTransactionService {
         ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
 
         orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
         });
 
         return orderTransactionModels;
@@ -243,7 +243,7 @@ public class OrderTransactionService {
         ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
 
         orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
         });
 
         return orderTransactionModels;
@@ -264,7 +264,7 @@ public class OrderTransactionService {
         ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
 
         orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(mapOrderTransactionEntityToModel(orderTransaction));
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
         });
 
         return orderTransactionModels;
@@ -356,42 +356,5 @@ public class OrderTransactionService {
         });
 
         return resultWithProductTurnedToProductModel;
-    }
-
-    private OrderTransactionModel mapOrderTransactionEntityToModel(OrderTransaction orderTransaction){
-
-        OrderTransactionModel orderTransactionReturnModel = OrderTransactionModel
-                .builder()
-                .id(orderTransaction.getId())
-                .firstNameAndLastName(orderTransaction.getUser().getFirstName() + " " + orderTransaction.getUser().getLastName())
-                .userEmail(orderTransaction.getUser().getEmail())
-                .transactionDate(orderTransaction.getDate())
-                .deliveryProviderName(orderTransaction.getDeliveryProvider().getName())
-                .paymentMethodName(orderTransaction.getPaymentMethod().getName())
-                .build();
-
-        AddressModel addressModel = new AddressModel(orderTransaction.getDeliveryAddress().getCountry(),
-                orderTransaction.getDeliveryAddress().getProvince(), orderTransaction.getDeliveryAddress().getCity(),
-                orderTransaction.getDeliveryAddress().getAddress());
-
-        orderTransactionReturnModel.setAddress(addressModel);
-
-        ArrayList<OrderedProductModel> orderedProductModels = new ArrayList<>();
-
-        orderTransaction.getOrderedProducts().forEach(orderedProduct -> {
-
-            Product product = orderedProduct.getProduct();
-
-            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
-                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
-                    product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
-
-            orderedProductModels.add(new OrderedProductModel(orderedProduct.getId(), productModel,
-                    orderedProduct.getQuantity()));
-        });
-
-        orderTransactionReturnModel.setOrderedProducts(orderedProductModels);
-
-        return orderTransactionReturnModel;
     }
 }

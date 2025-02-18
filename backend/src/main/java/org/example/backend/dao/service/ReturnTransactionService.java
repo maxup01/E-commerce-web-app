@@ -22,8 +22,7 @@ import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.exception.transaction.ReturnedProductNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
-import org.example.backend.model.AddressModel;
-import org.example.backend.model.ReturnTransactionModel;
+import org.example.backend.model.*;
 import org.example.backend.validator.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -69,14 +68,14 @@ public class ReturnTransactionService {
         else if((returnTransactionModel.getUserEmail() == null)
                 || (!userEmailPattern.matcher(returnTransactionModel.getUserEmail()).matches()))
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.userEmail");
-        else if((returnTransactionModel.getAddressModel() == null) || (returnTransactionModel.getAddressModel().getCountry() == null)
-                || (returnTransactionModel.getAddressModel().getCountry().trim().isEmpty())
-                || (returnTransactionModel.getAddressModel().getProvince() == null)
-                || (returnTransactionModel.getAddressModel().getProvince().trim().isEmpty())
-                || (returnTransactionModel.getAddressModel().getCity() == null)
-                || (returnTransactionModel.getAddressModel().getCity().trim().isEmpty())
-                || (returnTransactionModel.getAddressModel().getAddress() == null)
-                || (returnTransactionModel.getAddressModel().getAddress().trim().isEmpty()))
+        else if((returnTransactionModel.getAddress() == null) || (returnTransactionModel.getAddress().getCountry() == null)
+                || (returnTransactionModel.getAddress().getCountry().trim().isEmpty())
+                || (returnTransactionModel.getAddress().getProvince() == null)
+                || (returnTransactionModel.getAddress().getProvince().trim().isEmpty())
+                || (returnTransactionModel.getAddress().getCity() == null)
+                || (returnTransactionModel.getAddress().getCity().trim().isEmpty())
+                || (returnTransactionModel.getAddress().getAddress() == null)
+                || (returnTransactionModel.getAddress().getAddress().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.addressModel");
         else if((returnTransactionModel.getDeliveryProviderName() == null) || (returnTransactionModel.getDeliveryProviderName().trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument field: returnTransactionModel.deliveryProviderName");
@@ -139,14 +138,16 @@ public class ReturnTransactionService {
         if(user == null)
             throw new UserNotFoundException("User with email" + returnTransactionModel.getUserEmail() + " not found");
 
-        DeliveryProvider deliveryProvider = deliveryProviderRepository.findByName(returnTransactionModel.getDeliveryProviderName());
+        DeliveryProvider deliveryProvider = deliveryProviderRepository
+                .findByName(returnTransactionModel.getDeliveryProviderName());
 
         if(deliveryProvider == null)
-            throw new DeliveryProviderNotFoundException("Delivery Provider with name " + returnTransactionModel.getDeliveryProviderName() + " not found");
+            throw new DeliveryProviderNotFoundException(
+                    "Delivery Provider with name " + returnTransactionModel.getDeliveryProviderName() + " not found");
 
         List<ReturnedProduct> returnedProductData = returnedProductRepository.saveAll(productsToReturn);
 
-        AddressModel address = returnTransactionModel.getAddressModel();
+        AddressModel address = returnTransactionModel.getAddress();
         Address entityAddress = addressRepository.findByCountryAndCityAndProvinceAndAddress(
                 address.getCountry(), address.getProvince(), address.getCity(), address.getAddress());
 
@@ -242,7 +243,8 @@ public class ReturnTransactionService {
 
     @Transactional
     public List<Object[]> getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(Date startingDate,
-                                                                                                Date endingDate, String phrase){
+                                                                                                Date endingDate,
+                                                                                                String phrase){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
