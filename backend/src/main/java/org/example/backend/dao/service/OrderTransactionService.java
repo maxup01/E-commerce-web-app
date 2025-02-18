@@ -34,7 +34,6 @@ import java.time.Instant;
 import java.util.*;
 import java.util.regex.Pattern;
 
-//TODO change return types to data models
 @Service
 public class OrderTransactionService {
 
@@ -281,8 +280,6 @@ public class OrderTransactionService {
         return orderedProductRepository.getAllTypesAndTheirOrderedQuantityAndRevenue();
     }
 
-    //TODO stopped here
-
     @Transactional
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
 
@@ -291,25 +288,7 @@ public class OrderTransactionService {
 
         List<Object[]> result = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(phrase);
 
-        ArrayList<Object[]> resultWithProductTurnedToProductModel = new ArrayList<>();
-
-        result.forEach(row -> {
-
-            Product product = (Product) row[0];
-
-            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
-                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(), product.getRegularPrice(),
-                    product.getCurrentPrice(), product.getMainImage().getImage());
-
-            Object[] newRow = new Object[3];
-            newRow[0] = productModel;
-            newRow[1] = productModel;
-            newRow[2] = productModel;
-
-            resultWithProductTurnedToProductModel.add(newRow);
-        });
-
-        return resultWithProductTurnedToProductModel;
+        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }
 
     @Transactional
@@ -318,7 +297,9 @@ public class OrderTransactionService {
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
 
-        return orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(type);
+        List<Object[]> result = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(type);
+
+        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }
 
     @Transactional
@@ -348,8 +329,33 @@ public class OrderTransactionService {
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return orderedProductRepository
+        List<Object[]> result = orderedProductRepository
                 .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
+
+        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+    }
+
+    private List<Object[]> mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){
+
+        ArrayList<Object[]> resultWithProductTurnedToProductModel = new ArrayList<>();
+
+        list.forEach(row -> {
+
+            Product product = (Product) row[0];
+
+            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(), product.getRegularPrice(),
+                    product.getCurrentPrice(), product.getMainImage().getImage());
+
+            Object[] newRow = new Object[3];
+            newRow[0] = productModel;
+            newRow[1] = productModel;
+            newRow[2] = productModel;
+
+            resultWithProductTurnedToProductModel.add(newRow);
+        });
+
+        return resultWithProductTurnedToProductModel;
     }
 
     private OrderTransactionModel mapOrderTransactionEntityToModel(OrderTransaction orderTransaction){
