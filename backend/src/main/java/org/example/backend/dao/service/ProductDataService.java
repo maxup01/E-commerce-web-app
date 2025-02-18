@@ -89,20 +89,20 @@ public class ProductDataService {
         else if((description == null) || (description.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: description");
 
-        Product product = productRepository.findById(id).orElseThrow(() -> {
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
             return new ProductNotFoundException("Product with id " + id + " not found");
         });
 
-        product.setDescription(description);
-        productRepository.save(product);
+        foundProduct.setDescription(description);
+        productRepository.save(foundProduct);
 
-        return new ProductModel(product.getId(), product.getEANCode(), product.getName(),
-                product.getType(), product.getDescription(), product.getHeight(), product.getWidth(), product.getRegularPrice(),
-                product.getCurrentPrice(), product.getMainImage().getImage());
+        return new ProductModel(foundProduct.getId(), foundProduct.getEANCode(), foundProduct.getName(),
+                foundProduct.getType(), foundProduct.getDescription(), foundProduct.getHeight(), foundProduct.getWidth(),
+                foundProduct.getRegularPrice(), foundProduct.getCurrentPrice(), foundProduct.getMainImage().getImage());
     }
 
     @Transactional
-    public Product updateProductStockQuantityById(UUID id, Long stock){
+    public ProductModel updateProductStockQuantityById(UUID id, Long stock){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -114,7 +114,11 @@ public class ProductDataService {
         });
 
         foundProduct.getStock().setQuantity(stock);
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
+
+        return new ProductModel(foundProduct.getId(), foundProduct.getEANCode(), foundProduct.getName(),
+                foundProduct.getType(), foundProduct.getDescription(), foundProduct.getHeight(), foundProduct.getWidth(),
+                foundProduct.getRegularPrice(), foundProduct.getCurrentPrice(), foundProduct.getMainImage().getImage());
     }
 
     @Transactional
