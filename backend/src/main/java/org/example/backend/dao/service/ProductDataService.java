@@ -15,6 +15,7 @@ import org.example.backend.model.ProductModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -208,7 +209,7 @@ public class ProductDataService {
     }
 
     @Transactional
-    public Product deleteProductPageImageById(UUID id, UUID pageImageId){
+    public ProductModel deleteProductPageImageById(UUID id, UUID pageImageId){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -226,31 +227,43 @@ public class ProductDataService {
         if(arraySize == foundProduct.getPageImages().size())
             throw new ProductPageImageNotFoundException("Product page image with id " + pageImageId + " not found");
 
-        return productRepository.save(foundProduct);
+        productRepository.save(foundProduct);
+
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
-    public Product getProductById(UUID id){
+    public ProductModel getProductById(UUID id){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
 
-        return productRepository.findById(id).orElseThrow(() -> {
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
             return new ProductNotFoundException("Product with id " + id + " not found");
         });
+
+        return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
-    public List<Product> getProductsByPhrase(String phrase){
+    public List<ProductModel> getProductsByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return productRepository.findByPhrase(phrase);
+        List<Product> products = productRepository.findByPhrase(phrase);
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        products.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
-    public List<Product> getProductsByType(String type){
+    public List<ProductModel> getProductsByType(String type){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
@@ -260,7 +273,13 @@ public class ProductDataService {
         if(foundProducts.isEmpty())
             throw new ProductNotFoundException("Products with type " + type + " not found");
 
-        return foundProducts;
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     @Transactional
