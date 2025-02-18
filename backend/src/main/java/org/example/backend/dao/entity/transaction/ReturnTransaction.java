@@ -10,7 +10,6 @@ import org.example.backend.enumerated.TransactionStatus;
 
 import java.util.Date;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicReference;
 
 //Entity for storing data about returns
 @EqualsAndHashCode(callSuper = true)

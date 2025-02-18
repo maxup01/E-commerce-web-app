@@ -1,9 +1,13 @@
 package org.example.backend.dao.service;
 
+import org.example.backend.dao.entity.image.UserImage;
+import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
+import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
+import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.logistic.AddressRepository;
 import org.example.backend.dao.repository.logistic.DeliveryProviderRepository;
@@ -32,6 +36,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -73,6 +78,12 @@ public class ReturnTransactionServiceTest {
     private final Date DATE_BEFORE = new Date(0);
     private final Date DATE_NOW = Date.from(Instant.now());
     private final Date DATE_AFTER = new Date(10000000000000000L);
+    private final String RANDOM_FIRST_NAME = "random first name";
+    private final String RANDOM_LAST_NAME = "random last name";
+    private final String RANDOM_PASSWORD = "random password";
+    private final Role RANDOM_ROLE = new Role();
+    private final UserImage USER_IMAGE = new UserImage(new byte[12]);
+    private final LocalDate BIRTH_DATE = LocalDate.of(2020, 1, 1);
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -107,7 +118,6 @@ public class ReturnTransactionServiceTest {
 
     @BeforeEach
     public void setUp() {
-        returnTransaction = new ReturnTransaction();
         AddressModel addressModel = new AddressModel(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS);
         returnTransactionModel = new ReturnTransactionModel();
         returnTransactionModel.setUserEmail(RANDOM_EMAIL);
@@ -121,13 +131,30 @@ public class ReturnTransactionServiceTest {
                 .name(PRODUCT_NAME)
                 .build();
 
+        user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD,
+                BIRTH_DATE, RANDOM_ROLE, USER_IMAGE);
+
         product = new Product();
         product.setName(PRODUCT_NAME);
 
         orderedProduct = new OrderedProduct(
                 product, RANDOM_QUANTITY, RANDOM_PRICE);
 
-        user = new User();
+        returnTransaction = ReturnTransaction
+                .builder()
+                .returnCause(RETURN_CAUSE)
+                .user(user)
+                .deliveryAddress(new Address(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS))
+                .deliveryProvider(new DeliveryProvider(DELIVERY_PROVIDER_NAME, true))
+                .build();
+
+        returnTransaction.setId(ID_OF_RETURN_TRANSACTION_THAT_EXISTS);
+        returnTransaction.setFirstNameAndLastNameOfUser(user.getFirstName() + " " + user.getLastName());
+        returnTransaction.setUserEmail(user.getEmail());
+        returnTransaction.setStatus(RANDOM_STATUS);
+        returnTransaction.setDate(DATE_NOW);
+        returnTransaction.setCost(RANDOM_PRICE);
+        returnTransaction.setReturnedProducts(new ArrayList<>());
     }
 
     @Test
@@ -164,6 +191,8 @@ public class ReturnTransactionServiceTest {
 
         when(addressRepository.findByCountryAndCityAndProvinceAndAddress(COUNTRY_NAME, PROVINCE_NAME, CITY_NAME, ADDRESS))
                 .thenReturn(null);
+
+        when(returnTransactionRepository.save(any(ReturnTransaction.class))).thenReturn(returnTransaction);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.saveNewReturnTransaction(null);

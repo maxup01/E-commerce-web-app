@@ -61,7 +61,7 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public ReturnTransaction saveNewReturnTransaction(ReturnTransactionModel returnTransactionModel) {
+    public ReturnTransactionModel saveNewReturnTransaction(ReturnTransactionModel returnTransactionModel) {
 
         if(returnTransactionModel == null)
             throw new BadArgumentException("Incorrect argument: returnTransactionModel");
@@ -156,8 +156,12 @@ public class ReturnTransactionService {
                     address.getCity(), address.getAddress()));
         }
 
-        return new ReturnTransaction(Date.from(Instant.now()), user, entityAddress, deliveryProvider,
-                returnTransactionModel.getReturnCause(), returnedProductData);
+        ReturnTransaction returnTransaction = new ReturnTransaction(Date.from(Instant.now()), user,
+                entityAddress, deliveryProvider, returnTransactionModel.getReturnCause(), returnedProductData);
+
+        returnTransaction = returnTransactionRepository.save(returnTransaction);
+
+        return ReturnTransactionModel.fromReturnTransaction(returnTransaction);
     }
 
     @Transactional
