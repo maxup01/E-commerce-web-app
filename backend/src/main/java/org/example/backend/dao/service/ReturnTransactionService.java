@@ -165,7 +165,7 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public ReturnTransaction updateReturnTransactionStatusById(UUID id, TransactionStatus status) {
+    public ReturnTransactionModel updateReturnTransactionStatusById(UUID id, TransactionStatus status) {
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -177,18 +177,22 @@ public class ReturnTransactionService {
         });
 
         returnTransaction.setStatus(status);
-        return returnTransactionRepository.save(returnTransaction);
+        returnTransactionRepository.save(returnTransaction);
+
+        return ReturnTransactionModel.fromReturnTransaction(returnTransaction);
     }
 
     @Transactional
-    public ReturnTransaction getReturnTransactionById(UUID id){
+    public ReturnTransactionModel getReturnTransactionById(UUID id){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
 
-        return returnTransactionRepository.findById(id).orElseThrow(() -> {
+        ReturnTransaction returnTransactionFound = returnTransactionRepository.findById(id).orElseThrow(() -> {
             return new ReturnTransactionNotFoundException("Return transaction with id " + id + " not found");
         });
+
+        return ReturnTransactionModel.fromReturnTransaction(returnTransactionFound);
     }
 
     @Transactional
@@ -207,7 +211,10 @@ public class ReturnTransactionService {
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return returnedProductRepository.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(phrase);
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByPhrase(phrase);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
     }
 
     @Transactional
@@ -222,7 +229,7 @@ public class ReturnTransactionService {
         if(resultList.isEmpty())
             throw new ReturnedProductNotFoundException("Returned product with type " + type + " not exist");
 
-        return resultList;
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
     }
 
     @Transactional
@@ -241,7 +248,7 @@ public class ReturnTransactionService {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
-        return  returnedProductRepository
+        return returnedProductRepository
                 .getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
     }
 
@@ -255,8 +262,27 @@ public class ReturnTransactionService {
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
 
-        return returnedProductRepository
+        List<Object[]> resultList = returnedProductRepository
                 .getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(
                         startingDate, endingDate, phrase);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    private List<Object[]> mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){
+
+        ArrayList<Object[]> resultListWithProductModel = new ArrayList<>();
+
+        list.forEach(row -> {
+
+            Object[] newRow = new Object[3];
+            newRow[0] = ProductModel.fromProduct((Product) row[0]);
+            newRow[1] = row[1];
+            newRow[2] = row[2];
+
+            resultListWithProductModel.add(newRow);
+        });
+
+        return resultListWithProductModel;
     }
 }

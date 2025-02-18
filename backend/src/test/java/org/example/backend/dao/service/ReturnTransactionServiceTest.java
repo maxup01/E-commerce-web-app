@@ -1,9 +1,11 @@
 package org.example.backend.dao.service;
 
+import org.example.backend.dao.entity.image.ProductMainImage;
 import org.example.backend.dao.entity.image.UserImage;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
+import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
@@ -63,6 +65,15 @@ public class ReturnTransactionServiceTest {
     private final Long NEGATIVE_QUANTITY = -2L;
     private final UUID ID_OF_PRODUCT_THAT_EXISTS = UUID.randomUUID();
     private final UUID ID_OF_PRODUCT_THAT_NOT_EXISTS = UUID.randomUUID();
+    private final String RANDOM_EAN_CODE = "73920483";
+    private final String RANDOM_PRODUCT_NAME = "random product name";
+    private final String RANDOM_PRODUCT_TYPE = "random type";
+    private final String RANDOM_PRODUCT_DESCRIPTION = "random description";
+    private final Double RANDOM_PRODUCT_PRICE = 15.00;
+    private final Double GREATER_PRODUCT_PRICE = 15.00;
+    private final Integer RANDOM_PRODUCT_HEIGHT = 100;
+    private final Integer RANDOM_PRODUCT_WIDTH = 80;
+    private final byte[] RANDOM_IMAGE = new byte[12];
     private final UUID ID_OF_ORDER_TRANSACTION_THAT_EXISTS = UUID.randomUUID();
     private final UUID ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS = UUID.randomUUID();
     private final Long RANDOM_QUANTITY = 34L;
@@ -134,8 +145,9 @@ public class ReturnTransactionServiceTest {
         user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD,
                 BIRTH_DATE, RANDOM_ROLE, USER_IMAGE);
 
-        product = new Product();
-        product.setName(PRODUCT_NAME);
+        product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_PRODUCT_TYPE, RANDOM_PRODUCT_DESCRIPTION,
+                RANDOM_PRODUCT_HEIGHT, RANDOM_PRODUCT_WIDTH, GREATER_PRODUCT_PRICE,
+                RANDOM_PRODUCT_PRICE, new Stock(RANDOM_QUANTITY), new ProductMainImage(RANDOM_IMAGE));
 
         orderedProduct = new OrderedProduct(
                 product, RANDOM_QUANTITY, RANDOM_PRICE);
@@ -512,7 +524,13 @@ public class ReturnTransactionServiceTest {
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByType(){
 
         ArrayList<Object[]> arrayList = new ArrayList<>();
-        arrayList.add(new Object[12]);
+
+        Object[] row = new Object[3];
+        row[0] = product;
+        row[1] = RANDOM_QUANTITY;
+        row[2] = RANDOM_PRICE;
+
+        arrayList.add(row);
 
         when(returnedProductRepository
                 .getProductsAndTheirReturnedQuantityAndRevenueByType(TYPE_THAT_EXIST))

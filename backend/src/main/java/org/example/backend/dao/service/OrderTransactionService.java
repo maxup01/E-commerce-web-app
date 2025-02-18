@@ -286,7 +286,7 @@ public class OrderTransactionService {
 
         List<Object[]> result = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByPhrase(phrase);
 
-        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }
 
     @Transactional
@@ -297,7 +297,7 @@ public class OrderTransactionService {
 
         List<Object[]> result = orderedProductRepository.getProductsAndTheirOrderedQuantityAndRevenueByType(type);
 
-        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }
 
     @Transactional
@@ -330,10 +330,10 @@ public class OrderTransactionService {
         List<Object[]> result = orderedProductRepository
                 .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
 
-        return mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }
 
-    private List<Object[]> mapRowFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){
+    private List<Object[]> mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){
 
         ArrayList<Object[]> resultWithProductTurnedToProductModel = new ArrayList<>();
 
@@ -341,9 +341,7 @@ public class OrderTransactionService {
 
             Product product = (Product) row[0];
 
-            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
-                    product.getType(), product.getDescription(), product.getHeight(), product.getWidth(), product.getRegularPrice(),
-                    product.getCurrentPrice(), product.getMainImage().getImage());
+            ProductModel productModel = ProductModel.fromProduct(product);
 
             Object[] newRow = new Object[3];
             newRow[0] = productModel;
