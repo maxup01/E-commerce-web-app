@@ -11,6 +11,7 @@ import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.privilege.PrivilegeNotFoundException;
+import org.example.backend.exception.privilege.PrivilegeNotSavedException;
 import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.user.UserNotFoundException;
@@ -64,8 +65,7 @@ public class UserDataService {
             throw new BadArgumentException(
                     "Privilege needs to match privilege name pattern and cannot be null");
         else if (privilegeRepository.findByName(privilegeName) != null)
-            throw new PrivilegeNotFoundException(
-                    "Privilege name cannot be the same as one of the existed privileges");
+            throw new PrivilegeNotSavedException("Privilege with name " + privilegeName + " already exists");
 
         Privilege newPrivilege = new Privilege(privilegeName);
         newPrivilege = privilegeRepository.save(newPrivilege);
