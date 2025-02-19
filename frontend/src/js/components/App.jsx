@@ -4,7 +4,7 @@ import '../../css/index.css';
 function App() {
 
     return (
-        <h1 className={"h-12 font-bold"}>Hello world!!!</h1>
+        <h1>Hello world!!!</h1>
     )
 }
 
