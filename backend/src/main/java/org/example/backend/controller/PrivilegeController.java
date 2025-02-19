@@ -40,6 +40,52 @@ public class PrivilegeController {
         return ResponseEntity.ok().body(privilegeModel);
     }
 
+    @PutMapping("/update-privilege")
+    public ResponseEntity updatePrivilege(@RequestBody PrivilegeModel privilegeModel) {
+
+        try{
+            userDataService.updateNameOfPrivilegeById(privilegeModel.getId(), privilegeModel.getName());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (PrivilegeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/privilege-by-id/{id}")
+    public ResponseEntity<PrivilegeModel> getPrivilegeById(@PathVariable("id") Long id) {
+
+        PrivilegeModel privilegeModel;
+
+        try{
+            privilegeModel = userDataService.getPrivilegeById(id);
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (PrivilegeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok().body(privilegeModel);
+    }
+
+    @GetMapping("/privilege-by-name/{privilegeName}")
+    public ResponseEntity<PrivilegeModel> getPrivilegeByName(@PathVariable("privilegeName") String privilegeName) {
+
+        PrivilegeModel privilegeModel;
+
+        try{
+            privilegeModel = userDataService.getPrivilegeByName(privilegeName);
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (PrivilegeNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.ok().body(privilegeModel);
+    }
+
     @GetMapping("/privileges")
     public ResponseEntity<List<PrivilegeModel>> getAllPrivileges(){
 
@@ -54,7 +100,7 @@ public class PrivilegeController {
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (PrivilegeNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();

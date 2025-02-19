@@ -1,8 +1,10 @@
 package org.example.backend.model;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.example.backend.dao.entity.user.Privilege;
 
+@Getter
 @AllArgsConstructor
 public class PrivilegeModel {
 
