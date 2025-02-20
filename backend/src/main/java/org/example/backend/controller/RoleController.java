@@ -37,4 +37,20 @@ public class RoleController {
 
         return ResponseEntity.status(HttpStatus.OK).body(roleModel);
     }
+
+    @GetMapping("/role-by-name/{name}")
+    public ResponseEntity<RoleModel> getRoleByName(String name) {
+
+        RoleModel roleModel;
+
+        try{
+            roleModel = userDataService.getRoleByName(name);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (RoleNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(roleModel);
+    }
 }
