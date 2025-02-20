@@ -37,7 +37,7 @@ public class PrivilegeController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        return ResponseEntity.ok().body(privilegeModel);
+        return ResponseEntity.status(HttpStatus.OK).body(privilegeModel);
     }
 
     @PutMapping("/update-privilege")
@@ -51,7 +51,7 @@ public class PrivilegeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok().build();
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @GetMapping("/privilege-by-id/{id}")
@@ -67,7 +67,7 @@ public class PrivilegeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok().body(privilegeModel);
+        return ResponseEntity.status(HttpStatus.OK).body(privilegeModel);
     }
 
     @GetMapping("/privilege-by-name/{privilegeName}")
@@ -83,13 +83,13 @@ public class PrivilegeController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
-        return ResponseEntity.ok().body(privilegeModel);
+        return ResponseEntity.status(HttpStatus.OK).body(privilegeModel);
     }
 
     @GetMapping("/privileges")
     public ResponseEntity<List<PrivilegeModel>> getAllPrivileges(){
 
-        return ResponseEntity.ok(userDataService.getAllPrivileges());
+        return ResponseEntity.status(HttpStatus.OK).body(userDataService.getAllPrivileges());
     }
 
     @DeleteMapping("/delete-privilege/{id}")
