@@ -16,7 +16,7 @@ import java.util.List;
 @RequestMapping("/admin")
 public class PrivilegeController {
 
-    private UserDataService userDataService;
+    private final UserDataService userDataService;
 
     @Autowired
     public PrivilegeController(UserDataService userDataService) {

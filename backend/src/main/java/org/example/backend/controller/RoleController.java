@@ -18,7 +18,7 @@ import java.util.List;
 @RequestMapping("/admin")
 public class RoleController {
 
-    private UserDataService userDataService;
+    private final UserDataService userDataService;
 
     @Autowired
     public RoleController(UserDataService userDataService) {
