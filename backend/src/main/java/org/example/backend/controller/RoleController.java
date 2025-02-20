@@ -59,7 +59,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedRole);
     }
 
-    @PutMapping("/delete-role-privilege-relation")
+    @PutMapping("/delete-privilege-from-role")
     public ResponseEntity<RoleModel> deletePrivilegeFromRole(@RequestBody RoleModel roleModel,
                                                                  @RequestParam("privilege_name") String privilegeName) {
 
@@ -67,6 +67,25 @@ public class RoleController {
 
         try{
             updatedRole = userDataService.deleteRolePrivilegeByIdAndName(roleModel.getId(), privilegeName);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (RoleNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (PrivilegeNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedRole);
+    }
+
+    @PutMapping("/add-privilege-to-role")
+    public ResponseEntity<RoleModel> addPrivilegeToRole(@RequestBody RoleModel roleModel,
+                                                        @RequestParam("privilege_name") String privilegeName) {
+
+        RoleModel updatedRole;
+
+        try{
+            updatedRole = userDataService.addPrivilegeToRoleByIdAndName(roleModel.getId(), privilegeName);
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (RoleNotFoundException e){
