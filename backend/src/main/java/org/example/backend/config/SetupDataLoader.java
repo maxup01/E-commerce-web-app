@@ -14,6 +14,9 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.List;
 
+//When you want to change this function then follow the rules
+//for naming email, role name and privilege name included in patterns
+//in UserDataService class
 @Service
 public class SetupDataLoader implements ApplicationListener<ContextRefreshedEvent> {
 
@@ -32,6 +35,17 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
 
+        //Change these role names in the future
+        Privilege readPrivilege = createPrivilegeIfNotExists("READ_PRIVILEGE");
+        Privilege writePrivilege = createPrivilegeIfNotExists("WRITE_PRIVILEGE");
+        Privilege deletePrivilege = createPrivilegeIfNotExists("DELETE_PRIVILEGE");
+
+        createRoleIfNotExists("CUSTOMER_ROLE", List.of(readPrivilege));
+        createRoleIfNotExists("MANAGER_ROLE", List.of(readPrivilege, writePrivilege));
+        Role adminRole = createRoleIfNotExists("ADMIN_ROLE", List.of(readPrivilege, writePrivilege, deletePrivilege));
+
+        User adminUser = createUserIfNotExists("Maks", "Gar", "example@email.com",
+                "Maks1234", LocalDate.of(2007, 2, 1), adminRole);
     }
 
     private Privilege createPrivilegeIfNotExists(String privilegeName) {
