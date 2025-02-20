@@ -27,7 +27,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -398,7 +397,7 @@ public class UserDataServiceTest {
     }
 
     @Test
-    public void testOfDeleteRoleRelationWithPrivilegeById(){
+    public void testOfDeleteRolePrivilegeByIdAndName(){
 
         when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
         when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
@@ -407,31 +406,76 @@ public class UserDataServiceTest {
         when(privilegeRepository.findByName(OTHER_PRIVILEGE_NAME)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(null, RANDOM_PRIVILEGE_NAME);
+            userDataService.deleteRolePrivilegeByIdAndName(null, RANDOM_PRIVILEGE_NAME);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(NEGATIVE_ID, ROLE_NAME_WHICH_NOT_EXIST);
+            userDataService.deleteRolePrivilegeByIdAndName(NEGATIVE_ID, ROLE_NAME_WHICH_NOT_EXIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, null);
+            userDataService.deleteRolePrivilegeByIdAndName(ID_OF_FIRST_CREATED_ENTITY, null);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, WRONG_ROLE_NAME);
+            userDataService.deleteRolePrivilegeByIdAndName(ID_OF_FIRST_CREATED_ENTITY, WRONG_ROLE_NAME);
         });
 
         Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(OTHER_ID, RANDOM_PRIVILEGE_NAME);
+            userDataService.deleteRolePrivilegeByIdAndName(OTHER_ID, RANDOM_PRIVILEGE_NAME);
         });
 
         Exception sixthException = assertThrows(PrivilegeNotFoundException.class, () -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, OTHER_PRIVILEGE_NAME);
+            userDataService.deleteRolePrivilegeByIdAndName(ID_OF_FIRST_CREATED_ENTITY, OTHER_PRIVILEGE_NAME);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.deleteRoleRelationWithPrivilegeById(ID_OF_FIRST_CREATED_ENTITY, RANDOM_PRIVILEGE_NAME);
+            userDataService.deleteRolePrivilegeByIdAndName(ID_OF_FIRST_CREATED_ENTITY, RANDOM_PRIVILEGE_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: id");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: privilegeName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: privilegeName");
+        assertEquals(fifthException.getMessage(), "Role with id " + OTHER_ID + " not found");
+        assertEquals(sixthException.getMessage(), "Privilege with name " + OTHER_PRIVILEGE_NAME + " not found");
+    }
+
+    @Test
+    public void testOfAddPrivilegeToRoleByIdAndName(){
+
+        when(roleRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
+        when(roleRepository.findById(ID_OF_FIRST_CREATED_ENTITY)).thenReturn(Optional.ofNullable(role));
+
+        when(privilegeRepository.findByName(OTHER_PRIVILEGE_NAME)).thenReturn(null);
+        when(privilegeRepository.findByName(RANDOM_PRIVILEGE_NAME)).thenReturn(existingPrivilege);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(null, RANDOM_PRIVILEGE_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(NEGATIVE_ID, RANDOM_PRIVILEGE_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(ID_OF_FIRST_CREATED_ENTITY, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(ID_OF_FIRST_CREATED_ENTITY, WRONG_ROLE_NAME);
+        });
+
+        Exception fifthException = assertThrows(RoleNotFoundException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(OTHER_ID, RANDOM_PRIVILEGE_NAME);
+        });
+
+        Exception sixthException = assertThrows(PrivilegeNotFoundException.class, () -> {
+            userDataService.addPrivilegeToRoleByIdAndName(ID_OF_FIRST_CREATED_ENTITY, OTHER_PRIVILEGE_NAME);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.addPrivilegeToRoleByIdAndName(ID_OF_FIRST_CREATED_ENTITY, RANDOM_PRIVILEGE_NAME);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");

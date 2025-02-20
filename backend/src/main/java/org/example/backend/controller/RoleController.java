@@ -60,13 +60,13 @@ public class RoleController {
     }
 
     @PutMapping("/delete-role-privilege-relation")
-    public ResponseEntity<RoleModel> deleteRolePrivilegeRelation(@RequestBody RoleModel roleModel,
+    public ResponseEntity<RoleModel> deletePrivilegeFromRole(@RequestBody RoleModel roleModel,
                                                                  @RequestParam("privilege_name") String privilegeName) {
 
         RoleModel updatedRole;
 
         try{
-            updatedRole = userDataService.deleteRoleRelationWithPrivilegeById(roleModel.getId(), privilegeName);
+            updatedRole = userDataService.deleteRolePrivilegeByIdAndName(roleModel.getId(), privilegeName);
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (RoleNotFoundException e){

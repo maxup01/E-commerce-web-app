@@ -213,7 +213,7 @@ public class UserDataService {
     }
 
     @Transactional
-    public RoleModel deleteRoleRelationWithPrivilegeById(Long id, String privilegeName) {
+    public RoleModel deleteRolePrivilegeByIdAndName(Long id, String privilegeName) {
 
         if ((id == null) || (id <= 0))
             throw new BadArgumentException("Incorrect argument: id");
@@ -231,6 +231,29 @@ public class UserDataService {
             throw new PrivilegeNotFoundException("Privilege with name " + privilegeName + " not found");
 
         role.getPrivileges().removeIf(pomPrivilege -> pomPrivilege.getId().equals(id));
+        roleRepository.save(role);
+
+        return RoleModel.fromRole(role);
+    }
+
+    @Transactional
+    public RoleModel addPrivilegeToRoleByIdAndName(Long id, String privilegeName) {
+
+        if((id == null) || (id <= 0))
+            throw new BadArgumentException("Incorrect argument: id");
+        else if((privilegeName == null) || (!privilegeNamePattern.matcher(privilegeName).matches()))
+            throw new BadArgumentException("Incorrect argument: privilegeName");
+
+        Role role = roleRepository.findById(id).orElseThrow(() -> {
+            return new RoleNotFoundException("Role with id " + id + " not found");
+        });
+
+        Privilege privilege = privilegeRepository.findByName(privilegeName);
+
+        if(privilege == null)
+            throw new PrivilegeNotFoundException("Privilege with name " + privilegeName + " not found");
+
+        role.getPrivileges().add(privilege);
         roleRepository.save(role);
 
         return RoleModel.fromRole(role);
