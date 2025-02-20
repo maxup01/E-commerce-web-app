@@ -2,6 +2,7 @@ package org.example.backend.config;
 
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
+import org.example.backend.dao.entity.user.User;
 import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
@@ -10,6 +11,7 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -29,7 +31,6 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
-
 
     }
 
@@ -55,5 +56,16 @@ public class SetupDataLoader implements ApplicationListener<ContextRefreshedEven
         role = new Role(roleName, privileges);
 
         return roleRepository.save(role);
+    }
+
+    private User createUserIfNotExists(String firstName, String lastName, String email, String password, LocalDate birthday
+            , Role role) {
+
+        if(userRepository.findByEmail(email) != null)
+            return userRepository.findByEmail(email);
+
+        User user = new User(firstName, lastName, email, password, birthday, role);
+
+        return userRepository.save(user);
     }
 }
