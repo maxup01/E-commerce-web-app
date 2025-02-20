@@ -194,22 +194,22 @@ public class UserDataService {
     }
 
     @Transactional
-    public RoleModel updateRoleNameById(Long id, String newRoleName) {
+    public RoleModel updateRoleNameById(Long id, String newName) {
 
         if((id == null) || (id <= 0))
             throw new BadArgumentException("Incorrect argument: id");
-        else if ((newRoleName == null) || (!roleNamePattern.matcher(newRoleName).matches()))
-            throw new BadArgumentException("Incorrect argument: newRoleName");
+        else if ((newName == null) || (!roleNamePattern.matcher(newName).matches()))
+            throw new BadArgumentException("Incorrect argument: newName");
 
-        Role role = roleRepository.findById(id).orElse(null);
+        Role foundRole = roleRepository.findById(id).orElse(null);
 
-        if(role == null)
+        if(foundRole == null)
             throw new RoleNotFoundException("Role with id " + id + " not found");
 
-        role.setName(newRoleName);
-        roleRepository.save(role);
+        foundRole.setName(newName);
+        roleRepository.save(foundRole);
 
-        return RoleModel.fromRole(role);
+        return RoleModel.fromRole(foundRole);
     }
 
     @Transactional

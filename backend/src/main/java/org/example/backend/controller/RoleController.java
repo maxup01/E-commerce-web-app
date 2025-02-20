@@ -43,6 +43,22 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedRole);
     }
 
+    @PutMapping("/update-role-name")
+    public ResponseEntity<RoleModel> updateRoleName(@RequestBody RoleModel roleModel) {
+
+        RoleModel updatedRole;
+
+        try{
+            updatedRole = userDataService.updateRoleNameById(roleModel.getId(), roleModel.getName());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (RoleNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(updatedRole);
+    }
+
     @GetMapping("/role-by-id/{id}")
     public ResponseEntity<RoleModel> getRoleById(Long id) {
 

@@ -392,8 +392,8 @@ public class UserDataServiceTest {
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
         assertEquals(secondException.getMessage(), "Incorrect argument: id");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: newRoleName");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: newRoleName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: newName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: newName");
         assertEquals(fifthException.getMessage(), "Role with id " + OTHER_ID + " not found");
     }
 
