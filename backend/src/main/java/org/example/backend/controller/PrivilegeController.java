@@ -86,7 +86,7 @@ public class PrivilegeController {
         return ResponseEntity.status(HttpStatus.OK).body(privilegeModel);
     }
 
-    @GetMapping("/privileges")
+    @GetMapping("/privilege-all")
     public ResponseEntity<List<PrivilegeModel>> getAllPrivileges(){
 
         return ResponseEntity.status(HttpStatus.OK).body(userDataService.getAllPrivileges());

@@ -267,6 +267,20 @@ public class UserDataService {
     }
 
     @Transactional
+    public List<RoleModel> getAllRoles() {
+
+        List<Role> roles = roleRepository.findAll();
+
+        ArrayList<RoleModel> roleModelsList = new ArrayList<>();
+
+        roles.forEach(role -> {
+            roleModelsList.add(RoleModel.fromRole(role));
+        });
+
+        return roleModelsList;
+    }
+
+    @Transactional
     public void deleteRoleById(Long idOfRoleToDelete, Long idOfRoleToAssignToUsers) {
 
         if((idOfRoleToDelete == null) || (idOfRoleToDelete <= 0))
@@ -291,20 +305,6 @@ public class UserDataService {
         }
 
         roleRepository.delete(roleToDelete);
-    }
-
-    @Transactional
-    public List<RoleModel> getAllRoles() {
-
-        List<Role> roles = roleRepository.findAll();
-
-        ArrayList<RoleModel> roleModelsList = new ArrayList<>();
-
-        roles.forEach(role -> {
-            roleModelsList.add(RoleModel.fromRole(role));
-        });
-
-        return roleModelsList;
     }
 
     @Transactional
