@@ -14,6 +14,8 @@ import org.example.backend.exception.role.RoleNotFoundException;
 import org.example.backend.exception.role.RoleNotSavedException;
 import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.exception.user.UserNotSavedException;
+import org.example.backend.model.PrivilegeModel;
+import org.example.backend.model.RoleModel;
 import org.example.backend.model.UserModel;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -291,44 +293,70 @@ public class UserDataServiceTest {
 
         when(roleRepository.save(any())).thenReturn(role);
 
+        ArrayList<PrivilegeModel> privileges = new ArrayList<>();
+
+        privileges.add(new PrivilegeModel(null, RANDOM_PRIVILEGE_NAME));
+
+        RoleModel roleModel = new RoleModel(null, null, privileges);
+
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(null, List.of(RANDOM_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel);
         });
+
+        RoleModel roleModel2 = new RoleModel(null, WRONG_ROLE_NAME, privileges);
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(WRONG_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel2);
         });
+
+        RoleModel roleModel3 = new RoleModel(null, RANDOM_ROLE_NAME, privileges);
 
         Exception thirdException = assertThrows(RoleNotSavedException.class, () -> {
-            userDataService.saveNewRole(RANDOM_ROLE_NAME, List.of(RANDOM_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel3);
         });
+
+        RoleModel roleModel4 = new RoleModel(null, ROLE_NAME_WHICH_NOT_EXIST, null);
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, null);
+            userDataService.saveNewRole(roleModel4);
         });
+
+        RoleModel roleModel5 = new RoleModel(null, ROLE_NAME_WHICH_NOT_EXIST, new ArrayList<>());
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of());
+            userDataService.saveNewRole(roleModel5);
         });
+
+        ArrayList<PrivilegeModel> privileges2 = new ArrayList<>();
+        privileges2.add(new PrivilegeModel(null, RANDOM_WRONG_PRIVILEGE_NAME));
+
+        RoleModel roleModel6 = new RoleModel(null, ROLE_NAME_WHICH_NOT_EXIST, privileges2);
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(RANDOM_WRONG_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel6);
         });
+
+        ArrayList<PrivilegeModel> privileges3 = new ArrayList<>();
+        privileges3.add(new PrivilegeModel(null, OTHER_PRIVILEGE_NAME));
+
+        RoleModel roleModel7 = new RoleModel(null, ROLE_NAME_WHICH_NOT_EXIST, privileges3);
 
         Exception seventhException = assertThrows(PrivilegeNotFoundException.class, () -> {
-            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(OTHER_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel7);
         });
+
+        RoleModel roleModel8 = new RoleModel(null, ROLE_NAME_WHICH_NOT_EXIST, privileges);
 
         assertDoesNotThrow(() -> {
-            userDataService.saveNewRole(ROLE_NAME_WHICH_NOT_EXIST, List.of(RANDOM_PRIVILEGE_NAME));
+            userDataService.saveNewRole(roleModel8);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: roleName");
-        assertEquals(secondException.getMessage(), "Incorrect argument: roleName");
+        assertEquals(firstException.getMessage(), "Incorrect argument field: Role.name");
+        assertEquals(secondException.getMessage(), "Incorrect argument field: Role.name");
         assertEquals(thirdException.getMessage(), "Role with name " + RANDOM_ROLE_NAME + " already exists");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: privilegeList");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: privilegeList");
-        assertEquals(sixthException.getMessage(), "Incorrect argument: privilegeNameList item");
+        assertEquals(fourthException.getMessage(), "Incorrect argument field: Role.privileges");
+        assertEquals(fifthException.getMessage(), "Incorrect argument field: Role.privileges");
+        assertEquals(sixthException.getMessage(), "Incorrect argument field: Role.privileges.name");
         assertEquals(seventhException.getMessage(), "Privilege with name " + OTHER_PRIVILEGE_NAME + " not found");
     }
 

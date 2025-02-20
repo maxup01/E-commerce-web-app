@@ -23,9 +23,9 @@ public class PrivilegeController {
         this.userDataService = userDataService;
     }
 
-    @PostMapping("/create-privilege/{privilegeName}")
+    @PostMapping("/create-privilege")
     public ResponseEntity<PrivilegeModel> createPrivilege(
-            @PathVariable("privilegeName") String privilegeName) {
+            @RequestBody String privilegeName) {
 
         PrivilegeModel privilegeModel;
 
@@ -37,7 +37,7 @@ public class PrivilegeController {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         }
 
-        return ResponseEntity.status(HttpStatus.OK).body(privilegeModel);
+        return ResponseEntity.status(HttpStatus.CREATED).body(privilegeModel);
     }
 
     @PutMapping("/update-privilege")

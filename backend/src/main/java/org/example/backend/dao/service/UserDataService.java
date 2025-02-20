@@ -157,40 +157,40 @@ public class UserDataService {
     }
 
     @Transactional
-    public RoleModel saveNewRole(String roleName, List<String> privilegeNameList) {
+    public RoleModel saveNewRole(RoleModel role) {
 
-        if((roleName == null) || (!roleNamePattern.matcher(roleName).matches()))
-            throw new BadArgumentException("Incorrect argument: roleName");
-        else if(roleRepository.findByName(roleName) != null)
-            throw new RoleNotSavedException("Role with name " + roleName + " already exists");
-        else if((privilegeNameList == null) || (privilegeNameList.isEmpty()))
-            throw new BadArgumentException("Incorrect argument: privilegeList");
+        if((role == null) || (role.getName() == null) || (!roleNamePattern.matcher(role.getName()).matches()))
+            throw new BadArgumentException("Incorrect argument field: Role.name");
+        else if(roleRepository.findByName(role.getName()) != null)
+            throw new RoleNotSavedException("Role with name " + role.getName() + " already exists");
+        else if((role.getPrivileges() == null) || (role.getPrivileges().isEmpty()))
+            throw new BadArgumentException("Incorrect argument field: Role.privileges");
 
         List<Privilege> privileges = new ArrayList<>();
 
-        privilegeNameList.forEach(privilege -> {
+        role.getPrivileges().forEach(privilege -> {
 
-            if((!privilegeNamePattern.matcher(privilege).matches()))
-                throw new BadArgumentException("Incorrect argument: privilegeNameList item");
+            if((privilege.getName() == null) || (!privilegeNamePattern.matcher(privilege.getName()).matches()))
+                throw new BadArgumentException("Incorrect argument field: Role.privileges.name");
 
-            Privilege foundPrivilege = privilegeRepository.findByName(privilege);
+            Privilege foundPrivilege = privilegeRepository.findByName(privilege.getName());
 
             if(foundPrivilege == null){
-                throw new PrivilegeNotFoundException("Privilege with name " + privilege + " not found");
+                throw new PrivilegeNotFoundException("Privilege with name " + privilege.getName() + " not found");
             }
 
             privileges.add(foundPrivilege);
         });
 
-        Role role = new Role(roleName, privileges);
-        role = roleRepository.save(role);
+        Role roleEntity = new Role(role.getName(), privileges);
+        roleEntity = roleRepository.save(roleEntity);
 
-        Role finalRole = role;
+        Role finalRole = roleEntity;
         privileges.forEach(privilege -> {
             privilege.getRoles().add(finalRole);
         });
 
-        return RoleModel.fromRole(role);
+        return RoleModel.fromRole(roleEntity);
     }
 
     @Transactional
