@@ -886,6 +886,28 @@ public class UserDataServiceTest {
     }
 
     @Test
+    public void testOfGetUserIdAndImageById(){
+
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            userDataService.getUserIdAndImageById(null);
+        });
+
+        Exception secondException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.getUserIdAndImageById(ID_OF_USER_WHICH_NOT_EXIST);
+        });
+
+        assertDoesNotThrow(() -> {
+            userDataService.getUserIdAndImageById(RANDOM_USER_ID);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
     public void testOfDeleteUserById(){
 
         when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));

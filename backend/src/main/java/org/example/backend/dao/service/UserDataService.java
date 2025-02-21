@@ -30,6 +30,8 @@ import java.util.List;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+//Add sign up and login if needed
+
 @Service
 public class UserDataService {
 
@@ -468,6 +470,22 @@ public class UserDataService {
             throw new UserNotFoundException("User with email " + email + " not found");
 
         return UserModel.fromUser(foundUser);
+    }
+
+    @Transactional
+    public UserIdAndImage getUserIdAndImageById(UUID id){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+
+        User user = userRepository.findById(id).orElseThrow(() -> {
+            return new UserNotFoundException("User with id " + id + " not found");
+        });
+
+        if(user.getProfileImage() == null)
+            return new UserIdAndImage(id, null);
+
+        return new UserIdAndImage(id, user.getProfileImage().getImage());
     }
 
     @Transactional
