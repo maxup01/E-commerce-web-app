@@ -366,17 +366,16 @@ public class UserDataService {
     }
 
     @Transactional
-    public UserModel updateUserFirstNameByEmail(String email, String firstName) {
+    public UserModel updateUserFirstNameById(UUID id, String firstName) {
 
-        if((email == null) || (!userEmailPattern.matcher(email).matches()))
-            throw new BadArgumentException("Incorrect argument: email");
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
         else if((firstName == null) || (firstName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: firstName");
 
-        User foundUser = userRepository.findByEmail(email);
-
-        if(foundUser == null)
-            throw new UserNotFoundException("User with email " + email + " not found");
+        User foundUser = userRepository.findById(id).orElseThrow(() -> {
+            return new UserNotFoundException("User with id " + id + " not found");
+        });
 
         foundUser.setFirstName(firstName);
         userRepository.save(foundUser);
@@ -385,17 +384,16 @@ public class UserDataService {
     }
 
     @Transactional
-    public UserModel updateUserLastNameByEmail(String email, String lastName) {
+    public UserModel updateUserLastNameById(UUID id, String lastName) {
 
-        if((email == null) || (!userEmailPattern.matcher(email).matches()))
-            throw new BadArgumentException("Incorrect argument: email");
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
         else if((lastName == null) || (lastName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: lastName");
 
-        User foundUser = userRepository.findByEmail(email);
-
-        if(foundUser == null)
-            throw new UserNotFoundException("User with email " + email + " not found");
+        User foundUser = userRepository.findById(id).orElseThrow(() -> {
+            return new UserNotFoundException("User with id " + id + " not found");
+        });
 
         foundUser.setLastName(lastName);
         userRepository.save(foundUser);
@@ -404,17 +402,16 @@ public class UserDataService {
     }
 
     @Transactional
-    public UserModel updateUserPasswordByEmail(String email, String password) {
+    public UserModel updateUserPasswordById(UUID id, String password) {
 
-        if((email == null) || (!userEmailPattern.matcher(email).matches()))
-            throw new BadArgumentException("Incorrect argument: email");
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
         else if((password == null) || (!userPasswordPattern.matcher(password).matches()))
             throw new BadArgumentException("Incorrect argument: password");
 
-        User foundUser = userRepository.findByEmail(email);
-
-        if(foundUser == null)
-            throw new UserNotFoundException("User with email " + email + " not found");
+        User foundUser = userRepository.findById(id).orElseThrow(() -> {
+            return new UserNotFoundException("User with id " + id + " not found");
+        });
 
         foundUser.setPassword(bCryptPasswordEncoder.encode(password));
         userRepository.save(foundUser);
@@ -423,17 +420,16 @@ public class UserDataService {
     }
 
     @Transactional
-    public UserModel updateUserImageByEmail(String email, byte[] image) {
+    public UserModel updateUserImageById(UUID id, byte[] image) {
 
-         if((email == null) || (!userEmailPattern.matcher(email).matches()))
-             throw new BadArgumentException("Incorrect argument: email");
+         if(id == null)
+             throw new BadArgumentException("Null argument: id");
          else if(image == null)
              throw new BadArgumentException("Incorrect argument: image");
 
-         User foundUser = userRepository.findByEmail(email);
-
-         if(foundUser == null)
-             throw new UserNotFoundException("User with email " + email + " not found");
+         User foundUser = userRepository.findById(id).orElseThrow(() -> {
+             return new UserNotFoundException("User with id " + id + " not found");
+         });
 
          if(foundUser.getProfileImage() != null)
              userImageRepository.delete(foundUser.getProfileImage());

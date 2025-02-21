@@ -713,144 +713,124 @@ public class UserDataServiceTest {
     @Test
     public void testOfUpdateUserFirstNameByEmail(){
 
-        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
-        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserFirstNameByEmail(null, RANDOM_FIRST_NAME);
+            userDataService.updateUserFirstNameById(null, RANDOM_FIRST_NAME);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserFirstNameByEmail("", RANDOM_FIRST_NAME);
+            userDataService.updateUserFirstNameById(RANDOM_USER_ID, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, null);
+            userDataService.updateUserFirstNameById(RANDOM_USER_ID, "");
         });
 
-        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, "");
-        });
-
-        Exception fifthException = assertThrows(UserNotFoundException.class, () -> {
-            userDataService.updateUserFirstNameByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_FIRST_NAME);
+        Exception fourthException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserFirstNameById(ID_OF_USER_WHICH_NOT_EXIST, RANDOM_FIRST_NAME);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.updateUserFirstNameByEmail(RANDOM_EMAIL, RANDOM_FIRST_NAME);
+            userDataService.updateUserFirstNameById(RANDOM_USER_ID, RANDOM_FIRST_NAME);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: email");
-        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: firstName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: firstName");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: firstName");
-        assertEquals(fifthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
+        assertEquals(fourthException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
     public void testOfUpdateUserLastNameByEmail(){
 
-        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
-        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserLastNameByEmail(null, RANDOM_LAST_NAME);
+            userDataService.updateUserLastNameById(null, RANDOM_LAST_NAME);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserLastNameByEmail(WRONG_USER_EMAIL, RANDOM_LAST_NAME);
+            userDataService.updateUserLastNameById(RANDOM_USER_ID, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserLastNameByEmail(RANDOM_EMAIL, null);
+            userDataService.updateUserLastNameById(RANDOM_USER_ID, "");
         });
 
-        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserLastNameByEmail(RANDOM_EMAIL, "");
-        });
-
-        Exception fifthException = assertThrows(UserNotFoundException.class, () -> {
-            userDataService.updateUserLastNameByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_LAST_NAME);
+        Exception fourthException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserLastNameById(ID_OF_USER_WHICH_NOT_EXIST, RANDOM_LAST_NAME);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.updateUserLastNameByEmail(RANDOM_EMAIL, RANDOM_LAST_NAME);
+            userDataService.updateUserLastNameById(RANDOM_USER_ID, RANDOM_LAST_NAME);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: email");
-        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: lastName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: lastName");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: lastName");
-        assertEquals(fifthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
+        assertEquals(fourthException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
     public void testOfUpdateUserPasswordByEmail(){
 
-        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
-        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserPasswordByEmail(null, RANDOM_PASSWORD);
+            userDataService.updateUserPasswordById(null, RANDOM_PASSWORD);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserPasswordByEmail(WRONG_USER_EMAIL, RANDOM_PASSWORD);
+            userDataService.updateUserPasswordById(RANDOM_USER_ID, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserPasswordByEmail(RANDOM_EMAIL, null);
+            userDataService.updateUserPasswordById(RANDOM_USER_ID, WRONG_RANDOM_PASSWORD);
         });
 
-        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserPasswordByEmail(RANDOM_EMAIL, WRONG_RANDOM_PASSWORD);
-        });
-
-        Exception fifthException = assertThrows(UserNotFoundException.class, () -> {
-            userDataService.updateUserPasswordByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_PASSWORD);
+        Exception fourthException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserPasswordById(ID_OF_USER_WHICH_NOT_EXIST, RANDOM_PASSWORD);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.updateUserPasswordByEmail(RANDOM_EMAIL, RANDOM_PASSWORD);
+            userDataService.updateUserPasswordById(RANDOM_USER_ID, RANDOM_PASSWORD);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: email");
-        assertEquals(secondException.getMessage(), "Incorrect argument: email");
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: password");
         assertEquals(thirdException.getMessage(), "Incorrect argument: password");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: password");
-        assertEquals(fifthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
+        assertEquals(fourthException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
     public void testOfUpdateUserImageByEmail(){
 
-        when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(firstUser);
-        when(userRepository.findByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST)).thenReturn(null);
+        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
+        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserImageByEmail(null, RANDOM_IMAGE);
+            userDataService.updateUserImageById(null, RANDOM_IMAGE);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserImageByEmail(WRONG_USER_EMAIL, RANDOM_IMAGE);
+            userDataService.updateUserImageById(RANDOM_USER_ID, null);
         });
 
-        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            userDataService.updateUserImageByEmail(RANDOM_EMAIL, null);
-        });
-
-        Exception fourthException = assertThrows(UserNotFoundException.class, () -> {
-            userDataService.updateUserImageByEmail(EMAIL_OF_USER_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        Exception thirdException = assertThrows(UserNotFoundException.class, () -> {
+            userDataService.updateUserImageById(ID_OF_USER_WHICH_NOT_EXIST, RANDOM_IMAGE);
         });
 
         assertDoesNotThrow(() -> {
-            userDataService.updateUserImageByEmail(RANDOM_EMAIL, RANDOM_IMAGE);
+            userDataService.updateUserImageById(RANDOM_USER_ID, RANDOM_IMAGE);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: email");
-        assertEquals(secondException.getMessage(), "Incorrect argument: email");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: image");
-        assertEquals(fourthException.getMessage(), "User with email " + EMAIL_OF_USER_WHICH_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: image");
+        assertEquals(thirdException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 
     @Test
