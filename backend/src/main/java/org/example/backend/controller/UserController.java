@@ -38,6 +38,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+    @PutMapping("/user/update-last-name")
+    public ResponseEntity<UserModel> updateUserLastName(@RequestBody UserModel userModel) {
+
+        UserModel user;
+
+        try{
+            user = userDataService.updateUserLastNameById(userModel.getId(), userModel.getLastName());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
     @GetMapping("/admin/user/{email}")
     public ResponseEntity<UserModel> getUserByEmail(@PathVariable("email") String email) {
 
