@@ -3,6 +3,7 @@ package org.example.backend.controller;
 import org.example.backend.dao.service.UserDataService;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.user.UserNotFoundException;
+import org.example.backend.model.UserIdAndImage;
 import org.example.backend.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,6 +62,22 @@ public class UserController {
 
         try{
             user = userDataService.updateUserPasswordById(userModel.getId(), userModel.getPassword());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @PutMapping("/user/update-profile-image")
+    public ResponseEntity<UserModel> updateUserProfileImage(@RequestBody UserIdAndImage userIdAndImage) {
+
+        UserModel user;
+
+        try{
+            user = userDataService.updateUserImageById(userIdAndImage.getId(), userIdAndImage.getImage());
         } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (UserNotFoundException e) {
