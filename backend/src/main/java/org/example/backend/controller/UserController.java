@@ -7,11 +7,9 @@ import org.example.backend.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @RestController
@@ -24,7 +22,23 @@ public class UserController {
         this.userDataService = userDataService;
     }
 
-    @GetMapping("/admin/user-by-email/{email}")
+    @PutMapping("/user/update-first-name")
+    public ResponseEntity<UserModel> updateUserFirstName(@RequestBody UserModel userModel) {
+
+        UserModel user;
+
+        try{
+            user = userDataService.updateUserFirstNameById(userModel.getId(), userModel.getFirstName());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
+    @GetMapping("/admin/user/{email}")
     public ResponseEntity<UserModel> getUserByEmail(@PathVariable("email") String email) {
 
         UserModel foundUser;
