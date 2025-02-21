@@ -54,6 +54,22 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(user);
     }
 
+    @PutMapping("/user/update-password")
+    public ResponseEntity<UserModel> updateUserPassword(@RequestBody UserModel userModel) {
+
+        UserModel user;
+
+        try{
+            user = userDataService.updateUserPasswordById(userModel.getId(), userModel.getPassword());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(user);
+    }
+
     @GetMapping("/admin/user/{email}")
     public ResponseEntity<UserModel> getUserByEmail(@PathVariable("email") String email) {
 
