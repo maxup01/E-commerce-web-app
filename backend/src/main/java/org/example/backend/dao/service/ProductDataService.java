@@ -322,6 +322,30 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<ProductModel> getProductsByTypeAndPriceRange(String type, Double minimalPrice, Double maximalPrice){
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+        else if((minimalPrice == null) || (minimalPrice <= 0))
+            throw new BadArgumentException("Incorrect argument: minimalPrice");
+        else if((maximalPrice == null) || (maximalPrice <= 0))
+            throw new BadArgumentException("Incorrect argument: maximalPrice");
+        else if(minimalPrice > maximalPrice)
+            throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
+
+        List<Product> foundProducts = productRepository
+                .findByTypeAndPriceRange(type, minimalPrice, maximalPrice);
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        foundProducts.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
+    }
+
+    @Transactional
     public List<ProductModel> getProductsByPhraseAndPriceRange(String phrase, Double minimalPrice, Double maximalPrice){
 
         if((phrase == null) || (phrase.trim().isEmpty()))

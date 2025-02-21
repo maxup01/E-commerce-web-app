@@ -633,6 +633,61 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetProductsByTypeAndPriceRange(){
+
+        when(productRepository.findByTypeAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+                GREATER_PRICE_THAN_CURRENT_PRICE_1)).thenReturn(new ArrayList<>());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(null, LOWER_PRICE_THAN_CURRENT_PRICE,
+                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange("", LOWER_PRICE_THAN_CURRENT_PRICE,
+                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, null,
+                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, NEGATIVE_PRICE,
+                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+                    null);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+                    NEGATIVE_PRICE);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                    LOWER_PRICE_THAN_CURRENT_PRICE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductsByTypeAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: type");
+        assertEquals(secondException.getMessage(), "Incorrect argument: type");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: minimalPrice");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: minimalPrice");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: maximalPrice");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: maximalPrice");
+        assertEquals(seventhException.getMessage(), "Argument minimalPrice mustn't be greater than maximalPrice");
+    }
+
+    @Test
     public void testOfGetProductsByPhraseAndPriceRange(){
 
         when(productRepository.findByPhraseAndPriceRange(RANDOM_PHRASE, LOWER_PRICE_THAN_CURRENT_PRICE,
@@ -654,22 +709,22 @@ public class ProductDataServiceTest {
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.getProductsByPhraseAndPriceRange(RANDOM_TYPE, NEGATIVE_PRICE,
+            productDataService.getProductsByPhraseAndPriceRange(RANDOM_PHRASE, NEGATIVE_PRICE,
                     GREATER_PRICE_THAN_CURRENT_PRICE_1);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.getProductsByPhraseAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+            productDataService.getProductsByPhraseAndPriceRange(RANDOM_PHRASE, LOWER_PRICE_THAN_CURRENT_PRICE,
                     null);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.getProductsByPhraseAndPriceRange(RANDOM_TYPE, LOWER_PRICE_THAN_CURRENT_PRICE,
+            productDataService.getProductsByPhraseAndPriceRange(RANDOM_PHRASE, LOWER_PRICE_THAN_CURRENT_PRICE,
                     NEGATIVE_PRICE);
         });
 
         Exception seventhException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.getProductsByPhraseAndPriceRange(RANDOM_TYPE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+            productDataService.getProductsByPhraseAndPriceRange(RANDOM_PHRASE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
                     LOWER_PRICE_THAN_CURRENT_PRICE);
         });
 
