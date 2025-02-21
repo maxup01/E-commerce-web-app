@@ -26,6 +26,11 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type")
     List<Product> findByPhraseAndType(@Param("phrase") String phrase, @Param("type") String type);
 
+    @Query("SELECT p FROM Product AS p WHERE p.type = :type AND p.currentPrice >= :minimalPrice AND " +
+            " p.currentPrice <= :maximalPrice")
+    List<Product> findByTypeAndPriceRange(@Param("type") String type,
+                                            @Param("minimalPrice") Double min, @Param("maximalPrice") Double max);
+
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.currentPrice >= :minimalPrice AND " +
             " p.currentPrice <= :maximalPrice")
     List<Product> findByPhraseAndPriceRange(@Param("phrase") String phrase,

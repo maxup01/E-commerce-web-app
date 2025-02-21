@@ -156,6 +156,24 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    public void testOfFindByTypeAndPriceRange(){
+
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
+                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
+        productRepository.save(product);
+
+        List<Product> products = productRepository
+                .findByTypeAndPriceRange(RANDOM_TYPE_LOWER_CASE,
+                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        List<Product> notFoundedProductList = productRepository
+                .findByTypeAndPriceRange(RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                        GREATER_PRICE_THAN_CURRENT_PRICE_2);
+
+        assertEquals(products.size(), 1);
+        assertEquals(notFoundedProductList.size(), 0);
+    }
+
+    @Test
     public void testOfFindByPhraseAndPriceRange(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
