@@ -118,8 +118,8 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userIdAndImage);
     }
 
-    @DeleteMapping("/delete-user-by-id/{id}")
-    public ResponseEntity deleteUserById(@PathVariable("id") UUID id) {
+    @DeleteMapping("/delete-user")
+    public ResponseEntity deleteUserById(@RequestBody UUID id) {
 
         try{
             userDataService.deleteUserById(id);
