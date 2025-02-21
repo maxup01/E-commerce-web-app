@@ -18,6 +18,7 @@ import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.exception.user.UserNotSavedException;
 import org.example.backend.model.PrivilegeModel;
 import org.example.backend.model.RoleModel;
+import org.example.backend.model.UserIdAndImage;
 import org.example.backend.model.UserModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -420,7 +421,7 @@ public class UserDataService {
     }
 
     @Transactional
-    public UserModel updateUserImageById(UUID id, byte[] image) {
+    public UserIdAndImage updateUserImageById(UUID id, byte[] image) {
 
          if(id == null)
              throw new BadArgumentException("Null argument: id");
@@ -439,7 +440,7 @@ public class UserDataService {
          foundUser.setProfileImage(userImage);
          userRepository.save(foundUser);
 
-         return UserModel.fromUser(foundUser);
+         return new UserIdAndImage(id, userImage.getImage());
     }
 
     @Transactional

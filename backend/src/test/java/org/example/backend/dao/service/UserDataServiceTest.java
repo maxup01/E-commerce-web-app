@@ -1,5 +1,6 @@
 package org.example.backend.dao.service;
 
+import org.example.backend.dao.entity.image.UserImage;
 import org.example.backend.dao.entity.user.Privilege;
 import org.example.backend.dao.entity.user.Role;
 import org.example.backend.dao.entity.user.User;
@@ -113,6 +114,7 @@ public class UserDataServiceTest {
                 .password(RANDOM_PASSWORD)
                 .birthDate(RANDOM_BIRTH_DATE)
                 .role(role)
+                .profileImage(new UserImage(RANDOM_IMAGE))
                 .build();
     }
 
@@ -811,6 +813,7 @@ public class UserDataServiceTest {
 
         when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
         when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(userImageRepository.save(any())).thenReturn(firstUser.getProfileImage());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.updateUserImageById(null, RANDOM_IMAGE);
