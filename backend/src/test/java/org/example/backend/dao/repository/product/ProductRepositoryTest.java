@@ -196,10 +196,10 @@ public class ProductRepositoryTest {
 
         productRepository.save(product1);
 
-        List<Product> products = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+        List<Product> products = productRepository.findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
                 RANDOM_TYPE_LOWER_CASE, LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
 
-        List<Product> productsNotFound = productRepository.findByPhraseAndTypeAndPriceRanges(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+        List<Product> productsNotFound = productRepository.findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
                 RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2);
 
         assertEquals(products.size(), 1);

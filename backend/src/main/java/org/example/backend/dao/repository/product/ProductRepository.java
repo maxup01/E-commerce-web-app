@@ -39,8 +39,8 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type" +
     " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
-    List<Product> findByPhraseAndTypeAndPriceRanges(@Param("phrase") String phrase, @Param("type") String type,
-                                                    @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
+    List<Product> findByPhraseAndTypeAndPriceRange(@Param("phrase") String phrase, @Param("type") String type,
+                                                   @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
 
     @Query("SELECT p FROM Product AS p WHERE p.currentPrice != p.regularPrice")
     List<Product> showOnSale();
