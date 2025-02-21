@@ -10,7 +10,7 @@ import java.util.UUID;
 
 public interface ProductRepository extends JpaRepository<Product, UUID> {
 
-    @Query("SELECT p FROM Product p WHERE p.EANCode = :eanCode")
+    @Query("SELECT p FROM Product AS p WHERE p.EANCode = :eanCode")
     Product findByEANCode(@Param("eanCode") String eanCode);
 
     @Query("SELECT p FROM Product AS p WHERE p.type = :type")
@@ -20,11 +20,16 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase%")
     List<Product> findByPhrase(@Param("phrase") String phrase);
 
+    @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
+    List<Product> findByPriceRange(@Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
+
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type")
     List<Product> findByPhraseAndType(@Param("phrase") String phrase, @Param("type") String type);
 
-    @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
-    List<Product> findByPriceRange(@Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.currentPrice >= :minimalPrice AND " +
+            " p.currentPrice <= :maximalPrice")
+    List<Product> findByPhraseAndPriceRange(@Param("phrase") String phrase,
+                                            @Param("minimalPrice") Double min, @Param("maximalPrice") Double max);
 
     //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type" +

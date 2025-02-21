@@ -130,20 +130,6 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void testOfFindByPhraseAndType(){
-
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
-                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
-        productRepository.save(product);
-
-        List<Product> products = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
-        List<Product> notFoundedProductList = productRepository.findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, DIFFERENT_RANDOM_TYPE_LOWER_CASE);
-
-        assertEquals(products.size(), 1);
-        assertEquals(notFoundedProductList.size(), 0);
-    }
-
-    @Test
     public void testOfFindByPriceRange(){
 
         List<Product> products = productRepository.findByPriceRange(LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
@@ -151,6 +137,40 @@ public class ProductRepositoryTest {
 
         assertEquals(products.size(), 1);
         assertEquals(notFoundProducts.size(), 0);
+    }
+
+    @Test
+    public void testOfFindByPhraseAndType(){
+
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
+                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
+        productRepository.save(product);
+
+        List<Product> products = productRepository
+                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
+        List<Product> notFoundedProductList = productRepository
+                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, DIFFERENT_RANDOM_TYPE_LOWER_CASE);
+
+        assertEquals(products.size(), 1);
+        assertEquals(notFoundedProductList.size(), 0);
+    }
+
+    @Test
+    public void testOfFindByPhraseAndPriceRange(){
+
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
+                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
+        productRepository.save(product);
+
+        List<Product> products = productRepository
+                .findByPhraseAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        List<Product> notFoundedProductList = productRepository
+                .findByPhraseAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                        GREATER_PRICE_THAN_CURRENT_PRICE_2);
+
+        assertEquals(products.size(), 1);
+        assertEquals(notFoundedProductList.size(), 0);
     }
 
     @Test
