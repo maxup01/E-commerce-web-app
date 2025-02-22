@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 @RestController
 public class ProductController {
@@ -212,5 +213,17 @@ public class ProductController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @DeleteMapping("/admin/product/delete")
+    public ResponseEntity deleteProductById(@RequestBody UUID id){
+
+        try{
+            productDataService.deleteProductById(id);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 }
