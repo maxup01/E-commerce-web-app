@@ -433,16 +433,6 @@ public class ProductDataService {
     }
 
     @Transactional
-    public Long getTotalQuantityOfAllProducts(){
-        return productRepository.getTotalQuantityOfProducts();
-    }
-
-    @Transactional
-    public List<Object[]> getAllTypesOfProductsAndRelatedToThemQuantity(){
-        return productRepository.getTypesAndQuantityOfProductsWithThisTypes();
-    }
-
-    @Transactional
     public List<Object[]> getProductsAndRelatedToThemQuantityByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
@@ -462,6 +452,16 @@ public class ProductDataService {
         });
 
         return rowsWithProductModel;
+    }
+
+    @Transactional
+    public Long getTotalQuantityOfAllProducts(){
+        return productRepository.getTotalQuantityOfProducts();
+    }
+
+    @Transactional
+    public List<Object[]> getAllTypesOfProductsAndRelatedToThemQuantity(){
+        return productRepository.getTypesAndQuantityOfProductsWithThisTypes();
     }
 
     @Transactional

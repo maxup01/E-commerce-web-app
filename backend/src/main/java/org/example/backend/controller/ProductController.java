@@ -215,6 +215,19 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @GetMapping("/admin/products/quantity")
+    public ResponseEntity<Long> getQuantityOfAllProducts(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(productDataService.getTotalQuantityOfAllProducts());
+    }
+
+    @GetMapping("/admin/products/types-and-related-quantity")
+    public ResponseEntity<List<Object[]>> getProductTypesAndRelatedToThemQuantity(){
+
+        return ResponseEntity
+                .status(HttpStatus.OK).body(productDataService.getAllTypesOfProductsAndRelatedToThemQuantity());
+    }
+
     @DeleteMapping("/admin/product/delete")
     public ResponseEntity deleteProductById(@RequestBody UUID id){
 
