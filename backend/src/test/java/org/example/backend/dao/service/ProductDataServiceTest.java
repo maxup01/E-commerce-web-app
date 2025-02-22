@@ -25,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -78,6 +79,7 @@ public class ProductDataServiceTest {
         product = new Product(RANDOM_PRODUCT_NAME, OCCUPIED_EAN_CODE, RANDOM_TYPE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
                 RANDOM_WIDTH, RANDOM_PRICE, RANDOM_PRICE, new Stock(RANDOM_STOCK), new ProductMainImage(RANDOM_IMAGE));
         product.getPageImages().add(new ProductPageImage(ID_OF_PAGE_IMAGE_THAT_EXIST, RANDOM_IMAGE, product));
+        product.setId(ID_OF_PRODUCT_WHICH_EXIST);
         list_of_products = new ArrayList<>();
         list_of_products.add(product);
     }
@@ -88,6 +90,7 @@ public class ProductDataServiceTest {
         when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
         when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
         when(productRepository.findByEANCode(DIFFERENT_13_SIGN_EAN_CODE)).thenReturn(null);
+        when(productRepository.save(any())).thenReturn(product);
 
         ProductModel productModel = ProductModel
                 .builder()
@@ -288,29 +291,61 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void testOfUpdateProductStockQuantityById(){
+    public void testOfAddProductStockQuantityById(){
 
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductStockQuantityById(null, DIFFERENT_STOCK);
+            productDataService.addProductQuantityById(null, DIFFERENT_STOCK);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
         });
 
         Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.updateProductStockQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: id");
+        assertEquals(secondException.getMessage(), "Incorrect argument: stock");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: stock");
+        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+    }
+
+    @Test
+    public void testOfReduceProductStockQuantityById(){
+
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
+        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductQuantityById(null, DIFFERENT_STOCK);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+        });
+
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
         });
 
         assertEquals(firstException.getMessage(), "Null argument: id");
