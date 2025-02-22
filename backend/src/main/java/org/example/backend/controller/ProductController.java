@@ -113,7 +113,8 @@ public class ProductController {
     }
 
     @PutMapping("/products/add-quantity")
-    public ResponseEntity<ProductModelAndStock> addProductQuantity(@RequestBody ProductModelAndStock productModelAndStock) {
+    public ResponseEntity<ProductModelAndStock> addProductQuantity(
+            @RequestBody ProductModelAndStock productModelAndStock) {
 
         if(productModelAndStock == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -123,6 +124,27 @@ public class ProductController {
         try{
             result = productDataService
                     .addProductQuantityById(productModelAndStock.getProduct().getId(), productModelAndStock.getStock());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PutMapping("/products/add-quantity")
+    public ResponseEntity<ProductModelAndStock> reduceProductQuantity(
+            @RequestBody ProductModelAndStock productModelAndStock) {
+
+        if(productModelAndStock == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        ProductModelAndStock result;
+
+        try{
+            result = productDataService
+                    .reduceProductQuantityById(productModelAndStock.getProduct().getId(), productModelAndStock.getStock());
         } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e) {
