@@ -12,6 +12,7 @@ import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.ProductModel;
+import org.example.backend.model.ProductModelAndPageImages;
 import org.example.backend.model.ProductModelAndStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -173,7 +174,7 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel addProductPageImageById(UUID id, byte[] newPageImage){
+    public ProductModelAndPageImages addProductPageImageById(UUID id, byte[] newPageImage){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -187,11 +188,12 @@ public class ProductDataService {
         foundProduct.getPageImages().add(new ProductPageImage(newPageImage));
         productRepository.save(foundProduct);
 
-        return ProductModel.fromProduct(foundProduct);
+        return new ProductModelAndPageImages(ProductModel.fromProduct(foundProduct),
+                ProductModelAndPageImages.imagesFromPageImages(foundProduct.getPageImages()));
     }
 
     @Transactional
-    public ProductModel deleteProductPageImageById(UUID id, UUID pageImageId){
+    public ProductModelAndPageImages deleteProductPageImageById(UUID id, UUID pageImageId){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
@@ -211,7 +213,8 @@ public class ProductDataService {
 
         productRepository.save(foundProduct);
 
-        return ProductModel.fromProduct(foundProduct);
+        return new ProductModelAndPageImages(ProductModel.fromProduct(foundProduct),
+                ProductModelAndPageImages.imagesFromPageImages(foundProduct.getPageImages()));
     }
 
     @Transactional
