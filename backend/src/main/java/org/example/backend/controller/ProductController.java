@@ -172,6 +172,26 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @PutMapping("/products/delete-page-images")
+    public ResponseEntity<ProductModelAndPageImages> deleteProductPageImage(
+            @RequestBody ProductIdAndPageImageIdModel model) {
+
+        if(model == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        ProductModelAndPageImages result;
+
+        try{
+            result = productDataService.deleteProductPageImageById(model.getProductId(), model.getPageImageId());
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e){
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @GetMapping("/products")
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
             @RequestBody ProductSearchModel productSearchModel) {
