@@ -2,6 +2,7 @@ package org.example.backend.controller;
 
 import org.example.backend.dao.service.ProductDataService;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.ProductModel;
 import org.example.backend.model.ProductModelAndStock;
@@ -12,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Objects;
 
 @RestController
 public class ProductController {
@@ -42,6 +44,71 @@ public class ProductController {
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    @PutMapping("/admin/products/update")
+    public ResponseEntity<ProductModel> updateProduct(@RequestBody ProductModel productModel) {
+
+        if(productModel == null)
+            throw new BadArgumentException("Null argument: productModel");
+
+        ProductModel existingProduct = productDataService.getProductById(productModel.getId());
+
+        if(existingProduct == null)
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+
+        if(!Objects.equals(productModel.getDescription(), existingProduct.getDescription())){
+
+            try{
+                existingProduct = productDataService
+                        .updateProductDescriptionById(existingProduct.getId(), productModel.getDescription());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            } catch (ProductNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        }
+
+        if((!Objects.equals(productModel.getHeight(), existingProduct.getHeight())) ||
+                (!Objects.equals(productModel.getWidth(), existingProduct.getWidth()))){
+
+            try{
+                existingProduct = productDataService
+                        .updateProductSizeById(existingProduct.getId(), productModel.getHeight(), productModel.getWidth());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            } catch (ProductNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        }
+
+        if((!Objects.equals(productModel.getRegularPrice(), existingProduct.getRegularPrice())) ||
+                (!Objects.equals(productModel.getCurrentPrice(), existingProduct.getCurrentPrice()))){
+
+            try{
+                existingProduct = productDataService
+                        .updateProductRegularPriceAndCurrentPriceById(
+                                existingProduct.getId(), productModel.getRegularPrice(), productModel.getCurrentPrice());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            } catch (ProductNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        }
+
+        if(productModel.getMainImage() != existingProduct.getMainImage()){
+
+            try{
+                existingProduct = productDataService
+                        .updateProductMainImageById(existingProduct.getId(), productModel.getMainImage());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            } catch (ProductNotFoundException e) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            }
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(existingProduct);
     }
 
     @GetMapping("/products")

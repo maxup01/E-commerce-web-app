@@ -101,45 +101,6 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModelAndStock addProductQuantityById(UUID id, Long stock){
-
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
-        else if((stock == null) || (stock < 0))
-            throw new BadArgumentException("Incorrect argument: stock");
-
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
-
-        foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() + stock);
-        productRepository.save(foundProduct);
-
-        return new ProductModelAndStock(ProductModel.fromProduct(foundProduct), foundProduct.getStock().getQuantity());
-    }
-
-    @Transactional
-    public ProductModelAndStock reduceProductQuantityById(UUID id, Long stock){
-
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
-        else if((stock == null) || (stock < 0))
-            throw new BadArgumentException("Incorrect argument: stock");
-
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
-
-        if(foundProduct.getStock().getQuantity() < stock)
-            throw new BadArgumentException("Incorrect argument: stock");
-
-        foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() - stock);
-        productRepository.save(foundProduct);
-
-        return new ProductModelAndStock(ProductModel.fromProduct(foundProduct), foundProduct.getStock().getQuantity());
-    }
-
-    @Transactional
     public ProductModel updateProductSizeById(UUID id, Integer height, Integer width){
 
         if(id == null)
@@ -251,6 +212,45 @@ public class ProductDataService {
         productRepository.save(foundProduct);
 
         return ProductModel.fromProduct(foundProduct);
+    }
+
+    @Transactional
+    public ProductModelAndStock addProductQuantityById(UUID id, Long stock){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((stock == null) || (stock < 0))
+            throw new BadArgumentException("Incorrect argument: stock");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() + stock);
+        productRepository.save(foundProduct);
+
+        return new ProductModelAndStock(ProductModel.fromProduct(foundProduct), foundProduct.getStock().getQuantity());
+    }
+
+    @Transactional
+    public ProductModelAndStock reduceProductQuantityById(UUID id, Long stock){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+        else if((stock == null) || (stock < 0))
+            throw new BadArgumentException("Incorrect argument: stock");
+
+        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
+            return new ProductNotFoundException("Product with id " + id + " not found");
+        });
+
+        if(foundProduct.getStock().getQuantity() < stock)
+            throw new BadArgumentException("Incorrect argument: stock");
+
+        foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() - stock);
+        productRepository.save(foundProduct);
+
+        return new ProductModelAndStock(ProductModel.fromProduct(foundProduct), foundProduct.getStock().getQuantity());
     }
 
     @Transactional
