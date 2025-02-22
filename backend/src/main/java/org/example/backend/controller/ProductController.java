@@ -112,6 +112,26 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(existingProduct);
     }
 
+    @PutMapping("/products/add-quantity")
+    public ResponseEntity<ProductModelAndStock> addProductQuantity(@RequestBody ProductModelAndStock productModelAndStock) {
+
+        if(productModelAndStock == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        ProductModelAndStock result;
+
+        try{
+            result = productDataService
+                    .addProductQuantityById(productModelAndStock.getProduct().getId(), productModelAndStock.getStock());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @GetMapping("/products")
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
             @RequestBody ProductSearchModel productSearchModel) {
