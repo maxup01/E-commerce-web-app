@@ -2,17 +2,15 @@ package org.example.backend.controller;
 
 import org.example.backend.dao.service.ProductDataService;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.ProductModel;
+import org.example.backend.model.ProductModelAndStock;
 import org.example.backend.model.ProductSearchModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -23,6 +21,27 @@ public class ProductController {
     @Autowired
     public ProductController(ProductDataService productDataService) {
         this.productDataService = productDataService;
+    }
+
+    @PostMapping("/products/create")
+    public ResponseEntity<ProductModelAndStock> createProduct(@RequestBody ProductModelAndStock productModelAndStock) {
+
+        if(productModelAndStock == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        ProductModelAndStock response;
+
+        try{
+            response = productDataService.saveNewProduct(productModelAndStock.getProduct(),
+                    productModelAndStock.getStock());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotSavedException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
     @GetMapping("/products")

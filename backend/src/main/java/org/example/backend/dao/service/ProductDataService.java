@@ -12,6 +12,7 @@ import org.example.backend.exception.image.ProductPageImageNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.ProductModel;
+import org.example.backend.model.ProductModelAndStock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -39,7 +40,7 @@ public class ProductDataService {
     }
 
     @Transactional
-    public Product saveNewProduct(ProductModel productModel, Long stock){
+    public ProductModelAndStock saveNewProduct(ProductModel productModel, Long stock){
 
         if(productModel == null)
             throw new BadArgumentException("Null argument: productModel");
@@ -78,7 +79,7 @@ public class ProductDataService {
                 productModel.getDescription(), productModel.getHeight(), productModel.getWidth(), productModel.getRegularPrice(),
                 productModel.getCurrentPrice(), stockEntity, productMainImage);
 
-        return productRepository.save(product);
+        return new ProductModelAndStock(ProductModel.fromProduct(productRepository.save(product)), stock);
     }
 
     @Transactional
