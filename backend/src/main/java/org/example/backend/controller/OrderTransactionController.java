@@ -4,6 +4,7 @@ import org.example.backend.dao.service.OrderTransactionService;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.model.OrderTransactionModel;
+import org.example.backend.model.TimePeriodModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,5 +38,25 @@ public class OrderTransactionController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(orderTransactionModel);
+    }
+
+    @GetMapping("/orders/count-by-time-period")
+    public ResponseEntity<Long> getCountOfAllOrderTransactionsByTimePeriod(
+            @RequestBody TimePeriodModel timePeriodModel) {
+
+        if(timePeriodModel == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        Long count;
+
+        try{
+            count = orderTransactionService
+                    .getCountOfAllOrderTransactionsByTimePeriod(
+                            timePeriodModel.getStartingDate(), timePeriodModel.getEndDate());
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(count);
     }
 }
