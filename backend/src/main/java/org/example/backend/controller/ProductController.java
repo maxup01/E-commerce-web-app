@@ -4,9 +4,7 @@ import org.example.backend.dao.service.ProductDataService;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
-import org.example.backend.model.ProductModel;
-import org.example.backend.model.ProductModelAndStock;
-import org.example.backend.model.ProductSearchModel;
+import org.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -148,6 +146,26 @@ public class ProductController {
         } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @PutMapping("/products/insert-page-images")
+    public ResponseEntity<ProductModelAndPageImages> insertProductPageImage(
+            @RequestBody ProductIdAndPageImage model) {
+
+        if(model == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        ProductModelAndPageImages result;
+
+        try{
+            result = productDataService.addProductPageImageById(model.getProductId(), model.getImage());
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
