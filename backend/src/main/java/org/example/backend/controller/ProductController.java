@@ -133,7 +133,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/products/add-quantity")
+    @PutMapping("/products/reduce-quantity")
     public ResponseEntity<ProductModelAndStock> reduceProductQuantity(
             @RequestBody ProductModelAndStock productModelAndStock) {
 
