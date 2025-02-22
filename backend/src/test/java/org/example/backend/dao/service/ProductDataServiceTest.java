@@ -865,4 +865,18 @@ public class ProductDataServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
         assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
     }
+
+    @Test
+    public void testOfDeleteProductById(){
+
+        Exception exception = assertThrows(BadArgumentException.class, () -> {
+            productDataService.deleteProductById(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.deleteProductById(ID_OF_PRODUCT_WHICH_EXIST);
+        });
+
+        assertEquals(exception.getMessage(), "Null argument: id");
+    }
 }

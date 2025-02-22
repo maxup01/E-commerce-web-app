@@ -99,8 +99,6 @@ public class PrivilegeController {
             userDataService.deletePrivilegeById(id);
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (PrivilegeNotFoundException e){
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();

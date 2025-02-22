@@ -250,10 +250,6 @@ public class UserDataServiceTest {
     @Test
     public void testOfDeletePrivilegeById(){
 
-        when(privilegeRepository.findById(ID_OF_FIRST_CREATED_ENTITY))
-                .thenReturn(Optional.ofNullable(existingPrivilege));
-        when(privilegeRepository.findById(OTHER_ID)).thenReturn(Optional.empty());
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.deletePrivilegeById(null);
         });
@@ -262,17 +258,12 @@ public class UserDataServiceTest {
             userDataService.deletePrivilegeById(NEGATIVE_ID);
         });
 
-        Exception thirdException = assertThrows(PrivilegeNotFoundException.class, () -> {
-            userDataService.deletePrivilegeById(OTHER_ID);
-        });
-
         assertDoesNotThrow(() -> {
             userDataService.deletePrivilegeById(ID_OF_FIRST_CREATED_ENTITY);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: id");
         assertEquals(secondException.getMessage(), "Incorrect argument: id");
-        assertEquals(thirdException.getMessage(), "Privilege with id " + OTHER_ID + " not found");
     }
 
     @Test
@@ -910,15 +901,8 @@ public class UserDataServiceTest {
     @Test
     public void testOfDeleteUserById(){
 
-        when(userRepository.findById(RANDOM_USER_ID)).thenReturn(Optional.ofNullable(firstUser));
-        when(userRepository.findById(ID_OF_USER_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             userDataService.deleteUserById(null);
-        });
-
-        Exception secondException = assertThrows(UserNotFoundException.class, () -> {
-            userDataService.deleteUserById(ID_OF_USER_WHICH_NOT_EXIST);
         });
 
         assertDoesNotThrow(() -> {
@@ -926,6 +910,5 @@ public class UserDataServiceTest {
         });
 
         assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "User with id " + ID_OF_USER_WHICH_NOT_EXIST + " not found");
     }
 }

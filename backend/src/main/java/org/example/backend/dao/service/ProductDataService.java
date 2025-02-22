@@ -463,4 +463,13 @@ public class ProductDataService {
 
         return rowsWithProductModel;
     }
+
+    @Transactional
+    public void deleteProductById(UUID id){
+
+        if(id == null)
+            throw new BadArgumentException("Null argument: id");
+
+        productRepository.deleteById(id);
+    }
 }

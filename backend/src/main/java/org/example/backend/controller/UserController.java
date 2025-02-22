@@ -125,8 +125,6 @@ public class UserController {
             userDataService.deleteUserById(id);
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        } catch (UserNotFoundException e){
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         return ResponseEntity.status(HttpStatus.OK).build();

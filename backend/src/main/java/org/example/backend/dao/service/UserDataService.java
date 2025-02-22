@@ -125,27 +125,6 @@ public class UserDataService {
     }
 
     @Transactional
-    public void deletePrivilegeById(Long id) {
-
-        if((id == null) || (id <= 0))
-            throw new BadArgumentException("Incorrect argument: id");
-
-        Privilege privilege = privilegeRepository.findById(id).orElseThrow(() -> {
-            return new PrivilegeNotFoundException("Privilege with id " + id + " not found");
-        });
-
-        if(privilege.getRoles() != null){
-            privilege.getRoles().forEach(role -> {
-                List<Privilege> privileges = role.getPrivileges();
-                privileges.removeIf((pomPrivilege) -> pomPrivilege.getId() == id);
-                role.setPrivileges(privileges);
-            });
-        }
-
-        privilegeRepository.delete(privilege);
-    }
-
-    @Transactional
     public List<PrivilegeModel> getAllPrivileges() {
 
         List<Privilege> privileges = privilegeRepository.findAll();
@@ -157,6 +136,15 @@ public class UserDataService {
         });
 
         return privilegeModels;
+    }
+
+    @Transactional
+    public void deletePrivilegeById(Long id) {
+
+        if((id == null) || (id <= 0))
+            throw new BadArgumentException("Incorrect argument: id");
+
+        privilegeRepository.deleteById(id);
     }
 
     @Transactional
@@ -330,7 +318,7 @@ public class UserDataService {
             });
         }
 
-        roleRepository.delete(roleToDelete);
+        roleRepository.deleteById(idOfRoleToDelete);
     }
 
     @Transactional
@@ -494,11 +482,6 @@ public class UserDataService {
         if(id == null)
             throw new BadArgumentException("Null argument: id");
 
-        User foundUser = userRepository.findById(id).orElse(null);
-
-        if(foundUser == null)
-            throw new UserNotFoundException("User with id " + id + " not found");
-
-        userRepository.delete(foundUser);
+        userRepository.deleteById(id);
     }
 }
