@@ -130,6 +130,9 @@ public class ProductDataService {
             return new ProductNotFoundException("Product with id " + id + " not found");
         });
 
+        if(foundProduct.getStock().getQuantity() < stock)
+            throw new BadArgumentException("Incorrect argument: stock");
+
         foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() - stock);
         productRepository.save(foundProduct);
 

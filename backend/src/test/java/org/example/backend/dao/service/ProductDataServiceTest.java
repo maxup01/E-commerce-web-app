@@ -50,6 +50,7 @@ public class ProductDataServiceTest {
     private final Double NEGATIVE_PRICE = -10.00;
     private final Long RANDOM_STOCK = 1000L;
     private final Long DIFFERENT_STOCK = 76L;
+    private final Long GREATER_STOCK = 100000L;
     private final Long NEGATIVE_STOCK = -10L;
     private final byte[] RANDOM_IMAGE = new byte[12];
     private final String RANDOM_PHRASE = "Random product";
@@ -329,29 +330,34 @@ public class ProductDataServiceTest {
         when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(null, DIFFERENT_STOCK);
+            productDataService.reduceProductQuantityById(null, DIFFERENT_STOCK);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
         });
 
         Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, GREATER_STOCK);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
         });
 
         assertEquals(firstException.getMessage(), "Null argument: id");
         assertEquals(secondException.getMessage(), "Incorrect argument: stock");
         assertEquals(thirdException.getMessage(), "Incorrect argument: stock");
         assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: stock");
     }
 
     @Test
