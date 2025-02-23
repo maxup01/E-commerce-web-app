@@ -214,6 +214,17 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindOrderTransactionsByUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByUserEmail(RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 2);
+    }
+
+    @Test
     public void testOfFindOrderTransactionByTimePeriodAndPaymentMethodName(){
 
         orderTransactionRepository.save(orderTransaction);
@@ -242,6 +253,20 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 1);
+        assertEquals(orders.get(0).getDeliveryAddress(), address);
+        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
+        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
+    }
+
+    @Test
     public void testOfFindOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(){
 
         orderTransactionRepository.save(orderTransaction);
@@ -254,27 +279,13 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindOrderTransactionsByUserEmail(){
+    public void testOfFindOrderTransactionsByPaymentMethodNameAndUserEmail(){
 
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByUserEmail(RANDOM_EMAIL);
+                .findOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_METHOD, RANDOM_EMAIL);
 
         assertEquals(orders.size(), 2);
-    }
-
-    @Test
-    public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
-
-        orderTransactionRepository.save(orderTransaction);
-
-        List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
-
-        assertEquals(orders.size(), 1);
-        assertEquals(orders.get(0).getDeliveryAddress(), address);
-        assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
-        assertEquals(orders.get(0).getDate(), TODAYS_DATE);
     }
 }
