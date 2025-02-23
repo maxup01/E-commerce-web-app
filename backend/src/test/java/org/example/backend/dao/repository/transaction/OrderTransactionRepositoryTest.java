@@ -254,6 +254,17 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindOrderTransactionsByUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByUserEmail(RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 2);
+    }
+
+    @Test
     public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
 
         orderTransactionRepository.save(orderTransaction);

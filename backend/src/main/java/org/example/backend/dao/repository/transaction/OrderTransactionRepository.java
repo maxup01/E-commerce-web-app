@@ -23,6 +23,15 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByDeliveryProviderName(@Param("deliveryProviderName") String deliveryProviderName);
 
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.userEmail = :email")
+    List<OrderTransaction> findOrderTransactionsByUserEmail(@Param("email") String email);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
+            " o.user.email = :userEmail")
+    List<OrderTransaction> findOrderTransactionsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate,
+                                                                         @Param("endingDate") Date endingDate,
+                                                                         @Param("userEmail") String userEmail);
+
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.paymentMethod.name = :paymentMethodName")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndPaymentMethodName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
@@ -37,9 +46,4 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
             "AND o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
             @Param("paymentMethodName") String paymentMethodName, @Param("deliveryProviderName") String deliveryProviderName);
-
-    @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
-            " o.user.email = :userEmail")
-    List<OrderTransaction> findOrderTransactionsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-                                                                         @Param("userEmail") String userEmail);
 }
