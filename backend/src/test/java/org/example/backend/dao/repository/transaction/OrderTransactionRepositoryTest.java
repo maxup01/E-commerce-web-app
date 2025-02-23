@@ -182,7 +182,8 @@ public class OrderTransactionRepositoryTest {
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -197,6 +198,17 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_METHOD);
+
+        assertEquals(orders.size(), 2);
+    }
+
+    @Test
+    public void testOfFindOrderTransactionsByDeliveryProviderName(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByDeliveryProviderName(RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(orders.size(), 2);
     }
