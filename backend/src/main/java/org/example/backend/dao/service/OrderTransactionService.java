@@ -295,7 +295,8 @@ public class OrderTransactionService {
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
-    @Transactional List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
+    @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
             String paymentMethodName, String userEmail) {
 
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
@@ -305,6 +306,39 @@ public class OrderTransactionService {
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndUserEmail(paymentMethodName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+            String deliveryProviderName, String userEmail) {
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByDeliveryProviderNameAndUserEmail(deliveryProviderName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
+            Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(startingDate, endingDate,
+                        paymentMethodName, deliveryProviderName);
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
