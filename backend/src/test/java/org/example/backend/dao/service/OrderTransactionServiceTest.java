@@ -530,6 +530,26 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactionsByPaymentMethodName(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByPaymentMethodName(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByPaymentMethodName("");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
+    }
+
+    @Test
     public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

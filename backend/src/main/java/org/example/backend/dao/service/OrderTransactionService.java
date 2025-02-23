@@ -206,6 +206,24 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodName(String paymentMethodName) {
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodName(paymentMethodName);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orders.forEach(order -> {
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(order));
+        });
+
+        return orderTransactionModels;
+    }
+
+    @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
                                                                                        String paymentMethodName) {
 
