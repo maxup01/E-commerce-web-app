@@ -242,6 +242,18 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME);
+
+        assertEquals(orders.size(), 2);
+    }
+
+    @Test
     public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
 
         orderTransactionRepository.save(orderTransaction);
