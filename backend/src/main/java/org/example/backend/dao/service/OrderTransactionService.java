@@ -196,13 +196,7 @@ public class OrderTransactionService {
         List<OrderTransaction> orderTransactions =
                 orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
-
-        orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
-        });
-
-        return orderTransactionModels;
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
     @Transactional
@@ -214,13 +208,7 @@ public class OrderTransactionService {
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodName(paymentMethodName);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
-
-        orders.forEach(order -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(order));
-        });
-
-        return orderTransactionModels;
+        return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
 
     @Transactional
@@ -232,13 +220,18 @@ public class OrderTransactionService {
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByDeliveryProviderName(deliveryProviderName);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+        return mapOrderTransactionListToOrderTransactionModelList(orders);
+    }
 
-        orders.forEach(order -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(order));
-        });
+    @Transactional
+    public List<OrderTransactionModel> getOrderTransactionsByUserEmail(String userEmail) {
 
-        return orderTransactionModels;
+        if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByUserEmail(userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
 
     @Transactional
@@ -253,13 +246,7 @@ public class OrderTransactionService {
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
-
-        orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
-        });
-
-        return orderTransactionModels;
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
     @Transactional
@@ -274,13 +261,7 @@ public class OrderTransactionService {
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
-
-        orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
-        });
-
-        return orderTransactionModels;
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
     @Transactional
@@ -295,13 +276,7 @@ public class OrderTransactionService {
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
 
-        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
-
-        orderTransactions.forEach(orderTransaction -> {
-            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
-        });
-
-        return orderTransactionModels;
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
     @Transactional
@@ -388,5 +363,17 @@ public class OrderTransactionService {
         });
 
         return resultWithProductTurnedToProductModel;
+    }
+
+    private List<OrderTransactionModel> mapOrderTransactionListToOrderTransactionModelList(
+            List<OrderTransaction> orderTransactionList){
+
+        List<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orderTransactionList.forEach(orderTransaction -> {
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(orderTransaction));
+        });
+
+        return orderTransactionModels;
     }
 }

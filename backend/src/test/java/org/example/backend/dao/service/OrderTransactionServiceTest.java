@@ -570,6 +570,25 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactionsByUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByUserEmail(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByUserEmail(WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getOrderTransactionsByUserEmail(RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
