@@ -336,4 +336,16 @@ public class OrderTransactionRepositoryTest {
 
         assertEquals(orders.size(), 1);
     }
+
+    @Test
+    public void testOfFindOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 2);
+    }
 }
