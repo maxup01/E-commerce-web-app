@@ -224,6 +224,24 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderName(String deliveryProviderName) {
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByDeliveryProviderName(deliveryProviderName);
+
+        ArrayList<OrderTransactionModel> orderTransactionModels = new ArrayList<>();
+
+        orders.forEach(order -> {
+            orderTransactionModels.add(OrderTransactionModel.fromOrderTransaction(order));
+        });
+
+        return orderTransactionModels;
+    }
+
+    @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
                                                                                        String paymentMethodName) {
 

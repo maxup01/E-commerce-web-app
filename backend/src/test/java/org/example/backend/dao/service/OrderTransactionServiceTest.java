@@ -550,6 +550,26 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactionsByDeliveryProviderName(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByDeliveryProviderName(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByDeliveryProviderName("");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getOrderTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
+    }
+
+    @Test
     public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
