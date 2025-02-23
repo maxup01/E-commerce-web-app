@@ -842,6 +842,120 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            null, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, null, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_AFTER, DATE_BEFORE, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
+    public void testOfGetOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByPhrase(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

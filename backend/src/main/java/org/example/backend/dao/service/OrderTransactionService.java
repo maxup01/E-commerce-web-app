@@ -344,6 +344,42 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+            Date startingDate, Date endingDate, String paymentMethodName, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(startingDate, endingDate,
+                        paymentMethodName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+            Date startingDate, Date endingDate, String deliveryProviderName, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(startingDate, endingDate,
+                        deliveryProviderName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
     public List<Object[]> getAllQuantityOfOrderedProductsAndRevenue(){
         return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenue();
     }
