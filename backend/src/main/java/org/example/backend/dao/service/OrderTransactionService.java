@@ -280,6 +280,36 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+            String paymentMethodName, String deliveryProviderName){
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(paymentMethodName,
+                        deliveryProviderName);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
+            String paymentMethodName, String userEmail) {
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndUserEmail(paymentMethodName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
     public List<Object[]> getAllQuantityOfOrderedProductsAndRevenue(){
         return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenue();
     }

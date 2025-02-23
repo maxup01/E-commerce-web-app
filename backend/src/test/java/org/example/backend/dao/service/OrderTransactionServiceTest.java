@@ -727,6 +727,79 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(null,
+                            DELIVERY_PROVIDER_NAME);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName("",
+                            DELIVERY_PROVIDER_NAME);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
+                            null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
+                            "");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
+                            DELIVERY_PROVIDER_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
+    }
+
+    @Test
+    public void testOfGetOrderTransactionsByPaymentMethodNameAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(null, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail("", RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByPhrase(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
