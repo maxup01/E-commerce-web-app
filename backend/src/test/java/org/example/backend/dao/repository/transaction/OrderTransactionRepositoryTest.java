@@ -324,4 +324,16 @@ public class OrderTransactionRepositoryTest {
 
         assertEquals(orders.size(), 1);
     }
+
+    @Test
+    public void testOfFindOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 1);
+    }
 }

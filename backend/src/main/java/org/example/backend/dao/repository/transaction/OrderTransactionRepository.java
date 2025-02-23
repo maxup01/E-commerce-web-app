@@ -70,4 +70,11 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("deliveryProviderName") String deliveryProviderName,
             @Param("userEmail") String userEmail);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
+            " o.paymentMethod.name = :paymentMethodName AND o.userEmail = :userEmail")
+    List<OrderTransaction> findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("paymentMethodName") String paymentMethodName,
+            @Param("userEmail") String userEmail);
 }
