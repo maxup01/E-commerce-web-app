@@ -296,7 +296,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
             String paymentMethodName, String userEmail) {
 
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
@@ -311,7 +311,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderNameAndUserEmail(
             String deliveryProviderName, String userEmail) {
 
         if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
@@ -326,7 +326,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
             Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -344,7 +344,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
             Date startingDate, Date endingDate, String paymentMethodName, String userEmail){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -362,7 +362,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
             Date startingDate, Date endingDate, String deliveryProviderName, String userEmail){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -380,7 +380,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             String paymentMethodName, String deliveryProviderName, String userEmail){
 
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
@@ -398,7 +398,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName, String userEmail){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -428,7 +428,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
@@ -439,7 +439,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(String type){
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(String type){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
@@ -450,7 +450,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
+    public List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -458,7 +458,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
+    public List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
                                                                                 Date endingDate){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
@@ -468,7 +468,7 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
             Date startingDate, Date endingDate, String phrase){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);

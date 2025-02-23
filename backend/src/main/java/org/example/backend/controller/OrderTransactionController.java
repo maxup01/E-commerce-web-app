@@ -4,6 +4,7 @@ import org.example.backend.dao.service.OrderTransactionService;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.model.OrderTransactionModel;
+import org.example.backend.model.OrderTransactionSearchModel;
 import org.example.backend.model.TimePeriodModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -43,10 +44,168 @@ public class OrderTransactionController {
 
     @GetMapping("/orders")
     public ResponseEntity<List<OrderTransactionModel>> getOrderTransactions(
-            @RequestBody TimePeriodModel timePeriodModel) {
+            @RequestBody OrderTransactionSearchModel ots) {
 
-        //TODO make this function body to looks like body in getProductsByProductSearchModel in ProductController
-        return null;
+        List<OrderTransactionModel> result;
+
+        if(ots == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getPaymentMethodName() != null) &&
+                (ots.getDeliveryProviderName() != null) && (ots.getUserEmail() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                                ots.getStartingDate(), ots.getEndingDate(), ots.getPaymentMethodName(),
+                                ots.getDeliveryProviderName(), ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getPaymentMethodName() != null) &&
+                (ots.getDeliveryProviderName() != null)){
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(ots.getStartingDate(),
+                                ots.getEndingDate(), ots.getPaymentMethodName(), ots.getDeliveryProviderName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getPaymentMethodName() != null) &&
+                (ots.getUserEmail() != null)){
+
+            try{
+                result = orderTransactionService.getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                        ots.getStartingDate(), ots.getEndingDate(), ots.getPaymentMethodName(), ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getDeliveryProviderName() != null) &&
+        (ots.getUserEmail() != null)){
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(ots.getStartingDate(),
+                                ots.getEndingDate(), ots.getDeliveryProviderName(), ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getPaymentMethodName() != null) && (ots.getDeliveryProviderName() != null)
+                && (ots.getUserEmail() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                                ots.getPaymentMethodName(), ots.getDeliveryProviderName(), ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getPaymentMethodName() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndPaymentMethodName(ots.getStartingDate(), ots.getEndingDate(),
+                                ots.getPaymentMethodName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getDeliveryProviderName() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndDeliveryProviderName(ots.getStartingDate(), ots.getEndingDate(),
+                                ots.getDeliveryProviderName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null) && (ots.getUserEmail() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriodAndUserEmail(ots.getStartingDate(), ots.getEndingDate(),
+                                ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getPaymentMethodName() != null) && (ots.getDeliveryProviderName() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(ots.getPaymentMethodName(),
+                                ots.getDeliveryProviderName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getPaymentMethodName() != null) && (ots.getUserEmail() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByPaymentMethodNameAndUserEmail(ots.getPaymentMethodName(), ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getDeliveryProviderName() != null) && (ots.getUserEmail() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByDeliveryProviderNameAndUserEmail(ots.getDeliveryProviderName(),
+                                ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((ots.getStartingDate() != null) && (ots.getEndingDate() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByTimePeriod(ots.getStartingDate(), ots.getEndingDate());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(ots.getPaymentMethodName() != null){
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByPaymentMethodName(ots.getPaymentMethodName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(ots.getDeliveryProviderName() != null){
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByDeliveryProviderName(ots.getDeliveryProviderName());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(ots.getUserEmail() != null){
+
+            try{
+                result = orderTransactionService
+                        .getOrderTransactionsByUserEmail(ots.getUserEmail());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
     @GetMapping("/orders/count-by-time-period")
