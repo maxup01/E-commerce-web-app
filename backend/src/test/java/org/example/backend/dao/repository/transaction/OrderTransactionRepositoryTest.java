@@ -288,4 +288,16 @@ public class OrderTransactionRepositoryTest {
 
         assertEquals(orders.size(), 2);
     }
+
+    @Test
+    public void testOfFindOrderTransactionsByDeliveryProviderNameAndUserEmail(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByDeliveryProviderNameAndUserEmail(RANDOM_DELIVERY_PROVIDER_NAME,
+                        RANDOM_EMAIL);
+
+        assertEquals(orders.size(), 2);
+    }
 }

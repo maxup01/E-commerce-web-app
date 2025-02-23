@@ -47,6 +47,11 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndUserEmail(
             @Param("paymentMethodName") String paymentMethodName, @Param("userEmail") String userEmail);
 
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName AND " +
+            "o.userEmail = :userEmail")
+    List<OrderTransaction> findOrderTransactionsByDeliveryProviderNameAndUserEmail(
+            @Param("deliveryProviderName") String deliveryProviderName, @Param("userEmail") String userEmail);
+
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName " +
             "AND o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
