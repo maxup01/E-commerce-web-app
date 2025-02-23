@@ -380,6 +380,44 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+            String paymentMethodName, String deliveryProviderName, String userEmail){
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(paymentMethodName,
+                        deliveryProviderName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
+    List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+            Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(paymentMethodName,
+                        deliveryProviderName, userEmail);
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    @Transactional
     public List<Object[]> getAllQuantityOfOrderedProductsAndRevenue(){
         return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenue();
     }
