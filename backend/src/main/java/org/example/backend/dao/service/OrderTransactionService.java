@@ -469,16 +469,6 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
-                                                                                       Date endingDate){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        return orderedProductRepository
-                .getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
-    }
-
-    @Transactional
     public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
             Date startingDate, Date endingDate, String phrase){
 
@@ -491,6 +481,31 @@ public class OrderTransactionService {
                 .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
 
         return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+    }
+
+    @Transactional
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndType(
+            Date startingDate, Date endingDate, String type){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+
+        List<Object[]> result = orderedProductRepository
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndType(startingDate, endingDate, type);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+    }
+
+    @Transactional
+    public List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
+                                                                                       Date endingDate){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        return orderedProductRepository
+                .getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
     }
 
     private List<Object[]> mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){
