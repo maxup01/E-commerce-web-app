@@ -227,4 +227,12 @@ public class OrderTransactionController {
 
         return ResponseEntity.status(HttpStatus.OK).body(count);
     }
+
+    @GetMapping("/orders/quantity-and-revenue")
+    public ResponseEntity<Object[]> getAllQuantityAndRevenueOfOrderedProducts(){
+
+        List<Object[]> result = orderTransactionService.getAllQuantityOfOrderedProductsAndRevenue();
+
+        return ResponseEntity.status(HttpStatus.OK).body(result.get(0));
+    }
 }
