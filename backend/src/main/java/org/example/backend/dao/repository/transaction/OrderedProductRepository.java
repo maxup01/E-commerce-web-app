@@ -19,12 +19,22 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     List<Object[]> getAllTypesAndTheirOrderedQuantityAndRevenue();
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o" +
-            " WHERE LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product.name")
-    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(@Param("phrase") String phrase);
+            " WHERE o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate GROUP BY o.product.name")
+    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate, Date endingDate);
 
     @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o" +
             " WHERE o.product.type = :type GROUP BY o.product.name")
     List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByType(@Param("type") String type);
+
+    @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o" +
+            " WHERE LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product.name")
+    List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(@Param("phrase") String phrase);
+
+    @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
+            "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate AND " +
+            "LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product")
+    List<Object[]> getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);
 
     @Query("SELECT SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
             "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate")
@@ -35,12 +45,6 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
             "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate GROUP BY o.product.type")
     List<Object[]> getAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                          @Param("endingDate") Date endingDate);
-
-    @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
-            "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate AND " +
-            "LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product")
-    List<Object[]> getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(
-            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);
 
     @Query("SELECT o FROM OrderedProduct AS o WHERE " +
             "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate AND " +

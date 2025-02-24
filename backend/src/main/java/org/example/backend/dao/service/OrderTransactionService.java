@@ -428,6 +428,14 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
+    }
+
+    @Transactional
     public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
@@ -450,16 +458,8 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getQuantityOfOrderedProductsAndRevenueByTimePeriod(Date startingDate, Date endingDate){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        return orderedProductRepository.getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(startingDate, endingDate);
-    }
-
-    @Transactional
     public List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
-                                                                                Date endingDate){
+                                                                                       Date endingDate){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
