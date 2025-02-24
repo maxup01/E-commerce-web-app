@@ -499,6 +499,20 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(String type, String phrase){
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+        else if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        List<Object[]> result = orderedProductRepository
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTypeAndPhrase(type, phrase);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+    }
+
+    @Transactional
     public List<Object[]> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate,
                                                                                        Date endingDate){
 

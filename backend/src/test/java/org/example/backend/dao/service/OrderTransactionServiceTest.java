@@ -1232,6 +1232,40 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(null, RANDOM_PHRASE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase("", RANDOM_PHRASE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(RANDOM_PRODUCT_TYPE, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(RANDOM_PRODUCT_TYPE, "");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(RANDOM_PRODUCT_TYPE, RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: type");
+        assertEquals(secondException.getMessage(), "Incorrect argument: type");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: phrase");
+    }
+
+    @Test
     public void testOfGetQuantityOfOrderedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
