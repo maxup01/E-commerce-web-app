@@ -2,15 +2,16 @@ package org.example.backend.controller;
 
 import org.example.backend.dao.service.OrderTransactionService;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
+import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
+import org.example.backend.exception.transaction.PaymentMethodNotFoundException;
+import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -23,6 +24,32 @@ public class OrderTransactionController {
     @Autowired
     public OrderTransactionController(OrderTransactionService orderTransactionService) {
         this.orderTransactionService = orderTransactionService;
+    }
+
+    @PostMapping("/order/create")
+    public ResponseEntity<OrderTransactionModel> createNewOrderTransaction(
+            @RequestBody OrderTransactionModel orderTransactionModel) {
+
+        if(orderTransactionModel == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        OrderTransactionModel result;
+
+        try{
+            result = orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (DeliveryProviderNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (PaymentMethodNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/order/update-status-by-id")
