@@ -436,6 +436,17 @@ public class OrderTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByTimePeriod(Date startingDate, Date endingDate){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        List<Object[]> result = orderedProductRepository
+                .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriod(startingDate, endingDate);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
+    }
+
+    @Transactional
     public List<Object[]> getProductsAndTheirOrderedQuantityAndRevenueByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
