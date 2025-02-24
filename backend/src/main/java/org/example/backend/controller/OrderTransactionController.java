@@ -228,11 +228,18 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(count);
     }
 
-    @GetMapping("/orders/quantity-and-revenue")
+    @GetMapping("/orders/ordered-products/quantity-and-revenue")
     public ResponseEntity<Object[]> getAllQuantityAndRevenueOfOrderedProducts(){
 
         List<Object[]> result = orderTransactionService.getAllQuantityOfOrderedProductsAndRevenue();
 
         return ResponseEntity.status(HttpStatus.OK).body(result.get(0));
+    }
+
+    @GetMapping("/orders/ordered-products/types-quantity-and-revenue")
+    public ResponseEntity<List<Object[]>> getAllTypesAndTheirOrderedQuantityAndRevenue(){
+
+        return ResponseEntity.status(HttpStatus.OK)
+                .body(orderTransactionService.getAllTypesAndTheirOrderedQuantityAndRevenue());
     }
 }
