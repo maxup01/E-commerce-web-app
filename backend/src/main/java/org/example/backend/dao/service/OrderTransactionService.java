@@ -477,7 +477,7 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: phrase");
 
         List<Object[]> result = orderedProductRepository
-                .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(startingDate, endingDate, phrase);
 
         return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(result);
     }

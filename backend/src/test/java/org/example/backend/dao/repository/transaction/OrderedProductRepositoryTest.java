@@ -285,7 +285,7 @@ public class OrderedProductRepositoryTest {
     public void testOfGetAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(){
 
         List<Object[]> result = orderedProductRepository
-                .getAllProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE);
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE);
 
         HashMap<String, Long> map1 = new HashMap<>();
         HashMap<String, Double> map2 = new HashMap<>();
@@ -321,5 +321,26 @@ public class OrderedProductRepositoryTest {
         assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
         assertEquals(map1.get(DIFFERENT_PRODUCT_NAME), DIFFERENT_QUANTITY);
         assertEquals(map2.get(DIFFERENT_PRODUCT_NAME), DIFFERENT_QUANTITY * orderedProduct2.getPricePerUnit());
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndType(){
+
+        List<Object[]> result = orderedProductRepository
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndType(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_TYPE_LOWER_CASE);
+
+        HashMap<String, Long> map1 = new HashMap<>();
+        HashMap<String, Double> map2 = new HashMap<>();
+
+        result.forEach(row -> {
+            Product product = (Product) row[0];
+            map1.put(product.getName(), (Long) row[1]);
+            map2.put(product.getName(), (Double) row[2]);
+        });
+
+        assertEquals(map1.size(), 1);
+        assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
+        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
     }
 }
