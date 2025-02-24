@@ -5,6 +5,7 @@ import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.transaction.OrderTransactionNotFoundException;
 import org.example.backend.model.OrderTransactionModel;
 import org.example.backend.model.OrderTransactionSearchModel;
+import org.example.backend.model.ProductAndQuantityAndRevenueSearchModel;
 import org.example.backend.model.TimePeriodModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -241,5 +242,92 @@ public class OrderTransactionController {
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderTransactionService.getAllTypesAndTheirOrderedQuantityAndRevenue());
+    }
+
+    @GetMapping("/orders/ordered-products/product-quantity-and-revenue")
+    public ResponseEntity<List<Object[]>> getProductsAndTheirOrderedQuantityAndRevenueBy(
+            @RequestBody ProductAndQuantityAndRevenueSearchModel requestBody){
+
+        List<Object[]> result;
+
+        if(requestBody == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getType() != null) && (requestBody.getPhrase() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                                requestBody.getStartingDate(), requestBody.getStartingDate(), requestBody.getType(),
+                                requestBody.getPhrase());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getType() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndType(
+                                requestBody.getStartingDate(), requestBody.getEndingDate(), requestBody.getType());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getPhrase() != null)) {
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndPhrase(
+                                requestBody.getStartingDate(), requestBody.getStartingDate(), requestBody.getPhrase());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getType() != null) && (requestBody.getPhrase() != null)){
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByTypeAndPhrase(
+                                requestBody.getType(), requestBody.getPhrase());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)){
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriod(
+                                requestBody.getStartingDate(), requestBody.getEndingDate());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(requestBody.getType() != null){
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByType(requestBody.getType());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(requestBody.getPhrase() != null){
+
+            try{
+                result = orderTransactionService
+                        .getProductsAndTheirOrderedQuantityAndRevenueByPhrase(requestBody.getPhrase());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else{
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
