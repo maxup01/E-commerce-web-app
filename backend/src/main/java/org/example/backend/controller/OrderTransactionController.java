@@ -264,6 +264,26 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @GetMapping("/orders/ordered-products/product-types-quantity-and-revenue-by-time-period")
+    public ResponseEntity<List<Object[]>> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(
+            @RequestBody TimePeriodModel timePeriodModel){
+
+        if(timePeriodModel == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        List<Object[]> result;
+
+        try{
+            result = orderTransactionService
+                    .getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(
+                            timePeriodModel.getStartingDate(), timePeriodModel.getEndDate());
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @GetMapping("/orders/ordered-products/product-quantity-and-revenue")
     public ResponseEntity<List<Object[]>> getProductsAndTheirOrderedQuantityAndRevenueBy(
             @RequestBody ProductAndQuantityAndRevenueSearchModel requestBody){
