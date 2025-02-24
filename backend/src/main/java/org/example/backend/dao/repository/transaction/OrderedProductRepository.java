@@ -43,6 +43,11 @@ public interface OrderedProductRepository extends JpaRepository<OrderedProduct, 
     List<Object[]> getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndType(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("type") String type);
 
+    @Query("SELECT o.product, SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
+            "o.product.type = :type AND LOWER(o.product.name) LIKE %:phrase% GROUP BY o.product.name")
+    List<Object[]> getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTypeAndPhrase(
+            @Param("type") String type, @Param("phrase") String phrase);
+
     @Query("SELECT SUM(o.quantity), SUM(o.quantity * o.pricePerUnit) FROM OrderedProduct AS o WHERE " +
             "o.orderTransaction.date >= :startingDate AND o.orderTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfOrderedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,

@@ -343,4 +343,25 @@ public class OrderedProductRepositoryTest {
         assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
         assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
     }
+
+    @Test
+    public void testOfGetProductsAndTheirQuantityOfOrderedProductsAndRevenueByTypeAndPhrase(){
+
+        List<Object[]> result = orderedProductRepository
+                .getProductsAndTheirQuantityOfOrderedProductsAndRevenueByTypeAndPhrase(
+                        RANDOM_TYPE_LOWER_CASE, RANDOM_PHRASE_LOWER_CASE);
+
+        HashMap<String, Long> map1 = new HashMap<>();
+        HashMap<String, Double> map2 = new HashMap<>();
+
+        result.forEach(row -> {
+            Product product = (Product) row[0];
+            map1.put(product.getName(), (Long) row[1]);
+            map2.put(product.getName(), (Double) row[2]);
+        });
+
+        assertEquals(map1.size(), 1);
+        assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
+        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * orderedProduct1.getPricePerUnit());
+    }
 }
