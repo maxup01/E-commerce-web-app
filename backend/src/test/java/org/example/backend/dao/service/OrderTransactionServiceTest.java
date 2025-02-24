@@ -1266,6 +1266,66 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                        null, DATE_AFTER, RANDOM_PRODUCT_TYPE, RANDOM_PHRASE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, null, RANDOM_PRODUCT_TYPE, RANDOM_PHRASE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_AFTER, DATE_BEFORE, RANDOM_PRODUCT_TYPE, RANDOM_PHRASE);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_PHRASE);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_PHRASE);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PRODUCT_TYPE, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PRODUCT_TYPE, "");
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService
+                    .getProductsAndTheirOrderedQuantityAndRevenueByTimePeriodAndTypeAndPhrase(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PRODUCT_TYPE, RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: type");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: type");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: phrase");
+    }
+
+    @Test
     public void testOfGetQuantityOfOrderedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
