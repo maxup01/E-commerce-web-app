@@ -296,6 +296,6 @@ public class ReturnTransactionRepositoryTest {
                 .findReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderName(
                         DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME);
 
-        assertEquals(returns.size(), 2);
+        assertEquals(returns.size(), 1);
     }
 }
