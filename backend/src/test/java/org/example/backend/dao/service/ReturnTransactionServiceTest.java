@@ -917,7 +917,7 @@ public class ReturnTransactionServiceTest {
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RETURN_CAUSE, "");
+                            DATE_BEFORE, DATE_AFTER, RETURN_CAUSE, WRONG_EMAIL);
         });
 
         assertDoesNotThrow(() -> {
@@ -932,6 +932,71 @@ public class ReturnTransactionServiceTest {
         assertEquals(fourthException.getMessage(), "Null argument: returnCause");
         assertEquals(fifthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
+
+        when(returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL))
+                .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                                DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
     }
 
     @Test
