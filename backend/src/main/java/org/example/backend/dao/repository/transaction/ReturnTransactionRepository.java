@@ -21,6 +21,10 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause")
     List<ReturnTransaction> findReturnTransactionsByCause(@Param("returnCause") ReturnCause returnCause);
 
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.deliveryProvider.name = :deliveryProviderName")
+    List<ReturnTransaction> findReturnTransactionsByDeliveryProviderName(
+            @Param("deliveryProviderName") String deliveryProviderName);
+
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate AND " +
             " r.returnCause = :returnCause")
     List<ReturnTransaction> findReturnTransactionsByTimePeriodAndReturnCauseName(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,

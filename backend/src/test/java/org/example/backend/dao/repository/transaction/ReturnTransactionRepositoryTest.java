@@ -188,7 +188,18 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindReturnTransactionsByTimePeriodAndPaymentMethodName(){
+    public void testOfFindReturnTransactionsByDeliveryProviderName(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderName(RANDOM_DELIVERY_PROVIDER_NAME);
+
+        assertEquals(returns.size(), 2);
+    }
+
+    @Test
+    public void testOfFindReturnTransactionsByTimePeriodAndReturnCause(){
 
         returnTransactionRepository.save(returnTransaction);
 
