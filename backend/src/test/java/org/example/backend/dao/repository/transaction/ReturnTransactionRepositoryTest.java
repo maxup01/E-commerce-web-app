@@ -17,6 +17,7 @@ import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.enumerated.ReturnCause;
+import org.h2.api.DatabaseEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -297,5 +298,41 @@ public class ReturnTransactionRepositoryTest {
                         DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(returns.size(), 1);
+    }
+
+    @Test
+    public void testOfFindReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 1);
+    }
+
+    @Test
+    public void testOfFindReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 1);
+    }
+
+    @Test
+    public void testOfFindReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
+                        RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 2);
     }
 }
