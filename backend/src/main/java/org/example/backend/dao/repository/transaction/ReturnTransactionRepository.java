@@ -19,7 +19,7 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     List<ReturnTransaction> findReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause")
-    List<ReturnTransaction> findReturnTransactionsByCause(@Param("returnCause") ReturnCause returnCause);
+    List<ReturnTransaction> findReturnTransactionsByReturnCause(@Param("returnCause") ReturnCause returnCause);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.deliveryProvider.name = :deliveryProviderName")
     List<ReturnTransaction> findReturnTransactionsByDeliveryProviderName(
@@ -42,4 +42,10 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
             " r.user.email = :userEmail")
     List<ReturnTransaction> findReturnTransactionsByTimePeriodAndUserEmail(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
                                                                            @Param("userEmail") String userEmail);
+
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause AND " +
+            " r.deliveryProvider.name = :deliveryProviderName")
+    List<ReturnTransaction> findReturnTransactionsByReturnCauseAndDeliveryProviderName(
+            @Param("returnCause") ReturnCause returnCause,
+            @Param("deliveryProviderName") String deliveryProviderName);
 }

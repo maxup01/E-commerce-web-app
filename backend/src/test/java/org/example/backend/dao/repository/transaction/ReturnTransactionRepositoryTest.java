@@ -173,12 +173,12 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindReturnTransactionsByCause(){
+    public void testOfFindReturnTransactionsByReturnCause(){
 
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByCause(RANDOM_RETURN_CAUSE);
+                .findReturnTransactionsByReturnCause(RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 2);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
@@ -250,5 +250,17 @@ public class ReturnTransactionRepositoryTest {
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getDate(), TODAYS_DATE);
+    }
+
+    @Test
+    public void testOfFindReturnTransactionsByReturnCauseAndDeliveryProviderName(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
+                        RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME);
+
+        assertEquals(returns.size(), 2);
     }
 }
