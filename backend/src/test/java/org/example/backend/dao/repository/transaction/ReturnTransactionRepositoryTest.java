@@ -29,8 +29,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
 public class ReturnTransactionRepositoryTest {
@@ -164,7 +163,8 @@ public class ReturnTransactionRepositoryTest {
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
@@ -173,12 +173,27 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindReturnTransactionsByCause(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByCause(RANDOM_RETURN_CAUSE);
+
+        assertEquals(returns.size(), 2);
+        assertEquals(returns.get(0).getDeliveryAddress(), address);
+        assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
+        assertTrue((returns.get(0).getDate() == TODAYS_DATE)
+                || (returns.get(0).getDate() == DATE_NOT_IN_RANGE));
+    }
+
+    @Test
     public void testOfFindReturnTransactionsByTimePeriodAndPaymentMethodName(){
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriodAndReturnCauseName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCauseName(DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
@@ -191,8 +206,9 @@ public class ReturnTransactionRepositoryTest {
 
         returnTransactionRepository.save(returnTransaction);
 
-        List<ReturnTransaction> returns = returnTransactionRepository.findReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderName(DATE_BEFORE, DATE_AFTER,
+                        RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
