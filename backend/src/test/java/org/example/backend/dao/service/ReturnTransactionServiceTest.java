@@ -545,6 +545,50 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetReturnTransactionsByDeliveryProviderName(){
+
+        when(returnTransactionRepository.findReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME))
+            .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByDeliveryProviderName(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByDeliveryProviderName("");
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionsByUserEmail(){
+
+        when(returnTransactionRepository.findReturnTransactionsByUserEmail(RANDOM_EMAIL))
+            .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByUserEmail(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByUserEmail(WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByUserEmail(RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenue(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
