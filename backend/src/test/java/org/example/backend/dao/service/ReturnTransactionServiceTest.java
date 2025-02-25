@@ -501,6 +501,50 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetReturnTransactionsByTimePeriod(){
+
+        when(returnTransactionRepository.findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER))
+                .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByTimePeriod(null, DATE_AFTER);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_BEFORE, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_AFTER, DATE_BEFORE);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionsByReturnCause(){
+
+        when(returnTransactionRepository.findReturnTransactionsByReturnCause(RETURN_CAUSE))
+                .thenReturn(List.of(returnTransaction));
+
+        Exception exception = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByReturnCause(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByReturnCause(RETURN_CAUSE);
+        });
+
+        assertEquals(exception.getMessage(), "Null argument: returnCause");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenue(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

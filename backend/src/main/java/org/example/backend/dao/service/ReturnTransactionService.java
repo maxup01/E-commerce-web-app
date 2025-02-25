@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import org.example.backend.dao.entity.logistic.Address;
 import org.example.backend.dao.entity.logistic.DeliveryProvider;
 import org.example.backend.dao.entity.product.Product;
+import org.example.backend.dao.entity.transaction.OrderTransaction;
 import org.example.backend.dao.entity.transaction.OrderedProduct;
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 import org.example.backend.dao.entity.transaction.ReturnedProduct;
@@ -15,6 +16,7 @@ import org.example.backend.dao.repository.transaction.OrderedProductRepository;
 import org.example.backend.dao.repository.transaction.ReturnTransactionRepository;
 import org.example.backend.dao.repository.transaction.ReturnedProductRepository;
 import org.example.backend.dao.repository.user.UserRepository;
+import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.enumerated.TransactionStatus;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
@@ -196,6 +198,25 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriod(Date startingDate, Date endingDate){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository.findReturnTransactionsByTimePeriod(startingDate, endingDate));
+    }
+
+    @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByReturnCause(ReturnCause returnCause){
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository.findReturnTransactionsByReturnCause(returnCause));
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenue(){
         return returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenue();
     }
@@ -284,5 +305,17 @@ public class ReturnTransactionService {
         });
 
         return resultListWithProductModel;
+    }
+
+    private List<ReturnTransactionModel> mapReturnTransactionListToReturnTransactionModelList(
+            List<ReturnTransaction> returnTransactionList){
+
+        List<ReturnTransactionModel> returnTransactionModels = new ArrayList<>();
+
+        returnTransactionList.forEach(returnTransaction -> {
+            returnTransactionModels.add(ReturnTransactionModel.fromReturnTransaction(returnTransaction));
+        });
+
+        return returnTransactionModels;
     }
 }
