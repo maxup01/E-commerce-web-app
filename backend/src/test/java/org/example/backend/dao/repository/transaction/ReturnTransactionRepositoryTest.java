@@ -274,4 +274,16 @@ public class ReturnTransactionRepositoryTest {
 
         assertEquals(returns.size(), 2);
     }
+
+    @Test
+    public void testOfFindReturnTransactionsByDeliveryProviderNameAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderNameAndUserEmail(
+                        RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 2);
+    }
 }
