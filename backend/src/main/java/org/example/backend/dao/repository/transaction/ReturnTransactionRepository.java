@@ -48,4 +48,8 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     List<ReturnTransaction> findReturnTransactionsByReturnCauseAndDeliveryProviderName(
             @Param("returnCause") ReturnCause returnCause,
             @Param("deliveryProviderName") String deliveryProviderName);
+
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause AND r.userEmail = :userEmail")
+    List<ReturnTransaction> findReturnTransactionsByReturnCauseAndUserEmail(
+            @Param("returnCause") ReturnCause returnCause, @Param("userEmail") String userEmail);
 }

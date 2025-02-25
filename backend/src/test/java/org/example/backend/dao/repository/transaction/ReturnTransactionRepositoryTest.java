@@ -263,4 +263,15 @@ public class ReturnTransactionRepositoryTest {
 
         assertEquals(returns.size(), 2);
     }
+
+    @Test
+    public void testOfFindReturnTransactionsByReturnCauseAndUserEmail(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returns = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndUserEmail(RANDOM_RETURN_CAUSE, RANDOM_EMAIL);
+
+        assertEquals(returns.size(), 2);
+    }
 }
