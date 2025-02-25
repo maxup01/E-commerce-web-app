@@ -375,6 +375,44 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
+            ReturnCause returnCause, String deliveryProviderName, String userEmail){
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
+                                returnCause, deliveryProviderName, userEmail));
+    }
+
+    @Transactional
+    public List<ReturnTransactionModel>
+    getReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderNameAndUserEmail(
+            Date startingDate, Date endingDate, ReturnCause returnCause,
+            String deliveryProviderName, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+        else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderNameAndUserEmail(
+                                startingDate, endingDate, returnCause, deliveryProviderName, userEmail));
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenue(){
         return returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenue();
     }
