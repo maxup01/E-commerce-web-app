@@ -341,6 +341,23 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
+            Date startingDate, Date endingDate, ReturnCause returnCause, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+        else if((userEmail == null) || (userEmail.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
+                                startingDate, endingDate, returnCause, userEmail));
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenue(){
         return returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenue();
     }
