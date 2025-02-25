@@ -17,7 +17,6 @@ import org.example.backend.dao.repository.user.PrivilegeRepository;
 import org.example.backend.dao.repository.user.RoleRepository;
 import org.example.backend.dao.repository.user.UserRepository;
 import org.example.backend.enumerated.ReturnCause;
-import org.h2.api.DatabaseEventListener;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -216,7 +215,7 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByTimePeriodAndReturnCauseName(DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
+                .findReturnTransactionsByTimePeriodAndReturnCause(DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);

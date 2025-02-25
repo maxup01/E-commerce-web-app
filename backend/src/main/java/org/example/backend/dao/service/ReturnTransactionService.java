@@ -237,6 +237,35 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriodAndReturnCause(
+            Date startingDate, Date endingDate, ReturnCause returnCause){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByTimePeriodAndReturnCause(startingDate, endingDate, returnCause));
+    }
+
+    @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriodAndDeliveryProviderName(
+            Date startingDate, Date endingDate, String deliveryProviderName){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
+                                startingDate, endingDate, deliveryProviderName));
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenue(){
         return returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenue();
     }
