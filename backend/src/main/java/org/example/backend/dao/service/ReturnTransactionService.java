@@ -285,7 +285,7 @@ public class ReturnTransactionService {
             ReturnCause returnCause, String deliveryProviderName){
 
         if(returnCause == null)
-            throw new BadArgumentException("Incorrect argument: returnCause");
+            throw new BadArgumentException("Null argument: returnCause");
         else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
@@ -293,6 +293,34 @@ public class ReturnTransactionService {
                 returnTransactionRepository
                         .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
                                 returnCause, deliveryProviderName));
+    }
+
+    @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByReturnCauseAndUserEmail(
+            ReturnCause returnCause, String userEmail){
+
+        if(returnCause == null)
+            throw new BadArgumentException("Null argument: returnCause");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByReturnCauseAndUserEmail(returnCause, userEmail));
+    }
+
+    @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByDeliveryProviderNameAndUserEmail(
+            String deliveryProviderName, String userEmail){
+
+        if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        return mapReturnTransactionListToReturnTransactionModelList(
+                returnTransactionRepository
+                        .findReturnTransactionsByDeliveryProviderNameAndUserEmail(deliveryProviderName, userEmail));
     }
 
     @Transactional

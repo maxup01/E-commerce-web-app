@@ -701,9 +701,75 @@ public class ReturnTransactionServiceTest {
                             RETURN_CAUSE, DELIVERY_PROVIDER_NAME);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: returnCause");
+        assertEquals(firstException.getMessage(), "Null argument: returnCause");
         assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: deliveryProviderName");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionsByReturnCauseAndUserEmail(){
+
+        when(returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, RANDOM_EMAIL))
+                .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(null, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: returnCause");
+        assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
+    public void testOfGetReturnTransactionsByDeliveryProviderNameAndUserEmail(){
+
+        when(returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, RANDOM_EMAIL))
+                .thenReturn(List.of(returnTransaction));
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderNameAndUserEmail(null, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderNameAndUserEmail("", RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
     }
 
     @Test
