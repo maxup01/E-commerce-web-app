@@ -2,17 +2,17 @@ package org.example.backend.controller;
 
 import org.example.backend.dao.service.ReturnTransactionService;
 import org.example.backend.exception.global.BadArgumentException;
+import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
+import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
+import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.ReturnTransactionModel;
 import org.example.backend.model.ReturnTransactionSearchModel;
 import org.example.backend.model.TransactionIdAndTransactionStatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,6 +25,28 @@ public class ReturnTransactionController{
     @Autowired
     public ReturnTransactionController(ReturnTransactionService returnTransactionService) {
         this.returnTransactionService = returnTransactionService;
+    }
+
+    @PostMapping("/return/create")
+    public ResponseEntity<ReturnTransactionModel> createReturnTransaction(
+            @RequestBody ReturnTransactionModel returnTransactionModel) {
+
+        ReturnTransactionModel result;
+
+        try{
+            result = returnTransactionService
+                    .saveNewReturnTransaction(returnTransactionModel);
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ProductNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (UserNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        } catch (DeliveryProviderNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
     @PutMapping("/return/update-status-by-id")
