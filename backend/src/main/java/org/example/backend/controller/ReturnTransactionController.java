@@ -5,10 +5,12 @@ import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.model.ReturnTransactionModel;
 import org.example.backend.model.ReturnTransactionSearchModel;
+import org.example.backend.model.TransactionIdAndTransactionStatusModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -23,6 +25,25 @@ public class ReturnTransactionController{
     @Autowired
     public ReturnTransactionController(ReturnTransactionService returnTransactionService) {
         this.returnTransactionService = returnTransactionService;
+    }
+
+    @PutMapping("/return/update-status-by-id")
+    public ResponseEntity<ReturnTransactionModel> updateReturnTransactionStatusById(
+            @RequestBody TransactionIdAndTransactionStatusModel transactionIdAndTransactionStatusModel) {
+
+        ReturnTransactionModel returnTransactionModel;
+
+        try{
+            returnTransactionModel = returnTransactionService.updateReturnTransactionStatusById(
+                    transactionIdAndTransactionStatusModel.getTransactionId(),
+                    transactionIdAndTransactionStatusModel.getTransactionStatus());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        } catch (ReturnTransactionNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModel);
     }
 
     @GetMapping("/return")
