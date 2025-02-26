@@ -300,6 +300,26 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(){
+
+        List<Object[]> list = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(
+                        RANDOM_PHRASE_LOWER_CASE, RANDOM_EMAIL);
+
+        assertEquals(list.size(), 1);
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(){
+
+        List<Object[]> list = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                        RANDOM_TYPE_LOWER_CASE, RANDOM_EMAIL);
+
+        assertEquals(list.size(), 1);
+    }
+
+    @Test
     public void testOfGetAllQuantityOfReturnedProductsAndRevenueByTimePeriod(){
 
         List<Object[]> result = returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
@@ -333,25 +353,5 @@ public class ReturnedProductRepositoryTest {
         assertEquals(map2.get(RANDOM_TYPE_LOWER_CASE), RANDOM_QUANTITY * returnedProduct1.getPricePerUnit());
         assertEquals(map1.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY);
         assertEquals(map2.get(DIFFERENT_TYPE_LOWER_CASE), DIFFERENT_QUANTITY * returnedProduct2.getPricePerUnit());
-    }
-
-    @Test
-    public void testOfGetAllTypesAndTheirQuantityOfOrderedProductsAndRevenueByTimePeriodAndPhrase(){
-
-        List<Object[]> result = returnedProductRepository
-                .getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE);
-
-        HashMap<String, Long> map1 = new HashMap<>();
-        HashMap<String, Double> map2 = new HashMap<>();
-
-        result.forEach(row -> {
-            Product pomProduct = (Product) row[0];
-            map1.put(pomProduct.getName(), (Long) row[1]);
-            map2.put(pomProduct.getName(), (Double) row[2]);
-        });
-
-        assertEquals(map1.size(), 1);
-        assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
-        assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * returnedProduct1.getPricePerUnit());
     }
 }

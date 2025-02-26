@@ -62,6 +62,18 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
     List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
             @Param("phrase") String phrase, @Param("type") String type);
 
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE LOWER(r.product.name) LIKE %:phrase% AND r.returnTransaction.userEmail = :userEmail " +
+            " GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(
+            @Param("phrase") String phrase, @Param("userEmail") String userEmail);
+
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE r.product.type = :type AND r.returnTransaction.userEmail = :userEmail " +
+            " GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+            @Param("type") String type, @Param("userEmail") String userEmail);
+
     @Query("SELECT SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
@@ -71,12 +83,6 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate GROUP BY r.product.type")
     List<Object[]> getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
                                                                                       @Param("endingDate") Date endingDate);
-
-    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
-            "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate AND " +
-            "LOWER(r.product.name) LIKE %:phrase% GROUP BY r.product")
-    List<Object[]> getAllProductsAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriodAndPhrase(
-            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, @Param("phrase") String phrase);
 
     @Query("SELECT r FROM ReturnedProduct AS r WHERE " +
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate AND " +
