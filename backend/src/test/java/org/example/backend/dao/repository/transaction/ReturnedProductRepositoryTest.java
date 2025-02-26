@@ -200,6 +200,15 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(){
+
+        List<Object[]> list =returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
+
+        assertEquals(list.size(), 2);
+    }
+
+    @Test
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhrase(){
 
         List<Object[]> list = returnedProductRepository
@@ -239,6 +248,15 @@ public class ReturnedProductRepositoryTest {
         assertEquals(map2.size(), 1);
         assertEquals(map1.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY);
         assertEquals(map2.get(RANDOM_PRODUCT_NAME), RANDOM_QUANTITY * product1.getCurrentPrice());
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByUserEmail(){
+
+        List<Object[]> list = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(RANDOM_EMAIL);
+
+        assertEquals(list.size(), 2);
     }
 
     @Test
