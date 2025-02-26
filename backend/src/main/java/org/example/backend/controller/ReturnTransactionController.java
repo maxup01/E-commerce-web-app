@@ -263,4 +263,24 @@ public class ReturnTransactionController{
 
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModels);
     }
+
+    @GetMapping("/returns/returned-products/quantity-and-revenue")
+    public ResponseEntity<Object[]> getQuantityAndRevenueOfAllReturnedProducts(){
+
+        Object[] result = new Object[2];
+
+        List<Object[]> quantityAndRevenue= returnTransactionService.getQuantityOfAllReturnedProductsAndRevenue();
+
+        result[0] = quantityAndRevenue.get(0)[0];
+        result[1] = quantityAndRevenue.get(0)[1];
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/returns/returned-products/types-and-related-quantity-and-revenue")
+    public ResponseEntity<List<Object[]>> getAllTypesAndRelatedQuantityAndRevenueOfAllReturnedProducts(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnTransactionService
+                .getAllTypesAndTheirReturnedQuantityAndRevenue());
+    }
 }
