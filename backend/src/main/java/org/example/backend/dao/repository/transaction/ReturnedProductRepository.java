@@ -36,6 +36,20 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
     List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(
             @Param("userEmail") String userEmail);
 
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate " +
+            " AND LOWER(r.product.name) LIKE %:phrase% GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("phrase") String phrase);
+
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate " +
+            " AND r.product.type = :type GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndType(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("type") String type);
+
     @Query("SELECT SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,
