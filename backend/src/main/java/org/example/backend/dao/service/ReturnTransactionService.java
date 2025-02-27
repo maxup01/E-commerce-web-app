@@ -521,6 +521,22 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
+            String phrase, String type){
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+        else if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
+                        phrase, type);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 
