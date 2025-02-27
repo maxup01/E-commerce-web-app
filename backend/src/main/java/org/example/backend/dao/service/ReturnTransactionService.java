@@ -422,7 +422,19 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(String phrase){
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(
+            Date startingDate, Date endingDate){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(startingDate, endingDate);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhrase(String phrase){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
@@ -449,6 +461,22 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+            Date startingDate, Date endingDate, String phrase){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                        startingDate, endingDate, phrase);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 
@@ -466,23 +494,6 @@ public class ReturnTransactionService {
 
         return returnedProductRepository
                 .getAllTypesAndTheirQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
-    }
-
-    @Transactional
-    public List<Object[]> getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(Date startingDate,
-                                                                                                Date endingDate,
-                                                                                                String phrase){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                        startingDate, endingDate, phrase);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
     }
 
     private List<Object[]> mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(List<Object[]> list){

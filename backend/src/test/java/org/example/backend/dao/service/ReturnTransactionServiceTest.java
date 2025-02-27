@@ -83,6 +83,7 @@ public class ReturnTransactionServiceTest {
     private final TransactionStatus WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PAID;
     private final TransactionStatus SECOND_WRONG_STATUS_FOR_RETURN_TRANSACTION = TransactionStatus.PREPARED;
     private final String RANDOM_PHRASE = "randomPhrase";
+    private final String DIFFERENT_PHRASE = "differentPhrase";
     private final String TYPE_THAT_NOT_EXIST = "differentType";
     private final String TYPE_THAT_EXIST = "randomType";
     private final Date DATE_BEFORE = new Date(0);
@@ -1126,15 +1127,89 @@ public class ReturnTransactionServiceTest {
     public void testOfGetQuantityOfAllReturnedProductsAndRevenue(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(null);
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(null);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod("");
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase("");
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(RANDOM_PHRASE);
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(){
+
+        Object[] row = new Object[3];
+        row[0] = product;
+        row[1] = RANDOM_QUANTITY;
+        row[2] = RANDOM_PRICE;
+
+        ArrayList<Object[]> result = new ArrayList<>();
+        result.add(row);
+
+        when(returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER))
+                .thenReturn(result);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(null, DATE_AFTER);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(DATE_BEFORE, null);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(DATE_AFTER, DATE_BEFORE);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhrase(){
+
+        Object[] row = new Object[3];
+        row[0] = product;
+        row[1] = RANDOM_QUANTITY;
+        row[2] = RANDOM_PRICE;
+
+        ArrayList<Object[]> result = new ArrayList<>();
+        result.add(row);
+
+        when(returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByPhrase(RANDOM_PHRASE))
+                .thenReturn(result);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByPhrase(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByPhrase("");
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByPhrase(RANDOM_PHRASE);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
@@ -1180,6 +1255,52 @@ public class ReturnTransactionServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: type");
         assertEquals(secondException.getMessage(), "Incorrect argument: type");
         assertEquals(thirdException.getMessage(), "Returned product with type " + TYPE_THAT_NOT_EXIST + " not exist");
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            null, DATE_NOW, RANDOM_PHRASE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            DATE_BEFORE, null, RANDOM_PHRASE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            DATE_NOW, DATE_BEFORE, RANDOM_PHRASE);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            DATE_BEFORE, DATE_NOW, null);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            DATE_BEFORE, DATE_NOW, "");
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: phrase");
     }
 
     @Test
@@ -1236,51 +1357,5 @@ public class ReturnTransactionServiceTest {
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
         assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
-    }
-
-    @Test
-    public void testOfGetAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(){
-
-        Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                    null, DATE_NOW, RANDOM_PHRASE);
-        });
-
-        Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                    DATE_BEFORE, null, RANDOM_PHRASE);
-        });
-
-        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                    DATE_NOW, DATE_BEFORE, RANDOM_PHRASE);
-        });
-
-        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                            DATE_BEFORE, DATE_NOW, null);
-        });
-
-        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                            DATE_BEFORE, DATE_NOW, "");
-        });
-
-        assertDoesNotThrow(() -> {
-            returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
-                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE);
-        });
-
-        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
-        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
-        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: phrase");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: phrase");
     }
 }
