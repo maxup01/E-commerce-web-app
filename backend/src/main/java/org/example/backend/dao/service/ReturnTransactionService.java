@@ -641,6 +641,26 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+            Date startingDate, Date endingDate, String phrase, String type, String userEmail){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+        else if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                        startingDate, endingDate, type, userEmail);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 

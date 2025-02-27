@@ -1778,6 +1778,80 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            null, DATE_NOW, RANDOM_PHRASE, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, null, RANDOM_PHRASE, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_NOW, DATE_BEFORE, RANDOM_PHRASE, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, null, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, "", TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE, null, RANDOM_EMAIL);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE, "", RANDOM_EMAIL);
+        });
+
+        Exception eighthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE, TYPE_THAT_EXIST, null);
+        });
+
+        Exception ninthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE, TYPE_THAT_EXIST, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_PHRASE, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: type");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: type");
+        assertEquals(eighthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(ninthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
