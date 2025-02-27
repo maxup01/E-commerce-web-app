@@ -461,7 +461,19 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(String userEmail){
+
+        if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(userEmail);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
             Date startingDate, Date endingDate, String phrase){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);

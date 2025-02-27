@@ -1258,41 +1258,73 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByUserEmail(){
+
+        ArrayList<Object[]> arrayList = new ArrayList<>();
+
+        Object[] row = new Object[3];
+        row[0] = product;
+        row[1] = RANDOM_QUANTITY;
+        row[2] = RANDOM_PRICE;
+
+        arrayList.add(row);
+
+        when(returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(RANDOM_EMAIL))
+                .thenReturn(arrayList);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             null, DATE_NOW, RANDOM_PHRASE);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             DATE_BEFORE, null, RANDOM_PHRASE);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             DATE_NOW, DATE_BEFORE, RANDOM_PHRASE);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             DATE_BEFORE, DATE_NOW, null);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             DATE_BEFORE, DATE_NOW, "");
         });
 
         assertDoesNotThrow(() -> {
             returnTransactionService
-                    .getAllProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
                             DATE_BEFORE, DATE_NOW, RANDOM_PHRASE);
         });
 
