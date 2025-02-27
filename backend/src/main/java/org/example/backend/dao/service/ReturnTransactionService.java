@@ -553,6 +553,22 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+            String type, String userEmail){
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
+            throw new BadArgumentException("Incorrect argument: userEmail");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                        type, userEmail);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 

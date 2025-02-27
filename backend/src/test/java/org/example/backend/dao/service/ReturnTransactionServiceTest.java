@@ -1506,6 +1506,45 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                            null, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                            "", RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                            TYPE_THAT_EXIST, null);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                            TYPE_THAT_EXIST, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
+                            TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: type");
+        assertEquals(secondException.getMessage(), "Incorrect argument: type");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
