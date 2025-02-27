@@ -489,6 +489,22 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndType(
+            Date startingDate, Date endingDate, String type){
+
+        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
+
+        if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+
+        List<Object[]> resultList = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndType(
+                        startingDate, endingDate, type);
+
+        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
+    }
+
+    @Transactional
     public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 
