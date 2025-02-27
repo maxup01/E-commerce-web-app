@@ -1382,6 +1382,52 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            null, DATE_NOW, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            DATE_BEFORE, null, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            DATE_NOW, DATE_BEFORE, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, null);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
