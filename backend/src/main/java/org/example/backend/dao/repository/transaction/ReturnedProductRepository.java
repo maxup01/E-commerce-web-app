@@ -74,6 +74,22 @@ public interface ReturnedProductRepository extends JpaRepository<ReturnedProduct
     List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
             @Param("type") String type, @Param("userEmail") String userEmail);
 
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate " +
+            " AND LOWER(r.product.name) LIKE %:phrase% AND r.product.type = :type " +
+            " GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("phrase") String phrase, @Param("type") String type);
+
+    @Query("SELECT r.product, SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r" +
+            " WHERE r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate " +
+            " AND LOWER(r.product.name) LIKE %:phrase% AND r.returnTransaction.userEmail = :userEmail " +
+            " GROUP BY r.product.name")
+    List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("phrase") String phrase, @Param("userEmail") String userEmail);
+
     @Query("SELECT SUM(r.quantity), SUM(r.quantity * r.pricePerUnit) FROM ReturnedProduct AS r WHERE " +
             "r.returnTransaction.date >= :startingDate AND r.returnTransaction.date <= :endingDate")
     List<Object[]> getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(@Param("startingDate") Date startingDate,

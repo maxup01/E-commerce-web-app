@@ -320,6 +320,26 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(){
+
+        List<Object[]> list = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
+
+        assertEquals(list.size(), 1);
+    }
+
+    @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(){
+
+        List<Object[]> list = returnedProductRepository
+                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE, RANDOM_EMAIL);
+
+        assertEquals(list.size(), 1);
+    }
+
+    @Test
     public void testOfGetAllQuantityOfReturnedProductsAndRevenueByTimePeriod(){
 
         List<Object[]> result = returnedProductRepository.getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(DATE_BEFORE, DATE_AFTER);
