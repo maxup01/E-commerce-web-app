@@ -1665,6 +1665,66 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            null, DATE_NOW, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, null, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_NOW, DATE_BEFORE, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, null, RANDOM_EMAIL);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, "", RANDOM_EMAIL);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, TYPE_THAT_EXIST, null);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, TYPE_THAT_EXIST, WRONG_EMAIL);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService
+                    .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
+                            DATE_BEFORE, DATE_NOW, TYPE_THAT_EXIST, RANDOM_EMAIL);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
+        assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
+        assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: type");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: type");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
