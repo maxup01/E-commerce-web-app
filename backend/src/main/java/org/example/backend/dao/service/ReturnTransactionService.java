@@ -527,13 +527,19 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
+    public Object[] getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(Date startingDate,
                                                                                  Date endingDate){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
-        return returnedProductRepository
+        List<Object[]> resultList = returnedProductRepository
                 .getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(startingDate, endingDate);
+
+        Object[] returnList = new Object[2];
+        returnList[0] = resultList.get(0)[0];
+        returnList[1] = resultList.get(0)[1];
+
+        return returnList;
     }
 
     @Transactional

@@ -6,10 +6,7 @@ import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
-import org.example.backend.model.ProductAndQuantityAndRevenueSearchModel;
-import org.example.backend.model.ReturnTransactionModel;
-import org.example.backend.model.ReturnTransactionSearchModel;
-import org.example.backend.model.TransactionIdAndTransactionStatusModel;
+import org.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -366,6 +363,26 @@ public class ReturnTransactionController{
             }
         }
         else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
+    @GetMapping("/returns/returned-products/quantity-and-revenue")
+    public ResponseEntity<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+            @RequestBody TimePeriodModel requestBody){
+
+        if(requestBody == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        Object[] result;
+
+        try{
+            result = returnTransactionService
+                    .getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
+                            requestBody.getStartingDate(), requestBody.getEndDate());
+        } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
