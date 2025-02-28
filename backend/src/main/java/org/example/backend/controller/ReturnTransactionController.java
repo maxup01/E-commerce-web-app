@@ -388,4 +388,24 @@ public class ReturnTransactionController{
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
+
+    @GetMapping("/returns/returned-products/types-quantity-and-revenue")
+    public ResponseEntity<List<Object[]>> getTypesAndTheirReturnedQuantityAndRevenueByTimePeriod(
+            @RequestBody TimePeriodModel requestBody){
+
+        if(requestBody == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+        List<Object[]> result;
+
+        try{
+            result = returnTransactionService
+                    .getAllTypesAndTheirReturnedQuantityAndRevenueByTimePeriod(
+                            requestBody.getStartingDate(), requestBody.getEndDate());
+        } catch (BadArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
 }
