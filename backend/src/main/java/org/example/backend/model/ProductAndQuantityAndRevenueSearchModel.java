@@ -12,7 +12,8 @@ public class ProductAndQuantityAndRevenueSearchModel {
     private String type;
     private String phrase;
 
-    public ProductAndQuantityAndRevenueSearchModel(Date startingDate, Date endingDate, String type, String phrase) {
+    public ProductAndQuantityAndRevenueSearchModel(Date startingDate, Date endingDate,
+                                                   String type, String phrase) {
         this.startingDate = startingDate;
         this.endingDate = endingDate;
         this.type = type;

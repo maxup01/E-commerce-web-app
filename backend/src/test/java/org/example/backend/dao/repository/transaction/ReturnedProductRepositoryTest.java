@@ -251,15 +251,6 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(RANDOM_EMAIL);
-
-        assertEquals(list.size(), 2);
-    }
-
-    @Test
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(){
 
         List<Object[]> list = returnedProductRepository
@@ -280,16 +271,6 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 2);
-    }
-
-    @Test
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(){
 
         List<Object[]> list = returnedProductRepository
@@ -300,72 +281,11 @@ public class ReturnedProductRepositoryTest {
     }
 
     @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(
-                        RANDOM_PHRASE_LOWER_CASE, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
-                        RANDOM_TYPE_LOWER_CASE, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
     public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(){
 
         List<Object[]> list = returnedProductRepository
                 .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(
                         DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_TYPE_LOWER_CASE, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByPhraseAndTypeAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndTypeAndUserEmail(
-                        RANDOM_PHRASE_LOWER_CASE, RANDOM_TYPE_LOWER_CASE, RANDOM_EMAIL);
-
-        assertEquals(list.size(), 1);
-    }
-
-    @Test
-    public void testOfGetProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(){
-
-        List<Object[]> list = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_PHRASE_LOWER_CASE,
-                        RANDOM_TYPE_LOWER_CASE, RANDOM_EMAIL);
 
         assertEquals(list.size(), 1);
     }

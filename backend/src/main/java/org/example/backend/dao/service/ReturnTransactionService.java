@@ -461,18 +461,6 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(String userEmail){
-
-        if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByUserEmail(userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
     public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
             Date startingDate, Date endingDate, String phrase){
 
@@ -505,22 +493,6 @@ public class ReturnTransactionService {
     }
 
     @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
-            Date startingDate, Date endingDate, String userEmail){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndUserEmail(
-                        startingDate, endingDate, userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
     public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
             String phrase, String type){
 
@@ -532,38 +504,6 @@ public class ReturnTransactionService {
         List<Object[]> resultList = returnedProductRepository
                 .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
                         phrase, type);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(
-            String phrase, String userEmail){
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndUserEmail(
-                        phrase, userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
-            String type, String userEmail){
-
-        if((type == null) || (type.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: type");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTypeAndUserEmail(
-                        type, userEmail);
 
         return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
     }
@@ -582,80 +522,6 @@ public class ReturnTransactionService {
         List<Object[]> resultList = returnedProductRepository
                 .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(
                         startingDate, endingDate, phrase, type);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(
-            Date startingDate, Date endingDate, String phrase, String userEmail){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndUserEmail(
-                        startingDate, endingDate, phrase, userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
-            Date startingDate, Date endingDate, String type, String userEmail){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        if((type == null) || (type.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: type");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
-                        startingDate, endingDate, type, userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndTypeAndUserEmail(
-            String phrase, String type, String userEmail){
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-        else if((type == null) || (type.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: type");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndTypeAndUserEmail(
-                        phrase, type, userEmail);
-
-        return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
-    }
-
-    @Transactional
-    public List<Object[]> getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndTypeAndUserEmail(
-            Date startingDate, Date endingDate, String phrase, String type, String userEmail){
-
-        DateValidator.checkIfDatesAreGood(startingDate, endingDate);
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-        else if((type == null) || (type.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: type");
-        else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
-            throw new BadArgumentException("Incorrect argument: userEmail");
-
-        List<Object[]> resultList = returnedProductRepository
-                .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndTypeAndUserEmail(
-                        startingDate, endingDate, type, userEmail);
 
         return mapListRowsFromProductAndLongAndDoubleToProductModelAndLongAndDouble(resultList);
     }
