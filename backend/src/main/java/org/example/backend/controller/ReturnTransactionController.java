@@ -6,6 +6,7 @@ import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.transaction.ReturnTransactionNotFoundException;
 import org.example.backend.exception.user.UserNotFoundException;
+import org.example.backend.model.ProductAndQuantityAndRevenueSearchModel;
 import org.example.backend.model.ReturnTransactionModel;
 import org.example.backend.model.ReturnTransactionSearchModel;
 import org.example.backend.model.TransactionIdAndTransactionStatusModel;
@@ -282,5 +283,92 @@ public class ReturnTransactionController{
 
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionService
                 .getAllTypesAndTheirReturnedQuantityAndRevenue());
+    }
+
+    @GetMapping("/returns/returned-products/product-quantity-and-revenue")
+    public ResponseEntity<List<Object[]>> getProductsAndTheirReturnedQuantityAndRevenueBy(
+            ProductAndQuantityAndRevenueSearchModel requestBody){
+
+        List<Object[]> result;
+
+        if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getPhrase() != null) && (requestBody.getType() != null)) {
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhraseAndType(
+                                requestBody.getStartingDate(), requestBody.getEndingDate(),
+                                requestBody.getPhrase(), requestBody.getType());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getPhrase() != null)) {
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndPhrase(
+                                requestBody.getStartingDate(), requestBody.getEndingDate(),
+                                requestBody.getPhrase());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)
+                && (requestBody.getType() != null)) {
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriodAndType(
+                                requestBody.getStartingDate(), requestBody.getEndingDate(),
+                                requestBody.getType());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getPhrase() != null) && (requestBody.getType() != null)){
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByPhraseAndType(
+                                requestBody.getPhrase(), requestBody.getType());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if((requestBody.getStartingDate() != null) && (requestBody.getEndingDate() != null)){
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByTimePeriod(
+                                requestBody.getStartingDate(), requestBody.getEndingDate());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(requestBody.getPhrase() != null){
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByPhrase(requestBody.getPhrase());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else if(requestBody.getType() != null){
+
+            try{
+                result = returnTransactionService
+                        .getProductsAndTheirReturnedQuantityAndRevenueByType(requestBody.getType());
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
+        }
+        else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 }
