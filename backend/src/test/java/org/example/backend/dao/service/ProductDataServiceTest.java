@@ -884,6 +884,17 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetAllProductTypes(){
+
+        when(productRepository.getAllProductTypes())
+                .thenReturn(new ArrayList<>());
+
+        assertDoesNotThrow(() -> {
+            productDataService.getAllProductTypes();
+        });
+    }
+
+    @Test
     public void testOfDeleteProductById(){
 
         Exception exception = assertThrows(BadArgumentException.class, () -> {

@@ -486,6 +486,11 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<String> getAllProductTypes(){
+        return productRepository.getAllProductTypes();
+    }
+
+    @Transactional
     public void deleteProductById(UUID id){
 
         if(id == null)
