@@ -323,6 +323,12 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @GetMapping("/product/all-types")
+    public ResponseEntity<List<String>> getAllProductTypes(){
+
+        return ResponseEntity.status(HttpStatus.OK).body(productDataService.getAllProductTypes());
+    }
+
     @DeleteMapping("/admin/product/delete")
     public ResponseEntity deleteProductById(@RequestBody UUID id){
 
