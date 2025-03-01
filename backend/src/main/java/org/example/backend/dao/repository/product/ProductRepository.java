@@ -54,4 +54,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     //You need to adjust percent signs at the beginning and at the end
     @Query("SELECT p, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% GROUP BY p.name")
     List<Object[]> getProductsAndRelatedQuantityByPhrase(@Param("phrase") String phrase);
+
+    @Query("SELECT p.type FROM Product p GROUP BY p.type")
+    List<String> getAllProductTypes();
 }

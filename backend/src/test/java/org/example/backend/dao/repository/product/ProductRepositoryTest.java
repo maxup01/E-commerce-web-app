@@ -276,4 +276,14 @@ public class ProductRepositoryTest {
         assertEquals(map.size(), 1);
         assertEquals(map.get(RANDOM_NAME), RANDOM_STOCK.getQuantity());
     }
+
+    @Test
+    public void testOfGetAllProductTypes(){
+
+        productRepository.save(product1);
+
+        List<String> list = productRepository.getAllProductTypes();
+
+        assertEquals(list.size(), 2);
+    }
 }
