@@ -6,6 +6,7 @@ import org.example.backend.dao.entity.image.ProductPageImage;
 import org.example.backend.dao.entity.product.Product;
 import org.example.backend.dao.entity.product.Stock;
 import org.example.backend.dao.repository.image.ProductMainImageRepository;
+import org.example.backend.dao.repository.image.ProductPageImageRepository;
 import org.example.backend.dao.repository.product.ProductRepository;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.image.ProductPageImageNotFoundException;
@@ -14,6 +15,7 @@ import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.ProductModel;
 import org.example.backend.model.ProductModelAndPageImages;
 import org.example.backend.model.ProductModelAndStock;
+import org.example.backend.model.ProductPageImageModel;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -27,15 +29,20 @@ public class ProductDataService {
 
     Pattern ean8Pattern;
     Pattern ean13Pattern;
-    
+
+    private ProductPageImageRepository productPageImageRepository;
+
     private ProductMainImageRepository productMainImageRepository;
 
     private ProductRepository productRepository;
 
     @Autowired
-    public ProductDataService(ProductMainImageRepository productMainImageRepository, ProductRepository productRepository) {
+    public ProductDataService(ProductMainImageRepository productMainImageRepository,
+                              ProductRepository productRepository,
+                              ProductPageImageRepository productPageImageRepository) {
         this.productMainImageRepository = productMainImageRepository;
         this.productRepository = productRepository;
+        this.productPageImageRepository = productPageImageRepository;
         this.ean8Pattern = Pattern.compile("^[0-9]{8}$");
         this.ean13Pattern = Pattern.compile("^[0-9]{13}$");
     }
@@ -468,11 +475,34 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<ProductPageImageModel> getAllProductImagesByProductId(UUID productId){
+
+        if(productId == null)
+            throw new BadArgumentException("Null argument: productId");
+
+        List<ProductPageImage> images = productPageImageRepository.findByProductId(productId);
+
+        return mapProductPageImageListToProductPageImageList(images);
+    }
+
+    @Transactional
     public void deleteProductById(UUID id){
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
 
         productRepository.deleteById(id);
+    }
+
+    private List<ProductPageImageModel> mapProductPageImageListToProductPageImageList(
+            List<ProductPageImage> productPageImageList){
+
+        List<ProductPageImageModel> productPageImageModels = new ArrayList<>();
+
+        productPageImageList.forEach(productPageImage -> {
+            productPageImageModels.add(ProductPageImageModel.fromProductPageImage(productPageImage));
+        });
+
+        return productPageImageModels;
     }
 }

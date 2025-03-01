@@ -867,6 +867,23 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetAllProductImagesByProductId(){
+
+        when(productPageImageRepository.findByProductId(ID_OF_PRODUCT_WHICH_EXIST))
+                .thenReturn(new ArrayList<>());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getAllProductImagesByProductId(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getAllProductImagesByProductId(ID_OF_PRODUCT_WHICH_EXIST);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: productId");
+    }
+
+    @Test
     public void testOfDeleteProductById(){
 
         Exception exception = assertThrows(BadArgumentException.class, () -> {
