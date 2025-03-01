@@ -59,7 +59,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedRole);
     }
 
-    @PutMapping("/delete-privilege-from-role")
+    @PutMapping("/delete-privilege-role-relation")
     public ResponseEntity<RoleModel> deletePrivilegeFromRole(@RequestBody RoleModel roleModel,
                                                                  @RequestParam("privilege_name") String privilegeName) {
 
@@ -78,7 +78,7 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(updatedRole);
     }
 
-    @PutMapping("/add-privilege-to-role")
+    @PutMapping("/add-privilege-role-relation")
     public ResponseEntity<RoleModel> addPrivilegeToRole(@RequestBody RoleModel roleModel,
                                                         @RequestParam("privilege_name") String privilegeName) {
 
@@ -129,13 +129,13 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(roleModel);
     }
 
-    @GetMapping("/role-all")
+    @GetMapping("/roles")
     public ResponseEntity<List<RoleModel>> getAllRoles() {
 
         return ResponseEntity.status(HttpStatus.OK).body(userDataService.getAllRoles());
     }
 
-    @DeleteMapping("/delete-role-and-assign-new-by-id/{id}")
+    @DeleteMapping("/delete-role-and-assign-new/{id}")
     public ResponseEntity deleteRoleAndAssignNewById(@PathVariable("id") Long id,
                                                                 @Param("id_of_role_to_assign") Long idOfRoleToAssign) {
 

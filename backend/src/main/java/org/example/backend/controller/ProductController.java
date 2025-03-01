@@ -24,7 +24,7 @@ public class ProductController {
         this.productDataService = productDataService;
     }
 
-    @PostMapping("/products/create")
+    @PostMapping("/manager/create-product")
     public ResponseEntity<ProductModelAndStock> createProduct(@RequestBody ProductModelAndStock productModelAndStock) {
 
         if(productModelAndStock == null) {
@@ -45,7 +45,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @PutMapping("/admin/products/update")
+    @PutMapping("/manager/update-product")
     public ResponseEntity<ProductModel> updateProduct(@RequestBody ProductModel productModel) {
 
         if(productModel == null)
@@ -110,7 +110,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(existingProduct);
     }
 
-    @PutMapping("/products/add-quantity")
+    @PutMapping("/admin/add-product-quantity")
     public ResponseEntity<ProductModelAndStock> addProductQuantity(
             @RequestBody ProductModelAndStock productModelAndStock) {
 
@@ -131,7 +131,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/products/reduce-quantity")
+    @PutMapping("/admin/reduce-product-quantity")
     public ResponseEntity<ProductModelAndStock> reduceProductQuantity(
             @RequestBody ProductModelAndStock productModelAndStock) {
 
@@ -152,7 +152,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/products/insert-page-images")
+    @PutMapping("/manager/insert-product-page-images")
     public ResponseEntity<ProductModelAndPageImages> insertProductPageImage(
             @RequestBody ProductIdAndPageImage model) {
 
@@ -172,7 +172,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @PutMapping("/products/delete-page-images")
+    @PutMapping("/manager/delete-product-page-images")
     public ResponseEntity<ProductModelAndPageImages> deleteProductPageImage(
             @RequestBody ProductIdAndPageImageIdModel model) {
 
@@ -192,7 +192,7 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/products")
+    @GetMapping("/products-by-search")
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
             @RequestBody ProductSearchModel productSearchModel) {
 
@@ -308,7 +308,7 @@ public class ProductController {
                 .status(HttpStatus.OK).body(productDataService.getAllTypesOfProductsAndRelatedToThemQuantity());
     }
 
-    @GetMapping("/product/page-images")
+    @GetMapping("/product-page-images-by--product-id")
     public ResponseEntity<List<ProductPageImageModel>> getProductPageImagesByProductId(
             @RequestParam UUID productId) {
 
@@ -323,13 +323,13 @@ public class ProductController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/product/all-types")
+    @GetMapping("/all-product-types")
     public ResponseEntity<List<String>> getAllProductTypes(){
 
         return ResponseEntity.status(HttpStatus.OK).body(productDataService.getAllProductTypes());
     }
 
-    @DeleteMapping("/admin/product/delete")
+    @DeleteMapping("/manager/delete-product")
     public ResponseEntity deleteProductById(@RequestBody UUID id){
 
         try{

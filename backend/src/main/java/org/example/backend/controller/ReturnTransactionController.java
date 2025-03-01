@@ -25,7 +25,7 @@ public class ReturnTransactionController{
         this.returnTransactionService = returnTransactionService;
     }
 
-    @PostMapping("/return/create")
+    @PostMapping("/create-return-transaction")
     public ResponseEntity<ReturnTransactionModel> createReturnTransaction(
             @RequestBody ReturnTransactionModel returnTransactionModel) {
 
@@ -47,7 +47,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/return/update-status-by-id")
+    @PutMapping("/update-return-transaction-status-by-id")
     public ResponseEntity<ReturnTransactionModel> updateReturnTransactionStatusById(
             @RequestBody TransactionIdAndTransactionStatusModel transactionIdAndTransactionStatusModel) {
 
@@ -66,7 +66,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModel);
     }
 
-    @GetMapping("/return")
+    @GetMapping("/return-transaction-by-id")
     public ResponseEntity<ReturnTransactionModel> getReturnTransactionById(
             @RequestBody UUID id) {
 
@@ -83,7 +83,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModel);
     }
 
-    @GetMapping("/returns")
+    @GetMapping("/return-transactions-by-search")
     public ResponseEntity<List<ReturnTransactionModel>> getReturnTransactionsByReturnTransactionSearchModel(
             @RequestBody ReturnTransactionSearchModel searchModel) {
 
@@ -262,7 +262,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModels);
     }
 
-    @GetMapping("/returns/returned-products/quantity-and-revenue")
+    @GetMapping("/return-transactions/all/returned-products/quantity-and-revenue")
     public ResponseEntity<Object[]> getQuantityAndRevenueOfAllReturnedProducts(){
 
         Object[] result = new Object[2];
@@ -275,14 +275,14 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/returns/returned-products/types-and-related-quantity-and-revenue")
+    @GetMapping("/return-transactions/all/returned-products/types-and-related-quantity-and-revenue")
     public ResponseEntity<List<Object[]>> getAllTypesAndRelatedQuantityAndRevenueOfAllReturnedProducts(){
 
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionService
                 .getAllTypesAndTheirReturnedQuantityAndRevenue());
     }
 
-    @GetMapping("/returns/returned-products/product-quantity-and-revenue")
+    @GetMapping("/return-transactions/returned-products/product-quantity-and-revenue-by-search")
     public ResponseEntity<List<Object[]>> getProductsAndTheirReturnedQuantityAndRevenueBy(
             ProductAndQuantityAndRevenueSearchModel requestBody){
 
@@ -369,7 +369,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/returns/returned-products/quantity-and-revenue-by-time-period")
+    @GetMapping("/return-transactions/returned-products/quantity-and-revenue-by-time-period")
     public ResponseEntity<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
             @RequestBody TimePeriodModel requestBody){
 
@@ -389,7 +389,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/returns/returned-products/types-quantity-and-revenue")
+    @GetMapping("/return-transactions/returned-products/types-related-quantity-and-revenue-by-time-period")
     public ResponseEntity<List<Object[]>> getTypesAndTheirReturnedQuantityAndRevenueByTimePeriod(
             @RequestBody TimePeriodModel requestBody){
 

@@ -52,7 +52,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(result);
     }
 
-    @PutMapping("/order/update-status-by-id")
+    @PutMapping("/admin/order/update-status-by-id")
     public ResponseEntity<OrderTransactionModel> updateOrderTransactionStatusByOrderTransactionId(
             @RequestBody TransactionIdAndTransactionStatusModel transactionIdAndTransactionStatusModel) {
 
@@ -75,7 +75,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(orderTransactionModel);
     }
 
-    @GetMapping("/order")
+    @GetMapping("/order-by-id")
     public ResponseEntity<OrderTransactionModel> getOrderTransactionById(@RequestBody UUID orderId) {
 
         OrderTransactionModel orderTransactionModel;
@@ -91,7 +91,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(orderTransactionModel);
     }
 
-    @GetMapping("/orders")
+    @GetMapping("/orders-by-search")
     public ResponseEntity<List<OrderTransactionModel>> getOrderTransactions(
             @RequestBody OrderTransactionSearchModel ots) {
 
@@ -277,7 +277,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(count);
     }
 
-    @GetMapping("/orders/ordered-products/quantity-and-revenue")
+    @GetMapping("/orders/ordered-products/all/quantity-and-revenue")
     public ResponseEntity<Object[]> getAllQuantityAndRevenueOfOrderedProducts(){
 
         List<Object[]> result = orderTransactionService.getAllQuantityOfOrderedProductsAndRevenue();
@@ -285,14 +285,14 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(result.get(0));
     }
 
-    @GetMapping("/orders/ordered-products/types-quantity-and-revenue")
+    @GetMapping("/orders/ordered-products/all/types-and-related-quantity-and-revenue")
     public ResponseEntity<List<Object[]>> getAllTypesAndTheirOrderedQuantityAndRevenue(){
 
         return ResponseEntity.status(HttpStatus.OK)
                 .body(orderTransactionService.getAllTypesAndTheirOrderedQuantityAndRevenue());
     }
 
-    @GetMapping("/orders/ordered-products/quantity-and-revenue-by-time-period")
+    @GetMapping("/orders/ordered-products/all/quantity-and-revenue-by-time-period")
     public ResponseEntity<List<Object[]>> getQuantityOfOrderedProductsAndRevenueByTimePeriod(
             @RequestBody TimePeriodModel timePeriodModel){
 
@@ -312,7 +312,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/orders/ordered-products/product-types-quantity-and-revenue-by-time-period")
+    @GetMapping("/orders/ordered-products/all/types-quantity-and-revenue-by-time-period")
     public ResponseEntity<List<Object[]>> getProductTypesAndTheirOrderedQuantityAndRevenueByTimePeriod(
             @RequestBody TimePeriodModel timePeriodModel){
 
@@ -332,7 +332,7 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/orders/ordered-products/product-quantity-and-revenue")
+    @GetMapping("/orders/ordered-products/product-quantity-and-revenue-by-search")
     public ResponseEntity<List<Object[]>> getProductsAndTheirOrderedQuantityAndRevenueBy(
             @RequestBody ProductAndQuantityAndRevenueSearchModel requestBody){
 
