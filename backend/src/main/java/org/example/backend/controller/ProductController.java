@@ -308,6 +308,21 @@ public class ProductController {
                 .status(HttpStatus.OK).body(productDataService.getAllTypesOfProductsAndRelatedToThemQuantity());
     }
 
+    @GetMapping("/product/page-images")
+    public ResponseEntity<List<ProductPageImageModel>> getProductPageImagesByProductId(
+            @RequestParam UUID productId) {
+
+        List<ProductPageImageModel> result;
+
+        try{
+            result = productDataService.getAllProductImagesByProductId(productId);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(result);
+    }
+
     @DeleteMapping("/admin/product/delete")
     public ResponseEntity deleteProductById(@RequestBody UUID id){
 
