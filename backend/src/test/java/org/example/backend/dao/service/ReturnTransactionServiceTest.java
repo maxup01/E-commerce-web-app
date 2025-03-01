@@ -1451,6 +1451,18 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetQuantityOfAllReturnedProductsAndRevenueByTimePeriod(){
 
+        ArrayList<Object[]> myList = new ArrayList<>();
+
+        Object[] objects = new Object[2];
+        objects[0] = 10L;
+        objects[1] = 20.00;
+
+        myList.add(objects);
+
+        when(returnedProductRepository
+                .getAllQuantityOfReturnedProductsAndRevenueByTimePeriod(DATE_BEFORE, DATE_NOW))
+                .thenReturn(myList);
+
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService.getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
                     null, DATE_NOW);

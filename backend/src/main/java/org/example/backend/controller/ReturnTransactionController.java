@@ -369,7 +369,7 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
-    @GetMapping("/returns/returned-products/quantity-and-revenue")
+    @GetMapping("/returns/returned-products/quantity-and-revenue-by-time-period")
     public ResponseEntity<Object[]> getQuantityOfAllReturnedProductsAndRevenueByTimePeriod(
             @RequestBody TimePeriodModel requestBody){
 
