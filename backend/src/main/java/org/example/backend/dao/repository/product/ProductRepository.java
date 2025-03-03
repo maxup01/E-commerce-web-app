@@ -1,6 +1,7 @@
 package org.example.backend.dao.repository.product;
 
 import org.example.backend.dao.entity.product.Product;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -57,4 +58,11 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT p.type FROM Product p GROUP BY p.type")
     List<String> getAllProductTypes();
+
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type AND " +
+            " p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findSpecifiedNumberOfProductsByPhraseAndTypeAndForbbidenEanCodeList(
+            @Param("phrase") String phrase, @Param("type") String type,
+            @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+            Pageable pageable);
 }

@@ -10,7 +10,10 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -285,5 +288,22 @@ public class ProductRepositoryTest {
         List<String> list = productRepository.getAllProductTypes();
 
         assertEquals(list.size(), 2);
+    }
+
+    @Test
+    public void testOfFindMax24ProductsByPhraseAndTypeAndForbbidenEanCodeList(){
+
+        productRepository.save(product1);
+
+        List<String> forbiddenEanCodes = new ArrayList<>();
+        forbiddenEanCodes.add(DIFFERENT_EAN_CODE);
+
+        List<Product> result = productRepository
+                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbbidenEanCodeList(
+                        PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE,
+                        forbiddenEanCodes, PageRequest.of(0, 24));
+
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(0).getEANCode(), DIFFERENT_EAN_CODE);
     }
 }
