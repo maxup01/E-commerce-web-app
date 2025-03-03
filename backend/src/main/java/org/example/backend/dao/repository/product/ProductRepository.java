@@ -61,7 +61,7 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type AND " +
             " p.EANCode NOT IN (:forbiddenEanCodes)")
-    List<Product> findSpecifiedNumberOfProductsByPhraseAndTypeAndForbbidenEanCodeList(
+    List<Product> findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
             @Param("phrase") String phrase, @Param("type") String type,
             @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
             Pageable pageable);

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,7 @@ import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -864,6 +866,59 @@ public class ProductDataServiceTest {
 
         assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
         assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
+    }
+
+    @Test
+    public void testOfGetMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(){
+
+        List<String> forbiddenList = new ArrayList<>();
+
+        when(productRepository
+                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                        eq(RANDOM_PHRASE), eq(RANDOM_TYPE), eq(forbiddenList), any(Pageable.class)))
+                .thenReturn(new ArrayList<>());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            null, RANDOM_TYPE, forbiddenList);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            "", RANDOM_TYPE, forbiddenList);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            RANDOM_PHRASE, null, forbiddenList);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            RANDOM_PHRASE, "", forbiddenList);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            RANDOM_PHRASE, RANDOM_TYPE, null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService
+                    .getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                            RANDOM_PHRASE, RANDOM_TYPE, forbiddenList);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(secondException.getMessage(), "Incorrect argument: phrase");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: type");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: type");
+        assertEquals(fifthException.getMessage(), "Null argument: forbiddenEanCodeList");
     }
 
     @Test

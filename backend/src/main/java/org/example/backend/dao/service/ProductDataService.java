@@ -17,6 +17,7 @@ import org.example.backend.model.ProductModelAndPageImages;
 import org.example.backend.model.ProductModelAndStock;
 import org.example.backend.model.ProductPageImageModel;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -475,6 +476,24 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<ProductModel> getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
+            String phrase, String type, List<String> forbiddenEanCodeList){
+
+        if((phrase == null) || (phrase.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: phrase");
+        else if((type == null) || (type.trim().isEmpty()))
+            throw new BadArgumentException("Incorrect argument: type");
+        else if(forbiddenEanCodeList == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodeList");
+
+        List<Product> foundProducts = productRepository
+                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
+                        phrase, type, forbiddenEanCodeList, PageRequest.of(0, 24));
+
+        return mapProductListToProductModelList(foundProducts);
+    }
+
+    @Transactional
     public List<ProductPageImageModel> getAllProductImagesByProductId(UUID productId){
 
         if(productId == null)
@@ -497,6 +516,17 @@ public class ProductDataService {
             throw new BadArgumentException("Null argument: id");
 
         productRepository.deleteById(id);
+    }
+
+    private List<ProductModel> mapProductListToProductModelList(List<Product> productList){
+
+        ArrayList<ProductModel> productModels = new ArrayList<>();
+
+        productList.forEach(product -> {
+            productModels.add(ProductModel.fromProduct(product));
+        });
+
+        return productModels;
     }
 
     private List<ProductPageImageModel> mapProductPageImageListToProductPageImageList(

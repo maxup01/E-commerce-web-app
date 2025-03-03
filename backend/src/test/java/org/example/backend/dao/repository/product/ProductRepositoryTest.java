@@ -291,7 +291,7 @@ public class ProductRepositoryTest {
     }
 
     @Test
-    public void testOfFindMax24ProductsByPhraseAndTypeAndForbbidenEanCodeList(){
+    public void testOfFindMax24ProductsByPhraseAndTypeAndForbiddenEanCodeList(){
 
         productRepository.save(product1);
 
@@ -299,11 +299,11 @@ public class ProductRepositoryTest {
         forbiddenEanCodes.add(DIFFERENT_EAN_CODE);
 
         List<Product> result = productRepository
-                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbbidenEanCodeList(
+                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
                         PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE,
                         forbiddenEanCodes, PageRequest.of(0, 24));
 
         assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getEANCode(), DIFFERENT_EAN_CODE);
+        assertEquals(result.get(0).getEANCode(), RANDOM_EAN_CODE);
     }
 }
