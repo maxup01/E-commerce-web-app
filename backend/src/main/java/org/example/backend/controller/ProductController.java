@@ -6,6 +6,7 @@ import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -195,11 +196,9 @@ public class ProductController {
 
     @GetMapping("/products-by-search")
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
-            @RequestParam(name = "type", required = false) String type,
-            @RequestParam(name = "phrase", required = false) String phrase,
-            @RequestParam(name = "minPrice", required = false) Double minPrice,
-            @RequestParam(name = "maxPrice", required = false) Double maxPrice,
-            @RequestParam(name = "forbiddenEanCodes", required = false) List<String> forbiddenEanCodes) {
+            @RequestParam(name = "type") String type, @RequestParam(name = "phrase") String phrase,
+            @RequestParam(name = "minPrice") Double minPrice, @RequestParam(name = "maxPrice") Double maxPrice,
+            @RequestParam(name = "forbiddenEanCodes") List<String> forbiddenEanCodes) {
 
         if(forbiddenEanCodes == null)
             forbiddenEanCodes = new ArrayList<>();
@@ -278,6 +277,22 @@ public class ProductController {
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
+        }
+
+        return ResponseEntity.ok(productModels);
+    }
+
+    @GetMapping("/products-by-ean-codes")
+    public ResponseEntity<List<ProductModel>> getProductsByEanCodes(
+            @RequestParam(value = "eanCodes") List<String> eanCodes){
+
+        List<ProductModel> productModels;
+
+        try{
+            productModels = productDataService
+                    .getProductsByEANCodes(eanCodes);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
 
         return ResponseEntity.ok(productModels);
