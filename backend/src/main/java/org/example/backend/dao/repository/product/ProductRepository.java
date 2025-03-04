@@ -14,34 +14,52 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE p.EANCode = :eanCode")
     Product findByEANCode(@Param("eanCode") String eanCode);
 
-    @Query("SELECT p FROM Product AS p WHERE p.type = :type")
-    List<Product> findByType(@Param("type") String type);
+    @Query("SELECT p FROM Product AS p WHERE p.type = :type AND p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByType(
+            @Param("type") String type, @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+            Pageable pageable);
 
-    //You need to adjust percent signs at the beginning and at the end of phrase argument
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase%")
-    List<Product> findByPhrase(@Param("phrase") String phrase);
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND " +
+            " p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByPhrase(
+            @Param("phrase") String phrase, @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+            Pageable pageable);
 
-    @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
-    List<Product> findByPriceRange(@Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
+    @Query("SELECT p FROM Product AS p WHERE :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice " +
+            " AND p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByPriceRange(
+            @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice,
+            @Param("forbiddenEanCodes") List<String> forbiddenEanCodes, Pageable pageable
+    );
 
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type")
-    List<Product> findByPhraseAndType(@Param("phrase") String phrase, @Param("type") String type);
+    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type " +
+            " AND p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByPhraseAndType(@Param("phrase") String phrase, @Param("type") String type,
+                                      @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+                                      Pageable pageable);
 
     @Query("SELECT p FROM Product AS p WHERE p.type = :type AND p.currentPrice >= :minimalPrice AND " +
-            " p.currentPrice <= :maximalPrice")
-    List<Product> findByTypeAndPriceRange(@Param("type") String type,
-                                            @Param("minimalPrice") Double min, @Param("maximalPrice") Double max);
+            " p.currentPrice <= :maximalPrice AND p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByTypeAndPriceRange(@Param("type") String type, @Param("minimalPrice") Double min,
+                                          @Param("maximalPrice") Double max,
+                                          @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+                                          Pageable pageable);
 
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.currentPrice >= :minimalPrice AND " +
-            " p.currentPrice <= :maximalPrice")
+            " p.currentPrice <= :maximalPrice AND p.EANCode NOT IN (:forbiddenEanCodes)")
     List<Product> findByPhraseAndPriceRange(@Param("phrase") String phrase,
-                                            @Param("minimalPrice") Double min, @Param("maximalPrice") Double max);
+                                            @Param("minimalPrice") Double min, @Param("maximalPrice") Double max,
+                                            @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
+                                            Pageable pageable);
 
     //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type" +
-    " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice")
-    List<Product> findByPhraseAndTypeAndPriceRange(@Param("phrase") String phrase, @Param("type") String type,
-                                                   @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice);
+    " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice " +
+            " AND p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> findByPhraseAndTypeAndPriceRange(
+            @Param("phrase") String phrase, @Param("type") String type,
+            @Param("minimalPrice") Double minimalPrice, @Param("maximalPrice") Double maximalPrice,
+            @Param("forbiddenEanCodes") List<String> forbiddenEanCodes, Pageable pageable);
 
     @Query("SELECT p FROM Product AS p WHERE p.currentPrice != p.regularPrice")
     List<Product> showOnSale();
@@ -58,11 +76,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
 
     @Query("SELECT p.type FROM Product p GROUP BY p.type")
     List<String> getAllProductTypes();
-
-    @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type AND " +
-            " p.EANCode NOT IN (:forbiddenEanCodes)")
-    List<Product> findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
-            @Param("phrase") String phrase, @Param("type") String type,
-            @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
-            Pageable pageable);
 }

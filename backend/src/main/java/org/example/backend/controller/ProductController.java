@@ -205,7 +205,8 @@ public class ProductController {
                 productModels = productDataService
                         .getProductsByTypeAndPhraseAndPriceRange(productSearchModel.getType(),
                                 productSearchModel.getPhrase(), productSearchModel.getMinPrice(),
-                                productSearchModel.getMaxPrice());
+                                productSearchModel.getMaxPrice(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -214,7 +215,9 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByTypeAndPhrase(productSearchModel.getType(), productSearchModel.getPhrase());
+                        .getProductsByTypeAndPhrase(
+                                productSearchModel.getType(), productSearchModel.getPhrase(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -224,8 +227,9 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByTypeAndPriceRange(productSearchModel.getType(), productSearchModel.getMinPrice(),
-                                productSearchModel.getMaxPrice());
+                        .getProductsByTypeAndPriceRange(productSearchModel.getType(),
+                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -235,8 +239,9 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByPhraseAndPriceRange(productSearchModel.getPhrase(), productSearchModel.getMinPrice(),
-                                productSearchModel.getMaxPrice());
+                        .getProductsByPhraseAndPriceRange(productSearchModel.getPhrase(),
+                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -245,7 +250,9 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByType(productSearchModel.getType());
+                        .getProductsByType(
+                                productSearchModel.getType(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -254,7 +261,8 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByPhrase(productSearchModel.getPhrase());
+                        .getProductsByPhrase(productSearchModel.getPhrase(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -263,7 +271,9 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProductsByPriceRange(productSearchModel.getMinPrice(), productSearchModel.getMaxPrice());
+                        .getProductsByPriceRange(
+                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
+                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

@@ -115,7 +115,8 @@ public class ProductRepositoryTest {
                 RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
-        List<Product> products = productRepository.findByType(RANDOM_TYPE_LOWER_CASE);
+        List<Product> products = productRepository.findByType(
+                RANDOM_TYPE_LOWER_CASE, List.of(), PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
     }
@@ -123,11 +124,14 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByPhrase(){
 
+        List<String> list = new ArrayList<>();
+
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
                 RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
-        List<Product> products = productRepository.findByPhrase(PHRASE_OF_RANDOM_NAME_LOWER_CASE);
+        List<Product> products = productRepository
+                .findByPhrase(PHRASE_OF_RANDOM_NAME_LOWER_CASE, list, PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
     }
@@ -135,11 +139,25 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByPriceRange(){
 
-        List<Product> products = productRepository.findByPriceRange(LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
-        List<Product> notFoundProducts = productRepository.findByPriceRange(GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2);
+        productRepository.save(product1);
 
-        assertEquals(products.size(), 1);
+        List<Product> products = productRepository
+                .findByPriceRange(
+                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                        List.of(), PageRequest.of(0, 10));
+        List<Product> notFoundProducts = productRepository
+                .findByPriceRange(
+                        GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2,
+                        List.of(), PageRequest.of(0, 10));
+        List<Product> notFoundProducts2 = productRepository
+                .findByPriceRange(
+                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_2,
+                        List.of(RANDOM_EAN_CODE, DIFFERENT_EAN_CODE),
+                        PageRequest.of(0, 10));
+
+        assertEquals(products.size(), 2);
         assertEquals(notFoundProducts.size(), 0);
+        assertEquals(notFoundProducts2.size(), 0);
     }
 
     @Test
@@ -150,9 +168,11 @@ public class ProductRepositoryTest {
         productRepository.save(product);
 
         List<Product> products = productRepository
-                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE);
+                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE,
+                        List.of(), PageRequest.of(0, 10));
         List<Product> notFoundedProductList = productRepository
-                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, DIFFERENT_RANDOM_TYPE_LOWER_CASE);
+                .findByPhraseAndType(PHRASE_OF_RANDOM_NAME_LOWER_CASE, DIFFERENT_RANDOM_TYPE_LOWER_CASE,
+                        List.of(), PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
         assertEquals(notFoundedProductList.size(), 0);
@@ -166,11 +186,13 @@ public class ProductRepositoryTest {
         productRepository.save(product);
 
         List<Product> products = productRepository
-                .findByTypeAndPriceRange(RANDOM_TYPE_LOWER_CASE,
-                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+                .findByTypeAndPriceRange(RANDOM_TYPE_LOWER_CASE, LOWER_PRICE_THAN_CURRENT_PRICE,
+                        GREATER_PRICE_THAN_CURRENT_PRICE_1, List.of(),
+                        PageRequest.of(0, 10));
         List<Product> notFoundedProductList = productRepository
                 .findByTypeAndPriceRange(RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
-                        GREATER_PRICE_THAN_CURRENT_PRICE_2);
+                        GREATER_PRICE_THAN_CURRENT_PRICE_2, List.of(),
+                        PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
         assertEquals(notFoundedProductList.size(), 0);
@@ -179,16 +201,18 @@ public class ProductRepositoryTest {
     @Test
     public void testOfFindByPhraseAndPriceRange(){
 
-        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
-                RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE, RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
+        Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE,
+                RANDOM_DESCRIPTION, RANDOM_HEIGHT, RANDOM_WIDTH, RANDOM_REGULAR_PRICE, RANDOM_CURRENT_PRICE,
+                RANDOM_STOCK, RANDOM_MAIN_IMAGE, RANDOM_IMAGE_LIST);
         productRepository.save(product);
 
         List<Product> products = productRepository
                 .findByPhraseAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
-                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+                        LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                        List.of(), PageRequest.of(0, 10));
         List<Product> notFoundedProductList = productRepository
                 .findByPhraseAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
-                        GREATER_PRICE_THAN_CURRENT_PRICE_2);
+                        GREATER_PRICE_THAN_CURRENT_PRICE_2, List.of(), PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
         assertEquals(notFoundedProductList.size(), 0);
@@ -199,11 +223,15 @@ public class ProductRepositoryTest {
 
         productRepository.save(product1);
 
-        List<Product> products = productRepository.findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
-                RANDOM_TYPE_LOWER_CASE, LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1);
+        List<Product> products = productRepository
+                .findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+                RANDOM_TYPE_LOWER_CASE, LOWER_PRICE_THAN_CURRENT_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_1,
+                        List.of(), PageRequest.of(0, 10));
 
-        List<Product> productsNotFound = productRepository.findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
-                RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2);
+        List<Product> productsNotFound = productRepository
+                .findByPhraseAndTypeAndPriceRange(PHRASE_OF_RANDOM_NAME_LOWER_CASE,
+                RANDOM_TYPE_LOWER_CASE, GREATER_PRICE_THAN_CURRENT_PRICE_1, GREATER_PRICE_THAN_CURRENT_PRICE_2,
+                        List.of(), PageRequest.of(0, 10));
 
         assertEquals(products.size(), 1);
         assertEquals(productsNotFound.size(), 0);
@@ -288,22 +316,5 @@ public class ProductRepositoryTest {
         List<String> list = productRepository.getAllProductTypes();
 
         assertEquals(list.size(), 2);
-    }
-
-    @Test
-    public void testOfFindMax24ProductsByPhraseAndTypeAndForbiddenEanCodeList(){
-
-        productRepository.save(product1);
-
-        List<String> forbiddenEanCodes = new ArrayList<>();
-        forbiddenEanCodes.add(DIFFERENT_EAN_CODE);
-
-        List<Product> result = productRepository
-                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
-                        PHRASE_OF_RANDOM_NAME_LOWER_CASE, RANDOM_TYPE_LOWER_CASE,
-                        forbiddenEanCodes, PageRequest.of(0, 24));
-
-        assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getEANCode(), RANDOM_EAN_CODE);
     }
 }

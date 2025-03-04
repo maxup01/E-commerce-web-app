@@ -277,13 +277,19 @@ public class ProductDataService {
         return ProductModel.fromProduct(foundProduct);
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by type
     @Transactional
-    public List<ProductModel> getProductsByType(String type){
+    public List<ProductModel> getProductsByType(
+            String type, List<String> forbiddenEanCodes){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
-        List<Product> foundProducts = productRepository.findByType(type);
+        List<Product> foundProducts = productRepository
+                .findByType(type, forbiddenEanCodes, PageRequest.of(0, 24));
 
         if(foundProducts.isEmpty())
             throw new ProductNotFoundException("Products with type " + type + " not found");
@@ -297,13 +303,18 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by phrase
     @Transactional
-    public List<ProductModel> getProductsByPhrase(String phrase){
+    public List<ProductModel> getProductsByPhrase(String phrase, List<String> forbiddenEanCodes){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
-        List<Product> products = productRepository.findByPhrase(phrase);
+        List<Product> products = productRepository
+                .findByPhrase(phrase, forbiddenEanCodes, PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -314,8 +325,11 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by price range
     @Transactional
-    public List<ProductModel> getProductsByPriceRange(Double minimalPrice, Double maximalPrice){
+    public List<ProductModel> getProductsByPriceRange(
+            Double minimalPrice, Double maximalPrice, List<String> forbiddenEanCodes){
 
         if((minimalPrice == null) || (minimalPrice <= 0))
             throw new BadArgumentException("Incorrect argument: minimalPrice");
@@ -323,8 +337,12 @@ public class ProductDataService {
             throw new BadArgumentException("Incorrect argument: maximalPrice");
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
-        List<Product> foundProducts = productRepository.findByPriceRange(minimalPrice, maximalPrice);
+        List<Product> foundProducts = productRepository
+                .findByPriceRange(minimalPrice, maximalPrice, forbiddenEanCodes,
+                        PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -335,15 +353,22 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by type and phrase
     @Transactional
-    public List<ProductModel> getProductsByTypeAndPhrase(String type, String phrase){
+    public List<ProductModel> getProductsByTypeAndPhrase(
+            String type, String phrase, List<String> forbiddenEanCodes){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
         else if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
-        List<Product> foundProducts = productRepository.findByPhraseAndType(phrase, type);
+        List<Product> foundProducts = productRepository
+                .findByPhraseAndType(
+                        phrase, type, forbiddenEanCodes, PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -354,8 +379,11 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by type and price range
     @Transactional
-    public List<ProductModel> getProductsByTypeAndPriceRange(String type, Double minimalPrice, Double maximalPrice){
+    public List<ProductModel> getProductsByTypeAndPriceRange(
+            String type, Double minimalPrice, Double maximalPrice, List<String> forbiddenEanCodes){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
@@ -365,9 +393,12 @@ public class ProductDataService {
             throw new BadArgumentException("Incorrect argument: maximalPrice");
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
         List<Product> foundProducts = productRepository
-                .findByTypeAndPriceRange(type, minimalPrice, maximalPrice);
+                .findByTypeAndPriceRange(type, minimalPrice, maximalPrice, forbiddenEanCodes,
+                        PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -378,8 +409,11 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by phrase and price range
     @Transactional
-    public List<ProductModel> getProductsByPhraseAndPriceRange(String phrase, Double minimalPrice, Double maximalPrice){
+    public List<ProductModel> getProductsByPhraseAndPriceRange(
+            String phrase, Double minimalPrice, Double maximalPrice, List<String> forbiddenEanCodes){
 
         if((phrase == null) || (phrase.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: phrase");
@@ -389,9 +423,12 @@ public class ProductDataService {
             throw new BadArgumentException("Incorrect argument: maximalPrice");
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
         List<Product> foundProducts = productRepository
-                .findByPhraseAndPriceRange(phrase, minimalPrice, maximalPrice);
+                .findByPhraseAndPriceRange(phrase, minimalPrice, maximalPrice, forbiddenEanCodes,
+                        PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -402,9 +439,11 @@ public class ProductDataService {
         return productModels;
     }
 
+    //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
+    //and select them by type and phrase and price range
     @Transactional
-    public List<ProductModel> getProductsByTypeAndPhraseAndPriceRange(String type, String phrase, Double minimalPrice,
-                                                                  Double maximalPrice){
+    public List<ProductModel> getProductsByTypeAndPhraseAndPriceRange(
+            String type, String phrase, Double minimalPrice, Double maximalPrice, List<String> forbiddenEanCodes){
 
         if((type == null) || (type.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: type");
@@ -416,9 +455,13 @@ public class ProductDataService {
             throw new BadArgumentException("Incorrect argument: maximalPrice");
         else if(minimalPrice > maximalPrice)
             throw new BadArgumentException("Argument minimalPrice mustn't be greater than maximalPrice");
+        else if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
 
         List<Product> foundProducts = productRepository
-                .findByPhraseAndTypeAndPriceRange(phrase, type, minimalPrice, maximalPrice);
+                .findByPhraseAndTypeAndPriceRange(
+                        phrase, type, minimalPrice, maximalPrice, forbiddenEanCodes,
+                        PageRequest.of(0, 24));
 
         ArrayList<ProductModel> productModels = new ArrayList<>();
 
@@ -473,24 +516,6 @@ public class ProductDataService {
     @Transactional
     public List<Object[]> getAllTypesOfProductsAndRelatedToThemQuantity(){
         return productRepository.getTypesAndQuantityOfProductsWithThisTypes();
-    }
-
-    @Transactional
-    public List<ProductModel> getMaximum24ProductsByPhraseAndTypeAndForbiddenEanCodeList(
-            String phrase, String type, List<String> forbiddenEanCodeList){
-
-        if((phrase == null) || (phrase.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: phrase");
-        else if((type == null) || (type.trim().isEmpty()))
-            throw new BadArgumentException("Incorrect argument: type");
-        else if(forbiddenEanCodeList == null)
-            throw new BadArgumentException("Null argument: forbiddenEanCodeList");
-
-        List<Product> foundProducts = productRepository
-                .findSpecifiedNumberOfProductsByPhraseAndTypeAndForbiddenEanCodeList(
-                        phrase, type, forbiddenEanCodeList, PageRequest.of(0, 24));
-
-        return mapProductListToProductModelList(foundProducts);
     }
 
     @Transactional
