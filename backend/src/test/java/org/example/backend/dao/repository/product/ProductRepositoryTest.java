@@ -109,6 +109,16 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    public void testOfFind(){
+
+        productRepository.save(product1);
+
+        List<Product> products = productRepository.find(List.of(), PageRequest.of(0, 10));
+
+        assertEquals(products.size(), 2);
+    }
+
+    @Test
     public void testOffFindByType(){
 
         Product product = new Product(RANDOM_NAME, RANDOM_EAN_CODE, RANDOM_TYPE_LOWER_CASE, RANDOM_DESCRIPTION, RANDOM_HEIGHT,
@@ -246,6 +256,14 @@ public class ProductRepositoryTest {
     }
 
     @Test
+    public void testOfGetAllProductTypes(){
+
+        List<String> types = productRepository.getAllProductTypes();
+
+        assertEquals(types.size(), 1);
+    }
+
+    @Test
     public void testOfGetTotalQuantityOfProducts(){
 
         productRepository.save(product1);
@@ -306,15 +324,5 @@ public class ProductRepositoryTest {
 
         assertEquals(map.size(), 1);
         assertEquals(map.get(RANDOM_NAME), RANDOM_STOCK.getQuantity());
-    }
-
-    @Test
-    public void testOfGetAllProductTypes(){
-
-        productRepository.save(product1);
-
-        List<String> list = productRepository.getAllProductTypes();
-
-        assertEquals(list.size(), 2);
     }
 }

@@ -277,6 +277,18 @@ public class ProductDataService {
         return ProductModel.fromProduct(foundProduct);
     }
 
+    @Transactional
+    public List<ProductModel> getProducts(List<String> forbiddenEanCodes){
+
+        if(forbiddenEanCodes == null)
+            throw new BadArgumentException("Null argument: forbiddenEanCodes");
+
+        List<Product> foundProducts = productRepository
+                .find(forbiddenEanCodes, PageRequest.of(0, 24));
+
+        return mapProductListToProductModelList(foundProducts);
+    }
+
     //Function returns maximum 24 Products which don't have ean code included in forbiddenEanCodeList
     //and select them by type
     @Transactional

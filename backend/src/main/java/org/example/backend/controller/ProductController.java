@@ -196,6 +196,11 @@ public class ProductController {
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
             @RequestBody ProductSearchModel productSearchModel) {
 
+        if(productSearchModel == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        else if(productSearchModel.getEanCodesOfProductsPreviouslyLoaded() == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
         List<ProductModel> productModels;
 
         if((productSearchModel.getType() != null) && (productSearchModel.getPhrase() != null) &&
@@ -279,7 +284,13 @@ public class ProductController {
             }
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+
+            try{
+                productModels = productDataService
+                        .getProducts(productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
         }
 
         return ResponseEntity.ok(productModels);
@@ -331,12 +342,6 @@ public class ProductController {
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    @GetMapping("/all-product-types")
-    public ResponseEntity<List<String>> getAllProductTypes(){
-
-        return ResponseEntity.status(HttpStatus.OK).body(productDataService.getAllProductTypes());
     }
 
     @DeleteMapping("/manager/delete-product")

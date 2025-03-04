@@ -567,6 +567,20 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetProducts(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProducts(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProducts(List.of());
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: forbiddenEanCodes");
+    }
+
+    @Test
     public void testOfGetProductsByPhrase(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

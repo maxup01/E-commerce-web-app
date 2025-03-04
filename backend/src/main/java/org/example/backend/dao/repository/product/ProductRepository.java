@@ -14,6 +14,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE p.EANCode = :eanCode")
     Product findByEANCode(@Param("eanCode") String eanCode);
 
+    @Query("SELECT p FROM Product AS p WHERE p.EANCode NOT IN (:forbiddenEanCodes)")
+    List<Product> find(List<String> forbiddenEanCodes, Pageable pageable);
+
     @Query("SELECT p FROM Product AS p WHERE p.type = :type AND p.EANCode NOT IN (:forbiddenEanCodes)")
     List<Product> findByType(
             @Param("type") String type, @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
@@ -52,7 +55,6 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
                                             @Param("forbiddenEanCodes") List<String> forbiddenEanCodes,
                                             Pageable pageable);
 
-    //You need to adjust percent signs at the beginning and at the end of phrase argument
     @Query("SELECT p FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% AND p.type = :type" +
     " AND :minimalPrice <= p.currentPrice AND :maximalPrice >= p.currentPrice " +
             " AND p.EANCode NOT IN (:forbiddenEanCodes)")
@@ -64,6 +66,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE p.currentPrice != p.regularPrice")
     List<Product> showOnSale();
 
+    @Query("SELECT p.type FROM Product AS p GROUP BY p.type")
+    List<String> getAllProductTypes();
+
     @Query("SELECT SUM(p.stock.quantity) FROM Product AS p")
     Long getTotalQuantityOfProducts();
 
@@ -73,7 +78,4 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     //You need to adjust percent signs at the beginning and at the end
     @Query("SELECT p, SUM(p.stock.quantity) FROM Product AS p WHERE LOWER(p.name) LIKE %:phrase% GROUP BY p.name")
     List<Object[]> getProductsAndRelatedQuantityByPhrase(@Param("phrase") String phrase);
-
-    @Query("SELECT p.type FROM Product p GROUP BY p.type")
-    List<String> getAllProductTypes();
 }
