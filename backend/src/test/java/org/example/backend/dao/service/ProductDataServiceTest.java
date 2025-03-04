@@ -567,6 +567,24 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetProductsByEANCodes(){
+
+        List<String> list = List.of();
+
+        when(productRepository.findByEANCodes(list)).thenReturn(List.of());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductsByEANCodes(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductsByEANCodes(list);
+        });
+
+        assertEquals(firstException.getMessage(), "Null argument: eanCodes");
+    }
+
+    @Test
     public void testOfGetProducts(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

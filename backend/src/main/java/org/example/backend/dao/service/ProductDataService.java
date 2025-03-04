@@ -278,6 +278,17 @@ public class ProductDataService {
     }
 
     @Transactional
+    public List<ProductModel> getProductsByEANCodes(List<String> eanCodes){
+
+        if(eanCodes == null)
+            throw new BadArgumentException("Null argument: eanCodes");
+
+        List<Product> foundProducts = productRepository.findByEANCodes(eanCodes);
+
+        return mapProductListToProductModelList(foundProducts);
+    }
+
+    @Transactional
     public List<ProductModel> getProducts(List<String> forbiddenEanCodes){
 
         if(forbiddenEanCodes == null)

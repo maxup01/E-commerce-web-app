@@ -14,6 +14,9 @@ public interface ProductRepository extends JpaRepository<Product, UUID> {
     @Query("SELECT p FROM Product AS p WHERE p.EANCode = :eanCode")
     Product findByEANCode(@Param("eanCode") String eanCode);
 
+    @Query("SELECT p FROM Product AS p WHERE p.EANCode IN (:eanCodes)")
+    List<Product> findByEANCodes(@Param("eanCodes") List<String> eanCodes);
+
     @Query("SELECT p FROM Product AS p WHERE p.EANCode NOT IN (:forbiddenEanCodes)")
     List<Product> find(List<String> forbiddenEanCodes, Pageable pageable);
 

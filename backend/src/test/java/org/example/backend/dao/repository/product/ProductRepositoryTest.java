@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -106,6 +105,20 @@ public class ProductRepositoryTest {
         assertEquals(foundProduct.getWidth(), RANDOM_WIDTH);
         assertEquals(foundProduct.getRegularPrice(), RANDOM_REGULAR_PRICE);
         assertEquals(foundProduct.getCurrentPrice(), RANDOM_CURRENT_PRICE);
+    }
+
+    @Test
+    public void testOfFindByEANCodes(){
+
+        productRepository.save(product1);
+
+        List<Product> productsNotFound = productRepository.findByEANCodes(List.of());
+        List<Product> foundProducts = productRepository.findByEANCodes(List.of(RANDOM_EAN_CODE));
+        List<Product> foundProducts2 = productRepository.findByEANCodes(List.of(RANDOM_EAN_CODE, DIFFERENT_EAN_CODE));
+
+        assertEquals(productsNotFound.size(), 0);
+        assertEquals(foundProducts.size(), 1);
+        assertEquals(foundProducts2.size(), 2);
     }
 
     @Test

@@ -199,7 +199,7 @@ public class ProductController {
             @RequestParam(name = "phrase", required = false) String phrase,
             @RequestParam(name = "minPrice", required = false) Double minPrice,
             @RequestParam(name = "maxPrice", required = false) Double maxPrice,
-            @RequestParam(name = "eanCodes", required = false) List<String> forbiddenEanCodes) {
+            @RequestParam(name = "forbiddenEanCodes", required = false) List<String> forbiddenEanCodes) {
 
         if(forbiddenEanCodes == null)
             forbiddenEanCodes = new ArrayList<>();
