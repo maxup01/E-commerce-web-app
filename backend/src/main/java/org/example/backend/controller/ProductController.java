@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -194,91 +195,77 @@ public class ProductController {
 
     @GetMapping("/products-by-search")
     public ResponseEntity<List<ProductModel>> getProductsByProductSearchModel(
-            @RequestBody ProductSearchModel productSearchModel) {
+            @RequestParam(name = "type", required = false) String type,
+            @RequestParam(name = "phrase", required = false) String phrase,
+            @RequestParam(name = "minPrice", required = false) Double minPrice,
+            @RequestParam(name = "maxPrice", required = false) Double maxPrice,
+            @RequestParam(name = "eanCodes", required = false) List<String> forbiddenEanCodes) {
 
-        if(productSearchModel == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
-        else if(productSearchModel.getEanCodesOfProductsPreviouslyLoaded() == null)
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        if(forbiddenEanCodes == null)
+            forbiddenEanCodes = new ArrayList<>();
 
         List<ProductModel> productModels;
 
-        if((productSearchModel.getType() != null) && (productSearchModel.getPhrase() != null) &&
-        (productSearchModel.getMinPrice() != null) && (productSearchModel.getMaxPrice() != null)) {
+        if((type != null) && (phrase != null) && (minPrice != null) && (maxPrice != null)
+                && (!type.trim().isEmpty()) && (!phrase.trim().isEmpty())) {
 
             try{
                 productModels = productDataService
-                        .getProductsByTypeAndPhraseAndPriceRange(productSearchModel.getType(),
-                                productSearchModel.getPhrase(), productSearchModel.getMinPrice(),
-                                productSearchModel.getMaxPrice(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByTypeAndPhraseAndPriceRange(
+                                type, phrase, minPrice, maxPrice, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((productSearchModel.getType() != null) && (productSearchModel.getPhrase() != null)) {
+        else if((type != null) && (phrase != null) && (!type.trim().isEmpty()) && (!phrase.trim().isEmpty())) {
 
             try{
                 productModels = productDataService
-                        .getProductsByTypeAndPhrase(
-                                productSearchModel.getType(), productSearchModel.getPhrase(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByTypeAndPhrase(type, phrase, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((productSearchModel.getType() != null) && (productSearchModel.getMinPrice() != null) &&
-        (productSearchModel.getMaxPrice() != null)) {
+        else if((type != null) && (minPrice != null) && (maxPrice != null) && (!type.trim().isEmpty())) {
 
             try{
                 productModels = productDataService
-                        .getProductsByTypeAndPriceRange(productSearchModel.getType(),
-                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByTypeAndPriceRange(type, minPrice, maxPrice, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((productSearchModel.getPhrase() != null) && (productSearchModel.getMinPrice() != null) &&
-        (productSearchModel.getMaxPrice() != null)) {
+        else if((phrase != null) && (minPrice != null) && (maxPrice != null) && (!phrase.trim().isEmpty())) {
 
             try{
                 productModels = productDataService
-                        .getProductsByPhraseAndPriceRange(productSearchModel.getPhrase(),
-                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByPhraseAndPriceRange(phrase, minPrice, maxPrice, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if(productSearchModel.getType() != null) {
+        else if((type != null) && (!type.trim().isEmpty())) {
 
             try{
                 productModels = productDataService
-                        .getProductsByType(
-                                productSearchModel.getType(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByType( type, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if(productSearchModel.getPhrase() != null){
+        else if((phrase != null) && (!phrase.trim().isEmpty())) {
 
             try{
-                productModels = productDataService
-                        .getProductsByPhrase(productSearchModel.getPhrase(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                productModels = productDataService.getProductsByPhrase(phrase, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((productSearchModel.getMinPrice() != null) && (productSearchModel.getMaxPrice() != null)) {
+        else if((minPrice != null) && (maxPrice != null)) {
 
             try{
                 productModels = productDataService
-                        .getProductsByPriceRange(
-                                productSearchModel.getMinPrice(), productSearchModel.getMaxPrice(),
-                                productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProductsByPriceRange( minPrice, maxPrice, forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -287,7 +274,7 @@ public class ProductController {
 
             try{
                 productModels = productDataService
-                        .getProducts(productSearchModel.getEanCodesOfProductsPreviouslyLoaded());
+                        .getProducts(forbiddenEanCodes);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
