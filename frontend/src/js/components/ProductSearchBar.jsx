@@ -19,7 +19,7 @@ function ProductSearchBar(props) {
     });
 
     function handleTypeChange(event) {
-        props.typeSetter(() => event.target.value);
+        props.typeSetter(event.target.value);
     }
 
     function handleInputChange(event) {
@@ -33,15 +33,28 @@ function ProductSearchBar(props) {
         }
     }
 
+    function handleMinimalValueChange(event) {
+        props.minimalPriceSetter(event.target.value < 0 ? 0 : event.target.value);
+    }
+
+    function handleMaximalValueChange(event) {
+        props.maximalPriceSetter(event.target.value < 0 ? 0 : event.target.value);
+    }
+
     return (
-        <div style={divStyle}>
-            <select id={"type"} className={"bg-cyan-50 w-1/5"} onChange={handleTypeChange}>
+        <div className={"grid grid-cols-6 grid-rows-2"} style={divStyle}>
+            <select onChange={handleTypeChange} id={"type"}
+                    className={"bg-cyan-50 row-start-1 row-span-1 col-start-1 col-span-2 "}>
                 {types.map(type => (
                     <option key={type} value={type}>{type}</option>
                 ))}
             </select>
-            <input type={"text"} className={"bg-cyan-50 w-4/5 placeholder-gray-700"} placeholder={"Search"}
-                   onChange={handleInputChange} onKeyDown={handleKeyPress}/>
+            <input type={"text"} placeholder={"Search"} onChange={handleInputChange} onKeyDown={handleKeyPress}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-3 col-span-3"} />
+            <input type={"number"} placeholder={"Minimal price"} onChange={handleMinimalValueChange}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-2 row-span-1 col-start-2 col-span-2"} />
+            <input type={"number"} placeholder={"Maximal price"} onChange={handleMaximalValueChange}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-2 row-span-1 col-start-3 col-span-2"} />
         </div>
     );
 }
