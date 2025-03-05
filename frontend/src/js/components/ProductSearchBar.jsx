@@ -43,7 +43,7 @@ function ProductSearchBar(props) {
 
     return (
         <div className={"grid grid-cols-6 grid-rows-2"} style={divStyle}>
-            <select onChange={handleTypeChange} id={"type"}
+            <select onChange={handleTypeChange} id={"type"} name={"type"}
                     className={"bg-cyan-50 row-start-1 row-span-1 col-start-1 col-span-2 "}>
                 {types.map(type => (
                     <option key={type} value={type}>{type}</option>
