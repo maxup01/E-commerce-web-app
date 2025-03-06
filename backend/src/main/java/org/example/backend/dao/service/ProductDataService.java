@@ -191,16 +191,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModelAndPageImages addProductPageImageById(UUID id, byte[] newPageImage){
+    public ProductModelAndPageImages addProductPageImageByEANCode(String eanCode, byte[] newPageImage){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) || ((!ean8Pattern.matcher(eanCode).matches())
+                && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if(newPageImage == null)
             throw new BadArgumentException("Null argument: newPageImage");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         foundProduct.getPageImages().add(new ProductPageImage(newPageImage));
         productRepository.save(foundProduct);
@@ -210,16 +212,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModelAndPageImages deleteProductPageImageById(UUID id, UUID pageImageId){
+    public ProductModelAndPageImages deleteProductPageImageByEANCode(String eanCode, UUID pageImageId){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) || ((!ean8Pattern.matcher(eanCode).matches())
+                && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if(pageImageId == null)
             throw new BadArgumentException("Null argument: pageImageId");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         int arraySize = foundProduct.getPageImages().size();
 

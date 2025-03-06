@@ -161,7 +161,7 @@ public class ProductController {
 
     @PutMapping("/manager/insert-product-page-images")
     public ResponseEntity<ProductModelAndPageImages> insertProductPageImage(
-            @RequestBody ProductIdAndPageImage model) {
+            @RequestBody ProductEANCodeAndPageImage model) {
 
         if(model == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -169,7 +169,7 @@ public class ProductController {
         ProductModelAndPageImages result;
 
         try{
-            result = productDataService.addProductPageImageById(model.getProductId(), model.getImage());
+            result = productDataService.addProductPageImageByEANCode(model.getEanCode(), model.getImage());
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e){
@@ -181,7 +181,7 @@ public class ProductController {
 
     @PutMapping("/manager/delete-product-page-images")
     public ResponseEntity<ProductModelAndPageImages> deleteProductPageImage(
-            @RequestBody ProductIdAndPageImageIdModel model) {
+            @RequestBody ProductEANCodeAndPageImageIdModel model) {
 
         if(model == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
@@ -189,7 +189,8 @@ public class ProductController {
         ProductModelAndPageImages result;
 
         try{
-            result = productDataService.deleteProductPageImageById(model.getProductId(), model.getPageImageId());
+            result = productDataService
+                    .deleteProductPageImageByEANCode(model.getEanCode(), model.getPageImageId());
         } catch (BadArgumentException e){
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e){

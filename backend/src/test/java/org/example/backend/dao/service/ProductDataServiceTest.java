@@ -261,7 +261,7 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void testOfAddProductStockQuantityById(){
+    public void testOfAddProductStockQuantityByEANCode(){
 
         when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
         when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
@@ -299,7 +299,7 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void testOfReduceProductStockQuantityById(){
+    public void testOfReduceProductStockQuantityByEANCode(){
 
         when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
         when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
@@ -525,62 +525,78 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void testOfAddProductPageImageById(){
+    public void testOfAddProductPageImageByEANCode(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductPageImageById(null, RANDOM_IMAGE);
+            productDataService.addProductPageImageByEANCode(null, RANDOM_IMAGE);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.addProductPageImageByEANCode(WRONG_EAN_CODE, RANDOM_IMAGE);
         });
 
-        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductPageImageByEANCode(OCCUPIED_EAN_CODE, null);
+        });
+
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.addProductPageImageByEANCode(DIFFERENT_8_SIGN_EAN_CODE, RANDOM_IMAGE);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.addProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_IMAGE);
+            productDataService.addProductPageImageByEANCode(OCCUPIED_EAN_CODE, RANDOM_IMAGE);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Null argument: newPageImage");
-        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Null argument: newPageImage");
+        assertEquals(fourthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
-    public void testOfDeleteProductPageImageById(){
+    public void testOfDeleteProductPageImageByEANCode(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.deleteProductPageImageById(null, ID_OF_PAGE_IMAGE_THAT_EXIST);
+            productDataService.deleteProductPageImageByEANCode(null, ID_OF_PAGE_IMAGE_THAT_EXIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.deleteProductPageImageByEANCode(WRONG_EAN_CODE, ID_OF_PAGE_IMAGE_THAT_EXIST);
         });
 
-        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, ID_OF_PAGE_IMAGE_THAT_EXIST);
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .deleteProductPageImageByEANCode(OCCUPIED_EAN_CODE, null);
         });
 
-        Exception fourthException = assertThrows(ProductPageImageNotFoundException.class, () -> {
-            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, ID_OF_PAGE_IMAGE_THAT_NOT_EXIST);
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService
+                    .deleteProductPageImageByEANCode(DIFFERENT_8_SIGN_EAN_CODE, ID_OF_PAGE_IMAGE_THAT_EXIST);
+        });
+
+        Exception fifthException = assertThrows(ProductPageImageNotFoundException.class, () -> {
+            productDataService
+                    .deleteProductPageImageByEANCode(OCCUPIED_EAN_CODE, ID_OF_PAGE_IMAGE_THAT_NOT_EXIST);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.deleteProductPageImageById(ID_OF_PRODUCT_WHICH_EXIST, ID_OF_PAGE_IMAGE_THAT_EXIST);
+            productDataService.deleteProductPageImageByEANCode(OCCUPIED_EAN_CODE, ID_OF_PAGE_IMAGE_THAT_EXIST);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Null argument: pageImageId");
-        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
-        assertEquals(fourthException.getMessage(), "Product page image with id " + ID_OF_PAGE_IMAGE_THAT_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Null argument: pageImageId");
+        assertEquals(fourthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+        assertEquals(fifthException.getMessage(),
+                "Product page image with id " + ID_OF_PAGE_IMAGE_THAT_NOT_EXIST + " not found");
     }
 
     @Test

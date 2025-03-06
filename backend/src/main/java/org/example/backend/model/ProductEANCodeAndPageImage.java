@@ -7,8 +7,8 @@ import java.util.UUID;
 
 @Getter
 @AllArgsConstructor
-public class ProductIdAndPageImageIdModel {
+public class ProductEANCodeAndPageImage {
 
-    private UUID productId;
-    private UUID pageImageId;
+    private String eanCode;
+    private byte[] image;
 }
