@@ -278,12 +278,34 @@ public class ProductDataService {
     }
 
     @Transactional
-    public List<ProductModel> getProductsByEANCodes(List<String> eanCodes){
+    public ProductModel getProductByEANCode(String EANCode){
 
-        if(eanCodes == null)
-            throw new BadArgumentException("Null argument: eanCodes");
+        if((EANCode == null) || (!ean8Pattern.matcher(EANCode).matches())
+                || (!ean13Pattern.matcher(EANCode).matches()))
+            throw new BadArgumentException("Incorrect argument: EANCode");
 
-        List<Product> foundProducts = productRepository.findByEANCodes(eanCodes);
+        Product foundProduct = productRepository.findByEANCode(EANCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with EAN code " + EANCode + " not found");
+
+        return ProductModel.fromProduct(foundProduct);
+    }
+
+    @Transactional
+    public List<ProductModel> getProductsByEANCodes(List<String> EANCodes){
+
+        if(EANCodes == null)
+            throw new BadArgumentException("Null argument: EANCodes");
+
+        EANCodes.forEach(eanCode -> {
+
+            if((eanCode == null) || (!ean8Pattern.matcher(eanCode).matches())
+                    || (!ean13Pattern.matcher(eanCode).matches()))
+                throw new BadArgumentException("Incorrect argument: EANCodes");
+        });
+
+        List<Product> foundProducts = productRepository.findByEANCodes(EANCodes);
 
         return mapProductListToProductModelList(foundProducts);
     }

@@ -567,6 +567,38 @@ public class ProductDataServiceTest {
     }
 
     @Test
+    public void testOfGetProductByEANCode(){
+
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE))
+                .thenReturn(product);
+
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE))
+                .thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductByEANCode(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.getProductByEANCode(WRONG_EAN_CODE);
+        });
+
+        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.getProductByEANCode(DIFFERENT_8_SIGN_EAN_CODE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.getProductByEANCode(OCCUPIED_EAN_CODE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: EANCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: EANCode");
+        assertEquals(thirdException.getMessage(),
+                "Product with EAN code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+
+    }
+
+    @Test
     public void testOfGetProductsByEANCodes(){
 
         List<String> list = List.of();
