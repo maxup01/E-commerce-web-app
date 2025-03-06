@@ -62,9 +62,9 @@ public class ReturnTransactionServiceTest {
     private final ReturnCause RETURN_CAUSE = ReturnCause.DAMAGED;
     private final Long RETURNED_QUANTITY = 1L;
     private final Long NEGATIVE_QUANTITY = -2L;
-    private final UUID ID_OF_PRODUCT_THAT_EXISTS = UUID.randomUUID();
-    private final UUID ID_OF_PRODUCT_THAT_NOT_EXISTS = UUID.randomUUID();
-    private final String RANDOM_EAN_CODE = "73920483";
+    private final String WRONG_EAN_CODE = "DHADABDB232";
+    private final String OCCUPIED_EAN_CODE = "18921008";
+    private final String DIFFERENT_8_SIGN_EAN_CODE = "71021038";
     private final String RANDOM_PRODUCT_NAME = "random product name";
     private final String RANDOM_PRODUCT_TYPE = "random type";
     private final String RANDOM_PRODUCT_DESCRIPTION = "random description";
@@ -138,14 +138,14 @@ public class ReturnTransactionServiceTest {
 
         productModel = ProductModel
                 .builder()
-                .id(ID_OF_PRODUCT_THAT_EXISTS)
+                .EANCode(OCCUPIED_EAN_CODE)
                 .name(PRODUCT_NAME)
                 .build();
 
         user = new User(RANDOM_FIRST_NAME, RANDOM_LAST_NAME, RANDOM_EMAIL, RANDOM_PASSWORD,
                 BIRTH_DATE, RANDOM_ROLE, USER_IMAGE);
 
-        product = new Product(RANDOM_PRODUCT_NAME, RANDOM_EAN_CODE, RANDOM_PRODUCT_TYPE, RANDOM_PRODUCT_DESCRIPTION,
+        product = new Product(RANDOM_PRODUCT_NAME, OCCUPIED_EAN_CODE, RANDOM_PRODUCT_TYPE, RANDOM_PRODUCT_DESCRIPTION,
                 RANDOM_PRODUCT_HEIGHT, RANDOM_PRODUCT_WIDTH, GREATER_PRODUCT_PRICE,
                 RANDOM_PRODUCT_PRICE, new Stock(RANDOM_QUANTITY), new ProductMainImage(RANDOM_IMAGE));
 
@@ -172,10 +172,8 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfSaveNewReturnTransaction(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_THAT_EXISTS))
-                .thenReturn(Optional.ofNullable(product));
-        when(productRepository.findById(ID_OF_PRODUCT_THAT_NOT_EXISTS))
-                .thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         when(orderedProductRepository
                 .getAllProductsAndTheirOrderedQuantityAndPricePerUnitByTimePeriodAndTransactionId(
@@ -305,7 +303,7 @@ public class ReturnTransactionServiceTest {
                 .builder()
                 .product(null)
                 .quantity(RETURNED_QUANTITY)
-                .transactionInWhichThisProductWasOrdered(ID_OF_RETURN_TRANSACTION_THAT_EXISTS)
+                .transactionInWhichThisProductWasOrdered(ID_OF_ORDER_TRANSACTION_THAT_EXISTS)
                 .build();
 
         ArrayList<ReturnedProductModel> returnedProductModels = new ArrayList<>();
@@ -317,8 +315,7 @@ public class ReturnTransactionServiceTest {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        productModel.setId(null);
-
+        productModel.setEANCode(null);
         returnedProductModel.setProduct(productModel);
 
         returnedProductModels.clear();
@@ -328,8 +325,7 @@ public class ReturnTransactionServiceTest {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        productModel.setId(ID_OF_PRODUCT_THAT_EXISTS);
-
+        productModel.setEANCode(OCCUPIED_EAN_CODE);
         returnedProductModel.setProduct(productModel);
         returnedProductModel.setQuantity(null);
 
@@ -349,8 +345,7 @@ public class ReturnTransactionServiceTest {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        productModel.setId(ID_OF_PRODUCT_THAT_NOT_EXISTS);
-
+        productModel.setEANCode(DIFFERENT_8_SIGN_EAN_CODE);
         returnedProductModel.setProduct(productModel);
         returnedProductModel.setQuantity(RETURNED_QUANTITY);
 
@@ -361,7 +356,7 @@ public class ReturnTransactionServiceTest {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        productModel.setId(ID_OF_PRODUCT_THAT_EXISTS);
+        productModel.setEANCode(OCCUPIED_EAN_CODE);
         returnedProductModel.setProduct(productModel);
         returnedProductModel.setTransactionInWhichThisProductWasOrdered(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS);
 
@@ -403,34 +398,78 @@ public class ReturnTransactionServiceTest {
 
         returnTransactionModel.setDeliveryProviderName(DELIVERY_PROVIDER_NAME);
 
+        productModel.setEANCode(WRONG_EAN_CODE);
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setQuantity(RANDOM_QUANTITY);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
+
+        Exception twentyFifthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
+        });
+
+        productModel.setEANCode(OCCUPIED_EAN_CODE);
+        returnedProductModel.setProduct(productModel);
+        returnedProductModel.setQuantity(RANDOM_QUANTITY);
+
+        returnedProductModels.clear();
+        returnedProductModels.add(returnedProductModel);
+
         assertDoesNotThrow(() -> {
             returnTransactionService.saveNewReturnTransaction(returnTransactionModel);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: returnTransactionModel");
-        assertEquals(secondException.getMessage(), "Incorrect argument field: returnTransactionModel.userEmail");
-        assertEquals(thirdException.getMessage(), "Incorrect argument field: returnTransactionModel.userEmail");
-        assertEquals(fourthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(fifthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(sixthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(seventhException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(eighthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(ninthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(tenthException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(eleventhException.getMessage(), "Incorrect argument field: returnTransactionModel.addressModel");
-        assertEquals(twelfthException.getMessage(), "Incorrect argument field: returnTransactionModel.deliveryProviderName");
-        assertEquals(thirteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.deliveryProviderName");
-        assertEquals(fourteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.returnCause");
-        assertEquals(fifteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
-        assertEquals(sixteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
-        assertEquals(seventeenthException.getMessage(), "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
-        assertEquals(eighteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
-        assertEquals(nineteenthException.getMessage(), "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
-        assertEquals(twentiethException.getMessage(), "Product with id " + ID_OF_PRODUCT_THAT_NOT_EXISTS + " not found");
-        assertEquals(twentyFirstException.getMessage(), "Transaction with id " + ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS + " doesn't have product which you want to return");
-        assertEquals(twentySecondException.getMessage(), "One of products can't be returned cause of too big quantity");
-        assertEquals(twentyThirdException.getMessage(), "User with email" + DIFFERENT_EMAIL + " not found");
-        assertEquals(twentyFourthException.getMessage(), "Delivery Provider with name " + DIFFERENT_DELIVERY_PROVIDER_NAME + " not found");
+        assertEquals(firstException.getMessage(),
+                "Incorrect argument: returnTransactionModel");
+        assertEquals(secondException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.userEmail");
+        assertEquals(thirdException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.userEmail");
+        assertEquals(fourthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(fifthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(sixthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(seventhException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(eighthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(ninthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(tenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(eleventhException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.addressModel");
+        assertEquals(twelfthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.deliveryProviderName");
+        assertEquals(thirteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.deliveryProviderName");
+        assertEquals(fourteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.returnCause");
+        assertEquals(fifteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
+        assertEquals(sixteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
+        assertEquals(seventeenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
+        assertEquals(eighteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
+        assertEquals(nineteenthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
+        assertEquals(twentiethException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+        assertEquals(twentyFirstException.getMessage(), "Transaction with id "
+                + ID_OF_ORDER_TRANSACTION_THAT_NOT_EXISTS + " doesn't have product which you want to return");
+        assertEquals(twentySecondException.getMessage(),
+                "One of products can't be returned cause of too big quantity");
+        assertEquals(twentyThirdException.getMessage(),
+                "User with email" + DIFFERENT_EMAIL + " not found");
+        assertEquals(twentyFourthException.getMessage(),
+                "Delivery Provider with name " + DIFFERENT_DELIVERY_PROVIDER_NAME + " not found");
+        assertEquals(twentyFifthException.getMessage(),
+                "Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
     }
 
     @Test

@@ -6,7 +6,6 @@ import org.example.backend.exception.product.ProductNotFoundException;
 import org.example.backend.exception.product.ProductNotSavedException;
 import org.example.backend.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.Param;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,7 +52,7 @@ public class ProductController {
         if(productModel == null)
             throw new BadArgumentException("Null argument: productModel");
 
-        ProductModel existingProduct = productDataService.getProductById(productModel.getId());
+        ProductModel existingProduct = productDataService.getProductByEANCode(productModel.getEANCode());
 
         if(existingProduct == null)
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
@@ -62,7 +61,7 @@ public class ProductController {
 
             try{
                 existingProduct = productDataService
-                        .updateProductDescriptionById(existingProduct.getId(), productModel.getDescription());
+                        .updateProductDescriptionByEANCode(productModel.getEANCode(), productModel.getDescription());
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             } catch (ProductNotFoundException e) {
@@ -75,7 +74,9 @@ public class ProductController {
 
             try{
                 existingProduct = productDataService
-                        .updateProductSizeById(existingProduct.getId(), productModel.getHeight(), productModel.getWidth());
+                        .updateProductSizeByEANCode(
+                                existingProduct.getEANCode(), productModel.getHeight(),
+                                productModel.getWidth());
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             } catch (ProductNotFoundException e) {
@@ -88,8 +89,9 @@ public class ProductController {
 
             try{
                 existingProduct = productDataService
-                        .updateProductRegularPriceAndCurrentPriceById(
-                                existingProduct.getId(), productModel.getRegularPrice(), productModel.getCurrentPrice());
+                        .updateProductRegularPriceAndCurrentPriceByEANCode(
+                                existingProduct.getEANCode(), productModel.getRegularPrice(),
+                                productModel.getCurrentPrice());
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             } catch (ProductNotFoundException e) {
@@ -101,7 +103,8 @@ public class ProductController {
 
             try{
                 existingProduct = productDataService
-                        .updateProductMainImageById(existingProduct.getId(), productModel.getMainImage());
+                        .updateProductMainImageByEANCode(
+                                existingProduct.getEANCode(), productModel.getMainImage());
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             } catch (ProductNotFoundException e) {
@@ -123,7 +126,8 @@ public class ProductController {
 
         try{
             result = productDataService
-                    .addProductQuantityById(productModelAndStock.getProduct().getId(), productModelAndStock.getStock());
+                    .addProductQuantityByEANCode(
+                            productModelAndStock.getProduct().getEANCode(), productModelAndStock.getStock());
         } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e) {
@@ -144,7 +148,8 @@ public class ProductController {
 
         try{
             result = productDataService
-                    .reduceProductQuantityById(productModelAndStock.getProduct().getId(), productModelAndStock.getStock());
+                    .reduceProductQuantityByEANCode(
+                            productModelAndStock.getProduct().getEANCode(), productModelAndStock.getStock());
         } catch (BadArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         } catch (ProductNotFoundException e) {

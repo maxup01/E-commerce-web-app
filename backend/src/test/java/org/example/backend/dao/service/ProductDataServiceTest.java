@@ -18,7 +18,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.data.domain.Pageable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -262,227 +261,267 @@ public class ProductDataServiceTest {
     }
 
     @Test
-    public void testOfUpdateProductDescriptionById(){
-
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
-
-        Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductDescriptionById(null, RANDOM_DESCRIPTION);
-        });
-
-        Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, null);
-        });
-
-        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, "");
-        });
-
-        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_DESCRIPTION);
-        });
-
-        assertDoesNotThrow(() -> {
-            productDataService.updateProductDescriptionById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_DESCRIPTION);
-        });
-
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Incorrect argument: description");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: description");
-        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
-    }
-
-    @Test
     public void testOfAddProductStockQuantityById(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(null, DIFFERENT_STOCK);
+            productDataService.addProductQuantityByEANCode(null, DIFFERENT_STOCK);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.addProductQuantityByEANCode(WRONG_EAN_CODE, DIFFERENT_STOCK);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+            productDataService.addProductQuantityByEANCode(OCCUPIED_EAN_CODE, null);
         });
 
-        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.addProductQuantityByEANCode(OCCUPIED_EAN_CODE, NEGATIVE_STOCK);
+        });
+
+        Exception fifthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.addProductQuantityByEANCode(DIFFERENT_8_SIGN_EAN_CODE, DIFFERENT_STOCK);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.addProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+            productDataService.addProductQuantityByEANCode(OCCUPIED_EAN_CODE, DIFFERENT_STOCK);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Incorrect argument: stock");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
         assertEquals(thirdException.getMessage(), "Incorrect argument: stock");
-        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: stock");
+        assertEquals(fifthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
     public void testOfReduceProductStockQuantityById(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.reduceProductQuantityById(null, DIFFERENT_STOCK);
+            productDataService.reduceProductQuantityByEANCode(null, DIFFERENT_STOCK);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService.reduceProductQuantityByEANCode(WRONG_EAN_CODE, DIFFERENT_STOCK);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_STOCK);
+            productDataService.reduceProductQuantityByEANCode(OCCUPIED_EAN_CODE, null);
         });
 
-        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_NOT_EXIST, DIFFERENT_STOCK);
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.reduceProductQuantityByEANCode(OCCUPIED_EAN_CODE, NEGATIVE_STOCK);
         });
 
-        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, GREATER_STOCK);
+        Exception fifthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.reduceProductQuantityByEANCode(DIFFERENT_8_SIGN_EAN_CODE, RANDOM_STOCK);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.reduceProductQuantityById(ID_OF_PRODUCT_WHICH_EXIST, DIFFERENT_STOCK);
+            productDataService.reduceProductQuantityByEANCode(OCCUPIED_EAN_CODE, DIFFERENT_STOCK);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Incorrect argument: stock");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
         assertEquals(thirdException.getMessage(), "Incorrect argument: stock");
-        assertEquals(fourthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: stock");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: stock");
+        assertEquals(fifthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
-    public void testOfUpdateProductSizeById(){
+    public void testOfUpdateProductDescriptionByEANCode(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductSizeById(null, RANDOM_HEIGHT, RANDOM_WIDTH);
+            productDataService.updateProductDescriptionByEANCode(null, RANDOM_DESCRIPTION);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, null, RANDOM_WIDTH);
+            productDataService.updateProductDescriptionByEANCode(WRONG_EAN_CODE, RANDOM_DESCRIPTION);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_HEIGHT, RANDOM_WIDTH);
+            productDataService.updateProductDescriptionByEANCode(OCCUPIED_EAN_CODE, null);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, null);
+            productDataService.updateProductDescriptionByEANCode(OCCUPIED_EAN_CODE, "");
         });
 
-        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, NEGATIVE_WIDTH);
-        });
-
-        Exception sixthException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_HEIGHT, RANDOM_WIDTH);
+        Exception fifthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductDescriptionByEANCode(DIFFERENT_8_SIGN_EAN_CODE, RANDOM_DESCRIPTION);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.updateProductSizeById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_HEIGHT, RANDOM_WIDTH);
+            productDataService.updateProductDescriptionByEANCode(OCCUPIED_EAN_CODE, RANDOM_DESCRIPTION);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Incorrect argument: height");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: height");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: width");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: width");
-        assertEquals(sixthException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: description");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: description");
+        assertEquals(fifthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
-    public void testOfUpdateProductRegularPriceAndCurrentPriceById(){
+    public void testOfUpdateProductSizeByEANCode(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(null, GREATER_PRICE_THAN_CURRENT_PRICE_1, RANDOM_PRICE);
+            productDataService.updateProductSizeByEANCode(null, RANDOM_HEIGHT, RANDOM_WIDTH);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, null,
-                    RANDOM_PRICE);
+            productDataService.updateProductSizeByEANCode(WRONG_EAN_CODE, RANDOM_HEIGHT, RANDOM_WIDTH);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, NEGATIVE_PRICE,
-                    RANDOM_PRICE);
+            productDataService.updateProductSizeByEANCode(OCCUPIED_EAN_CODE, null, RANDOM_WIDTH);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
-                    null);
+            productDataService.updateProductSizeByEANCode(OCCUPIED_EAN_CODE, NEGATIVE_HEIGHT, RANDOM_WIDTH);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
-                    NEGATIVE_PRICE);
+            productDataService.updateProductSizeByEANCode(OCCUPIED_EAN_CODE, RANDOM_HEIGHT, null);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
-                    GREATER_PRICE_THAN_CURRENT_PRICE_1);
+            productDataService.updateProductSizeByEANCode(OCCUPIED_EAN_CODE, RANDOM_HEIGHT, NEGATIVE_WIDTH);
         });
 
         Exception seventhException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_PRICE,
-                    RANDOM_PRICE);
+            productDataService
+                    .updateProductSizeByEANCode(DIFFERENT_8_SIGN_EAN_CODE, RANDOM_HEIGHT, RANDOM_WIDTH);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.updateProductRegularPriceAndCurrentPriceById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_PRICE,
-                    RANDOM_PRICE);
+            productDataService
+                    .updateProductSizeByEANCode(OCCUPIED_EAN_CODE, RANDOM_HEIGHT, RANDOM_WIDTH);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Incorrect argument: regularPrice");
-        assertEquals(thirdException.getMessage(), "Incorrect argument: regularPrice");
-        assertEquals(fourthException.getMessage(), "Incorrect argument: currentPrice");
-        assertEquals(fifthException.getMessage(), "Incorrect argument: currentPrice");
-        assertEquals(sixthException.getMessage(), "Current price mustn't be greater than regular price");
-        assertEquals(seventhException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: height");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: height");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: width");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: width");
+        assertEquals(seventhException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
-    public void testOfUpdateProductMainImageById(){
+    public void testOfUpdateProductRegularPriceAndCurrentPriceByEANCode(){
 
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_WHICH_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductMainImageById(null, RANDOM_IMAGE);
+            productDataService
+                    .updateProductRegularPriceAndCurrentPriceByEANCode(
+                            null, GREATER_PRICE_THAN_CURRENT_PRICE_1, RANDOM_PRICE);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_EXIST, null);
+            productDataService
+                    .updateProductRegularPriceAndCurrentPriceByEANCode(
+                            WRONG_EAN_CODE, RANDOM_PRICE, RANDOM_PRICE);
         });
 
-        Exception thirdException = assertThrows(ProductNotFoundException.class, () -> {
-            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_NOT_EXIST, RANDOM_IMAGE);
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .updateProductRegularPriceAndCurrentPriceByEANCode(
+                            OCCUPIED_EAN_CODE, null, RANDOM_PRICE);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService
+                    .updateProductRegularPriceAndCurrentPriceByEANCode(
+                            OCCUPIED_EAN_CODE, NEGATIVE_PRICE, RANDOM_PRICE);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceByEANCode(
+                    OCCUPIED_EAN_CODE, RANDOM_PRICE, null);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceByEANCode(
+                    OCCUPIED_EAN_CODE, RANDOM_PRICE, NEGATIVE_PRICE);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceByEANCode(
+                    OCCUPIED_EAN_CODE, RANDOM_PRICE, GREATER_PRICE_THAN_CURRENT_PRICE_2);
+        });
+
+        Exception eighthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductRegularPriceAndCurrentPriceByEANCode(
+                    DIFFERENT_8_SIGN_EAN_CODE, RANDOM_PRICE, RANDOM_PRICE);
         });
 
         assertDoesNotThrow(() -> {
-            productDataService.updateProductMainImageById(ID_OF_PRODUCT_WHICH_EXIST, RANDOM_IMAGE);
+            productDataService.updateProductRegularPriceAndCurrentPriceByEANCode(
+                    OCCUPIED_EAN_CODE, RANDOM_PRICE, RANDOM_PRICE);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: id");
-        assertEquals(secondException.getMessage(), "Null argument: newMainImage");
-        assertEquals(thirdException.getMessage(), "Product with id " + ID_OF_PRODUCT_WHICH_NOT_EXIST + " not found");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Incorrect argument: regularPrice");
+        assertEquals(fourthException.getMessage(), "Incorrect argument: regularPrice");
+        assertEquals(fifthException.getMessage(), "Incorrect argument: currentPrice");
+        assertEquals(sixthException.getMessage(), "Incorrect argument: currentPrice");
+        assertEquals(seventhException.getMessage(),
+                "Current price mustn't be greater than regular price");
+        assertEquals(eighthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+    }
+
+    @Test
+    public void testOfUpdateProductMainImageByEANCode(){
+
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductMainImageByEANCode(null, RANDOM_IMAGE);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductMainImageByEANCode(WRONG_EAN_CODE, RANDOM_IMAGE);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            productDataService.updateProductMainImageByEANCode(OCCUPIED_EAN_CODE, null);
+        });
+
+        Exception fourthException = assertThrows(ProductNotFoundException.class, () -> {
+            productDataService.updateProductMainImageByEANCode(DIFFERENT_8_SIGN_EAN_CODE, RANDOM_IMAGE);
+        });
+
+        assertDoesNotThrow(() -> {
+            productDataService.updateProductMainImageByEANCode(OCCUPIED_EAN_CODE, RANDOM_IMAGE);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(thirdException.getMessage(), "Null argument: newMainImage");
+        assertEquals(fourthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
     }
 
     @Test
@@ -591,10 +630,10 @@ public class ProductDataServiceTest {
             productDataService.getProductByEANCode(OCCUPIED_EAN_CODE);
         });
 
-        assertEquals(firstException.getMessage(), "Incorrect argument: EANCode");
-        assertEquals(secondException.getMessage(), "Incorrect argument: EANCode");
+        assertEquals(firstException.getMessage(), "Incorrect argument: eanCode");
+        assertEquals(secondException.getMessage(), "Incorrect argument: eanCode");
         assertEquals(thirdException.getMessage(),
-                "Product with EAN code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
 
     }
 

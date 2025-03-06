@@ -44,6 +44,8 @@ public class OrderTransactionService {
     private final UserRepository userRepository;
 
     private final Pattern userEmailPattern;
+    private final Pattern ean8Pattern;
+    private final Pattern ean13Pattern;
 
     @Autowired
     public OrderTransactionService(AddressRepository addressRepository, ProductRepository productRepository,
@@ -58,6 +60,8 @@ public class OrderTransactionService {
         this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z0-9]+@[a-zA-Z0-9]+.[a-z]+");
         this.deliveryProviderRepository = deliveryProviderRepository;
         this.paymentMethodRepository = paymentMethodRepository;
+        this.ean8Pattern = Pattern.compile("^[0-9]{8}$");
+        this.ean13Pattern = Pattern.compile("^[0-9]{13}$");
     }
 
     @Transactional
@@ -85,16 +89,24 @@ public class OrderTransactionService {
         orderTransactionModel.getOrderedProducts().forEach(orderedProductModel -> {
 
             if((orderedProductModel == null) || (orderedProductModel.getProduct() == null)
-                    || (orderedProductModel.getProduct().getId() == null)
+                    || (orderedProductModel.getProduct().getEANCode() == null)
+                    || ((!ean8Pattern.matcher(orderedProductModel.getProduct().getEANCode()).matches())
+                            && (!ean13Pattern.matcher(orderedProductModel.getProduct().getEANCode()).matches()))
                     || (orderedProductModel.getQuantity() == null) || (orderedProductModel.getQuantity() <= 0))
                 throw new BadArgumentException("Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
 
-            Product foundProduct = productRepository.findById(orderedProductModel.getProduct().getId()).orElseThrow(() -> {
-                return new ProductNotFoundException("Product with id " + orderedProductModel.getProduct().getId() + " not found");
-            });
+            Product foundProduct = productRepository
+                    .findByEANCode(orderedProductModel.getProduct().getEANCode());
+
+            if(foundProduct == null){
+                throw new ProductNotFoundException(
+                        "Product with ean code " + orderedProductModel.getProduct().getEANCode() + " not found");
+            }
 
             if(foundProduct.getStock().getQuantity() < orderedProductModel.getQuantity()){
-                throw new BadArgumentException("There is not enough stock for product with id " + orderedProductModel.getProduct().getId());
+                throw new BadArgumentException(
+                        "There is not enough stock for product with ean code "
+                                + orderedProductModel.getProduct().getEANCode());
             }
 
             orderedProducts.add(new OrderedProduct(foundProduct, orderedProductModel.getQuantity(),

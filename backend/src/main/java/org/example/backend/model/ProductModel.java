@@ -14,7 +14,6 @@ import java.util.UUID;
 @Builder
 public class ProductModel {
 
-    private UUID id;
     private String EANCode;
     private String name;
     private String type;
@@ -28,12 +27,12 @@ public class ProductModel {
     @Override
     public boolean equals(Object o) {
 
-        return (o instanceof ProductModel) && ((ProductModel) o).getId().equals(this.getId());
+        return (o instanceof ProductModel) && ((ProductModel) o).getEANCode().equals(this.getEANCode());
     }
 
     public static ProductModel fromProduct(Product product) {
 
-        return new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+        return new ProductModel(product.getEANCode(), product.getName(),
                 product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
                 product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
     }

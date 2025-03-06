@@ -92,16 +92,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel updateProductDescriptionById(UUID id, String description){
+    public ProductModel updateProductDescriptionByEANCode(String eanCode, String description){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if((description == null) || (description.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: description");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         foundProduct.setDescription(description);
         productRepository.save(foundProduct);
@@ -110,18 +112,20 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel updateProductSizeById(UUID id, Integer height, Integer width){
+    public ProductModel updateProductSizeByEANCode(String eanCode, Integer height, Integer width){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if((height == null) || (height <= 0))
             throw new BadArgumentException("Incorrect argument: height");
         else if((width == null) || (width <= 0))
             throw new BadArgumentException("Incorrect argument: width");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         foundProduct.setHeight(height);
         foundProduct.setWidth(width);
@@ -132,10 +136,12 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel updateProductRegularPriceAndCurrentPriceById(UUID id, Double regularPrice, Double currentPrice){
+    public ProductModel updateProductRegularPriceAndCurrentPriceByEANCode(
+            String eanCode, Double regularPrice, Double currentPrice){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if((regularPrice == null) || (regularPrice <= 0))
             throw new BadArgumentException("Incorrect argument: regularPrice");
         else if((currentPrice == null) || (currentPrice <= 0))
@@ -143,9 +149,10 @@ public class ProductDataService {
         else if(currentPrice > regularPrice)
             throw new BadArgumentException("Current price mustn't be greater than regular price");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         foundProduct.setRegularPrice(regularPrice);
         foundProduct.setCurrentPrice(currentPrice);
@@ -155,16 +162,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel updateProductMainImageById(UUID id, byte[] newMainImage){
+    public ProductModel updateProductMainImageByEANCode(String eanCode, byte[] newMainImage){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if(newMainImage == null)
             throw new BadArgumentException("Null argument: newMainImage");
 
-        Product product = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product product = productRepository.findByEANCode(eanCode);
+
+        if(product == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         ProductMainImage productMainImage = new ProductMainImage(newMainImage);
 
@@ -226,16 +235,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModelAndStock addProductQuantityById(UUID id, Long stock){
+    public ProductModelAndStock addProductQuantityByEANCode(String eanCode, Long stock){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if((stock == null) || (stock < 0))
             throw new BadArgumentException("Incorrect argument: stock");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         foundProduct.getStock().setQuantity(foundProduct.getStock().getQuantity() + stock);
         productRepository.save(foundProduct);
@@ -244,16 +255,18 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModelAndStock reduceProductQuantityById(UUID id, Long stock){
+    public ProductModelAndStock reduceProductQuantityByEANCode(String eanCode, Long stock){
 
-        if(id == null)
-            throw new BadArgumentException("Null argument: id");
+        if((eanCode == null) ||
+                ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
         else if((stock == null) || (stock < 0))
             throw new BadArgumentException("Incorrect argument: stock");
 
-        Product foundProduct = productRepository.findById(id).orElseThrow(() -> {
-            return new ProductNotFoundException("Product with id " + id + " not found");
-        });
+        Product foundProduct = productRepository.findByEANCode(eanCode);
+
+        if(foundProduct == null)
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         if(foundProduct.getStock().getQuantity() < stock)
             throw new BadArgumentException("Incorrect argument: stock");
@@ -278,34 +291,33 @@ public class ProductDataService {
     }
 
     @Transactional
-    public ProductModel getProductByEANCode(String EANCode){
+    public ProductModel getProductByEANCode(String eanCode){
 
-        if((EANCode == null) || (!ean8Pattern.matcher(EANCode).matches())
-                || (!ean13Pattern.matcher(EANCode).matches()))
-            throw new BadArgumentException("Incorrect argument: EANCode");
+        if((eanCode == null) || ((!ean8Pattern.matcher(eanCode).matches()) && (!ean13Pattern.matcher(eanCode).matches())))
+            throw new BadArgumentException("Incorrect argument: eanCode");
 
-        Product foundProduct = productRepository.findByEANCode(EANCode);
+        Product foundProduct = productRepository.findByEANCode(eanCode);
 
         if(foundProduct == null)
-            throw new ProductNotFoundException("Product with EAN code " + EANCode + " not found");
+            throw new ProductNotFoundException("Product with ean code " + eanCode + " not found");
 
         return ProductModel.fromProduct(foundProduct);
     }
 
     @Transactional
-    public List<ProductModel> getProductsByEANCodes(List<String> EANCodes){
+    public List<ProductModel> getProductsByEANCodes(List<String> eanCodes){
 
-        if(EANCodes == null)
-            throw new BadArgumentException("Null argument: EANCodes");
+        if(eanCodes == null)
+            throw new BadArgumentException("Null argument: eanCodes");
 
-        EANCodes.forEach(eanCode -> {
+        eanCodes.forEach(eanCode -> {
 
             if((eanCode == null) || (!ean8Pattern.matcher(eanCode).matches())
                     || (!ean13Pattern.matcher(eanCode).matches()))
-                throw new BadArgumentException("Incorrect argument: EANCodes");
+                throw new BadArgumentException("Incorrect argument: eanCodes");
         });
 
-        List<Product> foundProducts = productRepository.findByEANCodes(EANCodes);
+        List<Product> foundProducts = productRepository.findByEANCodes(eanCodes);
 
         return mapProductListToProductModelList(foundProducts);
     }

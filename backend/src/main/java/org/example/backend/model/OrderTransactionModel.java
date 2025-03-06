@@ -50,7 +50,7 @@ public class OrderTransactionModel {
 
             Product product = orderedProduct.getProduct();
 
-            ProductModel productModel = new ProductModel(product.getId(), product.getEANCode(), product.getName(),
+            ProductModel productModel = new ProductModel(product.getEANCode(), product.getName(),
                     product.getType(), product.getDescription(), product.getHeight(), product.getWidth(),
                     product.getRegularPrice(), product.getCurrentPrice(), product.getMainImage().getImage());
 

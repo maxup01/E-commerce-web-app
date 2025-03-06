@@ -45,6 +45,8 @@ public class ReturnTransactionService {
     private final ReturnedProductRepository returnedProductRepository;
 
     private final Pattern userEmailPattern;
+    private final Pattern ean8Pattern;
+    private final Pattern ean13Pattern;
 
     @Autowired
     public ReturnTransactionService(DeliveryProviderRepository deliveryProviderRepository, ReturnTransactionRepository returnTransactionRepository,
@@ -59,6 +61,8 @@ public class ReturnTransactionService {
         this.returnedProductRepository = returnedProductRepository;
         this.addressRepository = addressRepository;
         this.userEmailPattern = Pattern.compile("[a-zA-Z]+[a-zA-Z0-9]+@[a-zA-Z0-9]+.[a-z]+");
+        this.ean8Pattern = Pattern.compile("^[0-9]{8}$");
+        this.ean13Pattern = Pattern.compile("^[0-9]{13}$");
     }
 
     @Transactional
@@ -91,14 +95,18 @@ public class ReturnTransactionService {
 
             Long quantityNotReturned = 0L;
 
-            if((returnedProductModel.getProduct() == null) || (returnedProductModel.getProduct().getId() == null)
+            if((returnedProductModel.getProduct() == null) || (returnedProductModel.getProduct().getEANCode() == null)
+                    || ((!ean8Pattern.matcher(returnedProductModel.getProduct().getEANCode()).matches()) &&
+                            (!ean13Pattern.matcher(returnedProductModel.getProduct().getEANCode()).matches()))
                     || (returnedProductModel.getQuantity() == null) || (returnedProductModel.getQuantity() <= 0)
                     || (returnedProductModel.getTransactionInWhichThisProductWasOrdered() == null))
                 throw new BadArgumentException("Incorrect argument field: returnTransactionModel.productsAndReturnedQuantity");
 
-            Product foundProduct = productRepository.findById(returnedProductModel.getProduct().getId()).orElseThrow(() -> {
-                return new ProductNotFoundException("Product with id " + returnedProductModel.getProduct().getId() + " not found");
-            });
+            Product foundProduct = productRepository.findByEANCode(returnedProductModel.getProduct().getEANCode());
+
+            if(foundProduct == null)
+                throw new ProductNotFoundException(
+                        "Product with ean code " + returnedProductModel.getProduct().getEANCode() + " not found");
 
             List<OrderedProduct> orderedProducts = orderedProductRepository
                     .getAllProductsAndTheirOrderedQuantityAndPricePerUnitByTimePeriodAndTransactionId(

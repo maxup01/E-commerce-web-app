@@ -57,6 +57,9 @@ public class OrderTransactionServiceTest {
     private final String NAME_OF_DELIVERY_PROVIDER_THAT_NOT_EXIST = "Not exist";
     private final String NAME_OF_PAYMENT_METHOD_THAT_EXIST = "Payment method name";
     private final String NAME_OF_PAYMENT_METHOD_THAT_NOT_EXIST = "Different dhaidada";
+    private final String WRONG_EAN_CODE = "DHADABDB232";
+    private final String OCCUPIED_EAN_CODE = "18921008";
+    private final String DIFFERENT_8_SIGN_EAN_CODE = "71021038";
     private final String COUNTRY_NAME = "country name";
     private final String PROVINCE_NAME = "province name";
     private final String CITY_NAME = "city name";
@@ -147,7 +150,6 @@ public class OrderTransactionServiceTest {
     public void testOfSaveNewOrderTransaction(){
 
         ProductModel productModel = new ProductModel();
-        productModel.setId(ID_OF_PRODUCT_THAT_EXIST);
 
         OrderedProductModel orderedProductModel = OrderedProductModel
                 .builder()
@@ -158,8 +160,8 @@ public class OrderTransactionServiceTest {
         ArrayList<OrderedProductModel> products = new ArrayList<>();
         products.add(orderedProductModel);
 
-        when(productRepository.findById(ID_OF_PRODUCT_THAT_EXIST)).thenReturn(Optional.of(product));
-        when(productRepository.findById(ID_OF_PRODUCT_THAT_NOT_EXIST)).thenReturn(Optional.empty());
+        when(productRepository.findByEANCode(OCCUPIED_EAN_CODE)).thenReturn(product);
+        when(productRepository.findByEANCode(DIFFERENT_8_SIGN_EAN_CODE)).thenReturn(null);
 
         when(userRepository.findByEmail(RANDOM_EMAIL)).thenReturn(user);
         when(userRepository.findByEmail(EMAIL_OF_USER_THAT_NOT_EXIST)).thenReturn(null);
@@ -312,8 +314,11 @@ public class OrderTransactionServiceTest {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        ProductModel productModel2 = new ProductModel();
-        productModel2.setId(ID_OF_PRODUCT_THAT_NOT_EXIST);
+        ProductModel productModel2 = ProductModel
+                .builder()
+                .EANCode(DIFFERENT_8_SIGN_EAN_CODE)
+                .name(RANDOM_PRODUCT_NAME)
+                .build();
 
         OrderedProductModel orderedProductModel2 = OrderedProductModel
                 .builder()
@@ -329,7 +334,10 @@ public class OrderTransactionServiceTest {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setOrderedProducts(products);
+        productModel2.setEANCode(OCCUPIED_EAN_CODE);
+        orderedProductModel2.setProduct(productModel2);
+
+        orderTransactionModel.setOrderedProducts(orderedProducts2);
         orderTransactionModel.setUserEmail(EMAIL_OF_USER_THAT_NOT_EXIST);
 
         Exception twentiethException = assertThrows(UserNotFoundException.class, () -> {
@@ -354,7 +362,7 @@ public class OrderTransactionServiceTest {
 
         OrderedProductModel orderedProductModelPom = OrderedProductModel
                 .builder()
-                .product(productModel)
+                .product(productModel2)
                 .quantity(RANDOM_QUANTITY + 10L)
                 .build();
 
@@ -366,38 +374,73 @@ public class OrderTransactionServiceTest {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        orderTransactionModel.setOrderedProducts(products);
+        productModel2.setEANCode(WRONG_EAN_CODE);
+        orderedProductModel2.setProduct(productModel2);
+        orderedProducts2.add(orderedProductModel2);
+        orderTransactionModel.setOrderedProducts(orderedProducts2);
 
-        orderTransaction.setOrderedProducts(new ArrayList<>());
+        Exception twentyFourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
+        });
+
+        productModel2.setEANCode(OCCUPIED_EAN_CODE);
+        orderedProductModel2.setProduct(productModel2);
+        orderedProducts2.add(orderedProductModel2);
+        orderTransactionModel.setOrderedProducts(orderedProducts2);
 
         assertDoesNotThrow(() -> {
             orderTransactionService.saveNewOrderTransaction(orderTransactionModel);
         });
 
-        assertEquals(firstException.getMessage(), "Null argument: orderTransactionModel");
-        assertEquals(secondException.getMessage(), "Incorrect argument field: orderTransactionModel.userEmail");
-        assertEquals(thirdException.getMessage(), "Incorrect argument field: orderTransactionModel.userEmail");
-        assertEquals(fourthException.getMessage(), "Incorrect argument field: orderTransactionModel.deliveryProviderName");
-        assertEquals(fifthException.getMessage(), "Incorrect argument field: orderTransactionModel.deliveryProviderName");
-        assertEquals(sixthException.getMessage(), "Incorrect argument field: orderTransactionModel.paymentMethodName");
-        assertEquals(seventhException.getMessage(), "Incorrect argument field: orderTransactionModel.paymentMethodName");
-        assertEquals(eighthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(ninthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(tenthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(eleventhException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(twelthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(thirteenthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(fourteenthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(fifteenthException.getMessage(), "Incorrect argument field: orderTransactionModel.addressModel");
-        assertEquals(sixteenthException.getMessage(), "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
-        assertEquals(seventeenthException.getMessage(), "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
-        assertEquals(eighteenthException.getMessage(), "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
-        assertEquals(nineteenthException.getMessage(), "Product with id " + ID_OF_PRODUCT_THAT_NOT_EXIST + " not found");
-        assertEquals(twentiethException.getMessage(), "User with email " + EMAIL_OF_USER_THAT_NOT_EXIST + " not found");
-        assertEquals(twentyFirstException.getMessage(), "Delivery Provider with name " + NAME_OF_DELIVERY_PROVIDER_THAT_NOT_EXIST + " not found");
-        assertEquals(twentySecondException.getMessage(), "Payment Method with name " + NAME_OF_PAYMENT_METHOD_THAT_NOT_EXIST + " not found");
-        assertEquals(twentyThirdException.getMessage(), "There is not enough stock for product with id " + ID_OF_PRODUCT_THAT_EXIST);
+        assertEquals(firstException.getMessage(),
+                "Null argument: orderTransactionModel");
+        assertEquals(secondException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.userEmail");
+        assertEquals(thirdException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.userEmail");
+        assertEquals(fourthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.deliveryProviderName");
+        assertEquals(fifthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.deliveryProviderName");
+        assertEquals(sixthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.paymentMethodName");
+        assertEquals(seventhException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.paymentMethodName");
+        assertEquals(eighthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(ninthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(tenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(eleventhException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(twelthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(thirteenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(fourteenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(fifteenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.addressModel");
+        assertEquals(sixteenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
+        assertEquals(seventeenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
+        assertEquals(eighteenthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
+        assertEquals(nineteenthException.getMessage(),
+                "Product with ean code " + DIFFERENT_8_SIGN_EAN_CODE + " not found");
+        assertEquals(twentiethException.getMessage(),
+                "User with email " + EMAIL_OF_USER_THAT_NOT_EXIST + " not found");
+        assertEquals(twentyFirstException.getMessage(),
+                "Delivery Provider with name " + NAME_OF_DELIVERY_PROVIDER_THAT_NOT_EXIST + " not found");
+        assertEquals(twentySecondException.getMessage(),
+                "Payment Method with name " + NAME_OF_PAYMENT_METHOD_THAT_NOT_EXIST + " not found");
+        assertEquals(twentyThirdException.getMessage(),
+                "There is not enough stock for product with ean code " + OCCUPIED_EAN_CODE);
         assertEquals(product.getStock().getQuantity(), RANDOM_QUANTITY - ORDERED_QUANTITY);
+        assertEquals(twentyFourthException.getMessage(),
+                "Incorrect argument field: orderTransactionModel.productsAndOrderedQuantity");
     }
 
     @Test
