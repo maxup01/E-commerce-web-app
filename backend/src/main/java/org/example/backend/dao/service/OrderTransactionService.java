@@ -155,7 +155,7 @@ public class OrderTransactionService {
 
         if(id == null)
             throw new BadArgumentException("Null argument: id");
-        else if((status == null) || (status == TransactionStatus.ACCEPTED_RETURN))
+        else if((status == null) || (status == TransactionStatus.RETURN_ACCEPTED))
             throw new BadArgumentException("Incorrect argument: status");
 
         OrderTransaction orderTransaction = orderTransactionRepository.findById(id).orElseThrow(() -> {

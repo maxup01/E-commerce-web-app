@@ -42,6 +42,6 @@ public class ReturnTransactionTest {
         assertEquals(returnTransaction.getDeliveryProvider(), RANDOM_DELIVERY_PROVIDER);
         assertEquals(returnTransaction.getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returnTransaction.getReturnedProducts(), RANDOM_RETRUNED_PRODUCT_LIST);
-        assertEquals(returnTransaction.getStatus(), TransactionStatus.ACCEPTED_RETURN);
+        assertEquals(returnTransaction.getStatus(), TransactionStatus.RETURN_ACCEPTED);
     }
 }

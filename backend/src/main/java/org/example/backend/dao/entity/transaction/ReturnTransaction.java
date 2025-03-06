@@ -44,7 +44,7 @@ public class ReturnTransaction extends Transaction {
 
 
 
-        super(transactionDate, TransactionStatus.ACCEPTED_RETURN,
+        super(transactionDate, TransactionStatus.RETURN_ACCEPTED,
                 user.getFirstName() + user.getLastName(), user.getEmail(), 0.00);
 
         Double moneyAmount = returnedProducts.stream().mapToDouble(returnedProduct -> {

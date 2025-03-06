@@ -81,7 +81,7 @@ public class OrderTransactionServiceTest {
     private final String DELIVERY_PROVIDER_NAME = "delivery provider name";
     private final String RANDOM_PHRASE = "random phrase";
     private final TransactionStatus RANDOM_STATUS = TransactionStatus.DELIVERED;
-    private final TransactionStatus WRONG_STATUS_FOR_ORDER_TRANSACTION = TransactionStatus.ACCEPTED_RETURN;
+    private final TransactionStatus WRONG_STATUS_FOR_ORDER_TRANSACTION = TransactionStatus.RETURN_ACCEPTED;
     private final String RANDOM_FIRST_NAME = "random first name";
     private final String RANDOM_LAST_NAME = "random last name";
     private final String RANDOM_PASSWORD = "random password";
