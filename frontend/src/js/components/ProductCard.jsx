@@ -3,8 +3,14 @@ import '../../css/index.css';
 
 function ProductCard(props) {
 
+    const divStyle = {
+
+        height: props.height,
+        width: props.width
+    }
+
     return (
-        <div style={{height: props.height, width: props.width}} className="grid grid-cols-6 grid-rows-4 justify-center
+        <div style={divStyle} className="grid grid-cols-6 grid-rows-4 justify-center
         bg-gray-100 hover:scale-105 hover:drop-shadow-xl rounded-lg p-3">
             <img src={props.imageSrc} alt="" className={"w-full h-full col-span-6 row-span-2 rounded-xl"} />
             <div className={"flex w-full h-full col-span-3 row-span-2 justify-items-start"}>
