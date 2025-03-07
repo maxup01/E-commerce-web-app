@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.DataIntegrityViolationException;
 
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 @DataJpaTest
@@ -49,5 +51,17 @@ public class PaymentMethodRepositoryTest {
         PaymentMethod foundPaymentMethod = paymentMethodRepository.findByName(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE);
 
         assertEquals(foundPaymentMethod.getName(), RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE);
+    }
+
+    @Test
+    public void testOfFindAllPaymentMethodNames(){
+
+        PaymentMethod paymentMethod = new PaymentMethod(RANDOM_PAYMENT_METHOD_NAME_LOWER_CASE, RANDOM_ENABLED_VALUE);
+        paymentMethodRepository.save(paymentMethod);
+
+        List<String> foundPaymentMethod = paymentMethodRepository
+                .findAllPaymentMethodNames();
+
+        assertEquals(foundPaymentMethod.size(), 1);
     }
 }
