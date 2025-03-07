@@ -3,6 +3,7 @@ package org.example.backend.dao.service;
 import jakarta.transaction.Transactional;
 import org.example.backend.dao.repository.logistic.DeliveryProviderRepository;
 import org.example.backend.dao.repository.transaction.PaymentMethodRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,6 +14,7 @@ public class TransactionDataService {
     private final DeliveryProviderRepository deliveryProviderRepository;
     private final PaymentMethodRepository paymentMethodRepository;
 
+    @Autowired
     public TransactionDataService(DeliveryProviderRepository deliveryProviderRepository
             , PaymentMethodRepository paymentMethodRepository) {
 
