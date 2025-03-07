@@ -15,4 +15,7 @@ public interface DeliveryProviderRepository extends JpaRepository<DeliveryProvid
 
     @Query("SELECT d FROM DeliveryProvider AS d WHERE d.name = :name")
     DeliveryProvider findByName(@Param("name") String name);
+
+    @Query("SELECT d.name FROM DeliveryProvider AS d GROUP BY d.name")
+    List<String> findAllNames();
 }

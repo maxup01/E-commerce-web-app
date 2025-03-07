@@ -83,4 +83,14 @@ public class DeliveryProviderRepositoryTest {
 
         assertEquals(providers.size(), 1);
     }
+
+    @Test
+    public void testOfFindAllNames(){
+
+        deliveryProviderRepository.save(deliveryProvider1);
+
+        List<String> deliveryProvidersNames = deliveryProviderRepository.findAllNames();
+
+        assertEquals(deliveryProvidersNames.size(), 3);
+    }
 }
