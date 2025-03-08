@@ -13,8 +13,8 @@ import java.util.UUID;
 public interface OrderTransactionRepository extends JpaRepository<OrderTransaction, UUID> {
 
     @Query("SELECT COUNT(o) FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate")
-    Long getCountOfAllOrderTransactionsByTimePeriod(@Param("startingDate") Date startingDate,
-                                                    @Param("endingDate") Date endingDate);
+    Long getCountOfAllOrderTransactionsByTimePeriod(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate")
     List<OrderTransaction> findOrderTransactionsByTimePeriod(
@@ -22,75 +22,78 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodName(
-            @Param("paymentMethodName") String paymentMethodName);
+            @Param("paymentMethodName") String paymentMethodName, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByDeliveryProviderName(
-            @Param("deliveryProviderName") String deliveryProviderName);
+            @Param("deliveryProviderName") String deliveryProviderName, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.userEmail = :email")
-    List<OrderTransaction> findOrderTransactionsByUserEmail(@Param("email") String email);
+    List<OrderTransaction> findOrderTransactionsByUserEmail(@Param("email") String email, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.paymentMethod.name = :paymentMethodName")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndPaymentMethodName(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-            @Param("paymentMethodName") String paymentMethodName);
+            @Param("paymentMethodName") String paymentMethodName, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndDeliveryProviderName(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-            @Param("deliveryProviderName") String deliveryProviderName);
+            @Param("deliveryProviderName") String deliveryProviderName, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.user.email = :userEmail")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndUserEmail(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
-            @Param("userEmail") String userEmail);
-
-    @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName AND " +
-            "o.userEmail = :userEmail")
-    List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndUserEmail(
-            @Param("paymentMethodName") String paymentMethodName, @Param("userEmail") String userEmail);
-
-    @Query("SELECT o FROM OrderTransaction AS o WHERE o.deliveryProvider.name = :deliveryProviderName AND " +
-            "o.userEmail = :userEmail")
-    List<OrderTransaction> findOrderTransactionsByDeliveryProviderNameAndUserEmail(
-            @Param("deliveryProviderName") String deliveryProviderName, @Param("userEmail") String userEmail);
+            @Param("userEmail") String userEmail, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName " +
             "AND o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
-            @Param("paymentMethodName") String paymentMethodName, @Param("deliveryProviderName") String deliveryProviderName);
+            @Param("paymentMethodName") String paymentMethodName,
+            @Param("deliveryProviderName") String deliveryProviderName, Pageable pageable);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName AND " +
+            "o.userEmail = :userEmail")
+    List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndUserEmail(
+            @Param("paymentMethodName") String paymentMethodName, @Param("userEmail") String userEmail,
+            Pageable pageable);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.deliveryProvider.name = :deliveryProviderName AND " +
+            "o.userEmail = :userEmail")
+    List<OrderTransaction> findOrderTransactionsByDeliveryProviderNameAndUserEmail(
+            @Param("deliveryProviderName") String deliveryProviderName, @Param("userEmail") String userEmail,
+            Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             "o.paymentMethod.name = :paymentMethodName AND o.deliveryProvider.name = :deliveryProviderName")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("paymentMethodName") String paymentMethodName,
-            @Param("deliveryProviderName") String deliveryProviderName);
+            @Param("deliveryProviderName") String deliveryProviderName, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.deliveryProvider.name = :deliveryProviderName AND o.userEmail = :userEmail")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("deliveryProviderName") String deliveryProviderName,
-            @Param("userEmail") String userEmail);
+            @Param("userEmail") String userEmail, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.paymentMethod.name = :paymentMethodName AND o.userEmail = :userEmail")
     List<OrderTransaction> findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("paymentMethodName") String paymentMethodName,
-            @Param("userEmail") String userEmail);
+            @Param("userEmail") String userEmail, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName AND " +
             " o.deliveryProvider.name = :deliveryProviderName AND o.userEmail = :userEmail")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             @Param("paymentMethodName") String paymentMethodName,
             @Param("deliveryProviderName") String deliveryProviderName,
-            @Param("userEmail") String userEmail);
+            @Param("userEmail") String userEmail, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate AND " +
             " o.paymentMethod.name = :paymentMethodName AND " +
@@ -99,5 +102,5 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
             @Param("paymentMethodName") String paymentMethodName,
             @Param("deliveryProviderName") String deliveryProviderName,
-            @Param("userEmail") String userEmail);
+            @Param("userEmail") String userEmail, Pageable pageable);
 }

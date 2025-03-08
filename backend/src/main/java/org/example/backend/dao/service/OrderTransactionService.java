@@ -201,8 +201,9 @@ public class OrderTransactionService {
         return orderTransactionRepository.getCountOfAllOrderTransactionsByTimePeriod(startingDate, endingDate);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getMax24OrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -213,6 +214,7 @@ public class OrderTransactionService {
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodName(String paymentMethodName) {
 
@@ -220,11 +222,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodName(paymentMethodName);
+                .findOrderTransactionsByPaymentMethodName(
+                        paymentMethodName, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderName(String deliveryProviderName) {
 
@@ -232,25 +236,29 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByDeliveryProviderName(deliveryProviderName);
+                .findOrderTransactionsByDeliveryProviderName(
+                        deliveryProviderName, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByUserEmail(String userEmail) {
 
         if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
 
-        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByUserEmail(userEmail);
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByUserEmail(userEmail, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodName(Date startingDate, Date endingDate,
-                                                                                       String paymentMethodName) {
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodName(
+            Date startingDate, Date endingDate, String paymentMethodName) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -258,14 +266,16 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndPaymentMethodName(startingDate, endingDate, paymentMethodName);
+                .findOrderTransactionsByTimePeriodAndPaymentMethodName(
+                        startingDate, endingDate, paymentMethodName, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderName(Date startingDate, Date endingDate,
-                                                                                          String deliveryProviderName) {
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderName(
+            Date startingDate, Date endingDate, String deliveryProviderName) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -273,14 +283,17 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndDeliveryProviderName(startingDate, endingDate, deliveryProviderName);
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderName(
+                        startingDate, endingDate, deliveryProviderName,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndUserEmail(Date startingDate, Date endingDate,
-                                                                               String userEmail) {
+    public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndUserEmail(
+            Date startingDate, Date endingDate, String userEmail) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -288,11 +301,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndUserEmail(startingDate, endingDate, userEmail);
+                .findOrderTransactionsByTimePeriodAndUserEmail(
+                        startingDate, endingDate, userEmail, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
             String paymentMethodName, String deliveryProviderName){
@@ -303,12 +318,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(paymentMethodName,
-                        deliveryProviderName);
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                        paymentMethodName, deliveryProviderName, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndUserEmail(
             String paymentMethodName, String userEmail) {
@@ -319,11 +335,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodNameAndUserEmail(paymentMethodName, userEmail);
+                .findOrderTransactionsByPaymentMethodNameAndUserEmail(
+                        paymentMethodName, userEmail, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByDeliveryProviderNameAndUserEmail(
             String deliveryProviderName, String userEmail) {
@@ -334,11 +352,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByDeliveryProviderNameAndUserEmail(deliveryProviderName, userEmail);
+                .findOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                        deliveryProviderName, userEmail, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
             Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName){
@@ -351,12 +371,14 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(startingDate, endingDate,
-                        paymentMethodName, deliveryProviderName);
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
+                        startingDate, endingDate, paymentMethodName, deliveryProviderName,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
             Date startingDate, Date endingDate, String paymentMethodName, String userEmail){
@@ -370,11 +392,12 @@ public class OrderTransactionService {
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(startingDate, endingDate,
-                        paymentMethodName, userEmail);
+                        paymentMethodName, userEmail, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
             Date startingDate, Date endingDate, String deliveryProviderName, String userEmail){
@@ -387,12 +410,14 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(startingDate, endingDate,
-                        deliveryProviderName, userEmail);
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                        startingDate, endingDate, deliveryProviderName, userEmail,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             String paymentMethodName, String deliveryProviderName, String userEmail){
@@ -405,12 +430,14 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(paymentMethodName,
-                        deliveryProviderName, userEmail);
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                        paymentMethodName, deliveryProviderName, userEmail,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
 
+    //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName, String userEmail){
@@ -425,8 +452,9 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: userEmail");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(paymentMethodName,
-                        deliveryProviderName, userEmail);
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                        paymentMethodName, deliveryProviderName, userEmail,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }

@@ -199,7 +199,8 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_METHOD);
+                .findOrderTransactionsByPaymentMethodName(
+                        RANDOM_PAYMENT_METHOD, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -210,7 +211,8 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByDeliveryProviderName(RANDOM_DELIVERY_PROVIDER_NAME);
+                .findOrderTransactionsByDeliveryProviderName(
+                        RANDOM_DELIVERY_PROVIDER_NAME, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -221,7 +223,7 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByUserEmail(RANDOM_EMAIL);
+                .findOrderTransactionsByUserEmail(RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -231,8 +233,9 @@ public class OrderTransactionRepositoryTest {
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByTimePeriodAndPaymentMethodName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD);
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndPaymentMethodName(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -246,7 +249,7 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
+                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -260,7 +263,8 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+                .findOrderTransactionsByTimePeriodAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -275,7 +279,7 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
-                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME);
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -286,7 +290,8 @@ public class OrderTransactionRepositoryTest {
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_METHOD, RANDOM_EMAIL);
+                .findOrderTransactionsByPaymentMethodNameAndUserEmail(
+                        RANDOM_PAYMENT_METHOD, RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -298,7 +303,7 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByDeliveryProviderNameAndUserEmail(RANDOM_DELIVERY_PROVIDER_NAME,
-                        RANDOM_EMAIL);
+                        RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -310,7 +315,8 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
     }
@@ -322,7 +328,8 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
     }
@@ -334,7 +341,8 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_EMAIL);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_EMAIL,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
     }
@@ -346,7 +354,8 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
     }
@@ -359,7 +368,7 @@ public class OrderTransactionRepositoryTest {
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
                         DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME,
-                        RANDOM_EMAIL);
+                        RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
     }
