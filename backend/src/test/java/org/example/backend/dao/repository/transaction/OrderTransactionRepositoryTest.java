@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -178,12 +179,13 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindOrderTransactionByTimePeriod(){
+    public void testOfFindOrderTransactionsByTimePeriod(){
 
         orderTransactionRepository.save(orderTransaction);
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionByTimePeriod(DATE_BEFORE, DATE_AFTER);
+                .findOrderTransactionsByTimePeriod(
+                        DATE_BEFORE, DATE_AFTER, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
@@ -225,7 +227,7 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindOrderTransactionByTimePeriodAndPaymentMethodName(){
+    public void testOfFindOrderTransactionsByTimePeriodAndPaymentMethodName(){
 
         orderTransactionRepository.save(orderTransaction);
 
@@ -239,7 +241,7 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindOrderTransactionByTimePeriodAndDeliveryProviderName(){
+    public void testOfFindOrderTransactionsByTimePeriodAndDeliveryProviderName(){
 
         orderTransactionRepository.save(orderTransaction);
 
@@ -253,7 +255,7 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfFindOrderTransactionByTimePeriodAndUserEmail(){
+    public void testOfFindOrderTransactionsByTimePeriodAndUserEmail(){
 
         orderTransactionRepository.save(orderTransaction);
 

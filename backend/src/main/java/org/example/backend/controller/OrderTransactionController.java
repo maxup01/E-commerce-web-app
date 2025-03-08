@@ -224,7 +224,7 @@ public class OrderTransactionController {
 
             try{
                 result = orderTransactionService
-                        .getOrderTransactionsByTimePeriod(startingDate, endingDate);
+                        .getMax24OrderTransactionsByTimePeriod(startingDate, endingDate);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

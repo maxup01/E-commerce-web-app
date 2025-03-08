@@ -529,22 +529,22 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriod(){
+    public void testOfGetMax24OrderTransactionsByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(null, DATE_NOW);
+            orderTransactionService.getMax24OrderTransactionsByTimePeriod(null, DATE_NOW);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_BEFORE, null);
+            orderTransactionService.getMax24OrderTransactionsByTimePeriod(DATE_BEFORE, null);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_NOW, DATE_BEFORE);
+            orderTransactionService.getMax24OrderTransactionsByTimePeriod(DATE_NOW, DATE_BEFORE);
         });
 
         assertDoesNotThrow(() -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW);
+            orderTransactionService.getMax24OrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
@@ -612,7 +612,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodName(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndPaymentMethodName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.getOrderTransactionsByTimePeriodAndPaymentMethodName(null, DATE_NOW, RANDOM_PAYMENT_NAME);
@@ -646,7 +646,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndDeliveryProviderName(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndDeliveryProviderName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.getOrderTransactionsByTimePeriodAndDeliveryProviderName(null, DATE_NOW,
@@ -684,7 +684,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndUserEmail(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndUserEmail(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService.getOrderTransactionsByTimePeriodAndUserEmail(null, DATE_NOW, RANDOM_EMAIL);
@@ -825,7 +825,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
@@ -885,7 +885,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
@@ -945,7 +945,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
@@ -1052,7 +1052,7 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
-    public void testOfGetOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(){
+    public void testOfGetMax24OrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService

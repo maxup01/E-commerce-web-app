@@ -26,6 +26,7 @@ import org.example.backend.model.OrderTransactionModel;
 import org.example.backend.model.ProductModel;
 import org.example.backend.validator.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -201,12 +202,13 @@ public class OrderTransactionService {
     }
 
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
+    public List<OrderTransactionModel> getMax24OrderTransactionsByTimePeriod(Date startingDate, Date endingDate) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         List<OrderTransaction> orderTransactions =
-                orderTransactionRepository.findOrderTransactionByTimePeriod(startingDate, endingDate);
+                orderTransactionRepository.findOrderTransactionsByTimePeriod(
+                        startingDate, endingDate, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
