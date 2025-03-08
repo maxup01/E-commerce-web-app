@@ -19,11 +19,11 @@ function ProductSearchBar(props) {
     });
 
     function handleTypeChange(event) {
-        props.typeSetter(event.target.value);
+        props.typeSetter(event.target.value !== "" ? event.target.value : null);
     }
 
     function handleInputChange(event) {
-        props.inputDataSetter(event.target.value);
+        props.inputDataSetter(event.target.value !== "" ? event.target.value : null);
     }
 
     function handleKeyPress(event) {

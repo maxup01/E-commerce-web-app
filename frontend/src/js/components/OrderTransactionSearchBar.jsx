@@ -25,26 +25,62 @@ function OrderTransactionSearchBar(props) {
             });
     });
 
+    function handleStartingDateChange(event) {
+
+        props.startingDateSetter(event.target.value !== "" ? event.target.value : null);
+    }
+
+    function handleEndingDateChange(event) {
+
+        props.endingDateSetter(event.target.value !== "" ? event.target.value : null);
+    }
+
+    function handleDeliveryProviderChange(event) {
+
+        props.deliveryProviderNameSetter(event.target.value !== "" ? event.target.value : null);
+    }
+
+    function handlePaymentMethodNameChange(event) {
+
+        props.paymentMethodNameSetter(event.target.value !== "" ? event.target.value : null);
+    }
+
+    function handleUserEmailChange(event) {
+
+        props.userEmailSetter(event.target.value !== "" ? event.target.value : null);
+    }
+
+    function handleSearchButtonClicked() {
+
+        props.onSearchButtonClick();
+    }
+
     return (
         <div className={"grid grid-cols-6 grid-rows-2"} style={divStyle}>
-            <input type={"date"} placeholder={"Starting date"} onChange={props.handleStartingDateChange}
-                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-2 col-span-2"} />
-            <input type={"date"} placeholder={"Ending date"} onChange={props.handleEndingDateChange}
-                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-4 col-span-2"} />
-            <select onChange={props.handleDeliveryProviderChange}
-                    className={"bg-cyan-50 row-start-2 row-span-1 col-start-1 col-span-2 "}>
+            <select onChange={handleDeliveryProviderChange}
+                    className={"bg-cyan-50 row-start-1 row-span-1 col-start-1 col-span-2 "}>
                 {deliveryProviders.map(deliveryProvider => (
                     <option key={deliveryProvider} value={deliveryProvider}>{deliveryProvider}</option>
                 ))}
             </select>
-            <select onChange={props.handlePaymentMethodName}
-                    className={"bg-cyan-50 row-start-2 row-span-1 col-start-3 col-span-2 "}>
+            <select onChange={handlePaymentMethodNameChange}
+                    className={"bg-cyan-50 row-start-1 row-span-1 col-start-3 col-span-2 "}>
                 {paymentMethods.map(paymentMethod => (
                     <option key={paymentMethod} value={paymentMethod}>{paymentMethod}</option>
                 ))}
             </select>
-            <input type={"email"} placeholder={"Email"} onChange={props.handleEmailChange}
-                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-5 col-span-2"} />
+            <input type={"email"} placeholder={"Email"} onChange={handleUserEmailChange}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-5 col-span-2"}/>
+            <input type={"date"} placeholder={"Starting date"} onChange={handleStartingDateChange}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-2 row-span-1 col-start-3 col-span-2"}/>
+            <input type={"date"} placeholder={"Ending date"} onChange={handleEndingDateChange}
+                   className={"bg-cyan-50 placeholder-gray-700 row-start-1 row-span-1 col-start-4 col-span-2"}/>
+            <button className={"bg-green-500 hover:bg-green-700 text-black font-semibold"}
+                    onClick={handleSearchButtonClicked}>
+                Search
+            </button>
         </div>
     );
 }
+
+export default OrderTransactionSearchBar;
