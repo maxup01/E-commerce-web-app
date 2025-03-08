@@ -11,8 +11,8 @@ function ProductSearchPage() {
         height: "100%",
         gridTemplateRows: "repeat(10, 350px)",
         gridTemplateColumns: "repeat(3, 250px)",
-        rowGap: "10px",
-        columnGap: "20px"
+        rowGap: "5px",
+        columnGap: "5px"
     }
 
     const [isLoading, setIsLoading] = useState(true);
@@ -26,23 +26,18 @@ function ProductSearchPage() {
 
     useEffect(() => {
         axios.get('http://127.0.0.1:8080/search-products', {
-            type: null,
-            phrase: null,
-            minPrice: null,
-            maxPrice: null,
-            forbiddenEanCodes: []
+            params: {
+                type: null,
+                phrase: null,
+                minPrice: null,
+                maxPrice: null,
+                forbiddenEanCodes: []
+            }
         })
             .then(response => {
 
                 setCurrentProducts(response.data);
                 setIsLoading(false);
-
-                response.data.forEach(item => {
-                    setEanCodesOfPreviouslyLoadedProducts(prevState => {
-                        prevState.push(item.get('EANCode'));
-                        return prevState;
-                    });
-                });
             })
             .catch(err => console.error("Error fetching products:", err));
     });
@@ -57,31 +52,18 @@ function ProductSearchPage() {
         let pomMax = maximalPrice === 0 ? null : maximalPrice;
 
         axios.get('http://127.0.0.1:8080/search-products', {
-            type: pomType,
-            phrase: pomPhrase,
-            minPrice: minimalPrice,
-            maxPrice: pomMax,
-            forbiddenEanCodes: []
+            params: {
+                type: pomType,
+                phrase: pomPhrase,
+                minPrice: minimalPrice,
+                maxPrice: pomMax,
+                forbiddenEanCodes: []
+            }
         })
             .then(response => {
 
                 setCurrentProducts(response.data);
                 setIsLoading(false);
-
-                let eanCodesOfCurrentlyLoadedProducts = [];
-
-                currentProducts.forEach(product => {
-
-                    eanCodesOfCurrentlyLoadedProducts.push(product.get('EANCode'));
-                });
-
-                setEanCodesOfPreviouslyLoadedProducts(prevState => {
-
-                    prevState.push(...eanCodesOfCurrentlyLoadedProducts);
-
-                    return prevState;
-                });
-
             })
             .catch(err => console.error("Error fetching products:", err));
     }
@@ -100,7 +82,9 @@ function ProductSearchPage() {
         }
 
         axios.get("http://127.0.0.1:8080/products-by-ean-codes", {
-            eanCodes: arrayOfLast24EanCodesInList
+            params: {
+                eanCodes: arrayOfLast24EanCodesInList
+            }
         }).then(response => {
 
             setIsLoading(false);
@@ -139,11 +123,13 @@ function ProductSearchPage() {
         let pomMax = maximalPrice === 0 ? null : maximalPrice;
 
         axios.get('http://127.0.0.1:8080/search-products', {
-            type: pomType,
-            phrase: pomPhrase,
-            minPrice: pomMin,
-            maxPrice: pomMax,
-            forbiddenEanCodes: eanCodesOfPreviouslyLoadedProducts
+            params: {
+                type: pomType,
+                phrase: pomPhrase,
+                minPrice: pomMin,
+                maxPrice: pomMax,
+                forbiddenEanCodes: eanCodesOfPreviouslyLoadedProducts
+            }
         })
             .then(response => {
 
@@ -154,7 +140,7 @@ function ProductSearchPage() {
 
                 currentProducts.forEach(product => {
 
-                    eanCodesOfCurrentlyLoadedProducts.push(product.get('EANCode'));
+                    eanCodesOfCurrentlyLoadedProducts.push(product['EANCode']);
                 });
 
                 setEanCodesOfPreviouslyLoadedProducts(prevState => {
@@ -192,8 +178,8 @@ function ProductSearchPage() {
                         {currentProducts.map(product => {
                             return (
                                 <div className={"col-span-1 row-span-1"}>
-                                    <ProductCard width={"100%"} height={"100%"} imageSrc={product.mainImage}
-                                                 name={product.name} price={product.currentPrice}/>
+                                    <ProductCard width={"100%"} height={"100%"} imageSrc={product['mainImage']}
+                                                 name={product['name']} price={product['currentPrice']}/>
                                 </div>
                             );
                         })}
