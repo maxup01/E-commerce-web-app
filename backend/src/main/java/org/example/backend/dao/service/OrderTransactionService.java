@@ -317,16 +317,19 @@ public class OrderTransactionService {
     //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndUserEmail(
-            Date startingDate, Date endingDate, String userEmail) {
+            Date startingDate, Date endingDate, String userEmail, List<UUID> forbiddenOrderTransactionIds) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndUserEmail(
-                        startingDate, endingDate, userEmail, PageRequest.of(0, 24));
+                        startingDate, endingDate, userEmail, forbiddenOrderTransactionIds,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }

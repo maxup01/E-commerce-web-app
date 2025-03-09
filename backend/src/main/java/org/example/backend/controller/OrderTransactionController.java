@@ -189,7 +189,7 @@ public class OrderTransactionController {
             try{
                 result = orderTransactionService
                         .getOrderTransactionsByTimePeriodAndUserEmail(
-                                startingDate, endingDate, userEmail);
+                                startingDate, endingDate, userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

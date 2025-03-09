@@ -325,12 +325,23 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, PageRequest.of(0, 10));
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultList = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
         assertEquals(orders.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
