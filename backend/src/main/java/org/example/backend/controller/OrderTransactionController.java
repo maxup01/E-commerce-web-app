@@ -113,7 +113,7 @@ public class OrderTransactionController {
                 result = orderTransactionService
                         .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
                                 startingDate, endingDate, paymentMethodName,
-                                deliveryProviderName, userEmail);
+                                deliveryProviderName, userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -158,7 +158,7 @@ public class OrderTransactionController {
             try{
                 result = orderTransactionService
                         .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                                paymentMethodName, deliveryProviderName, userEmail);
+                                paymentMethodName, deliveryProviderName, userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

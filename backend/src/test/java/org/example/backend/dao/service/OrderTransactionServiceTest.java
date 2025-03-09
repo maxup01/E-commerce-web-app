@@ -1155,43 +1155,49 @@ public class OrderTransactionServiceTest {
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            "", DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            "", DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            RANDOM_PAYMENT_NAME, null, RANDOM_EMAIL);
+                            RANDOM_PAYMENT_NAME, null, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            RANDOM_PAYMENT_NAME, "", RANDOM_EMAIL);
+                            RANDOM_PAYMENT_NAME, "", RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, null);
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, WRONG_EMAIL, TRANSACTIONS_ID_LIST);
+        });
+
+        Exception seventhException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
                     .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
@@ -1200,6 +1206,7 @@ public class OrderTransactionServiceTest {
         assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(fifthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(seventhException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test
@@ -1208,61 +1215,78 @@ public class OrderTransactionServiceTest {
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            null, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            null, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, null, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, null, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_AFTER, DATE_BEFORE, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_AFTER, DATE_BEFORE, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, "", DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, "", DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, null, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, null, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception seventhException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, "", RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, "", RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception eighthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, null);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, null,
+                            TRANSACTIONS_ID_LIST);
         });
 
         Exception ninthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, WRONG_EMAIL,
+                            TRANSACTIONS_ID_LIST);
+        });
+
+        Exception tenthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
@@ -1274,6 +1298,7 @@ public class OrderTransactionServiceTest {
         assertEquals(seventhException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(eighthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(ninthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(tenthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test

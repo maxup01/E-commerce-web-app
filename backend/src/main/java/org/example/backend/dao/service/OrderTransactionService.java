@@ -465,7 +465,8 @@ public class OrderTransactionService {
     //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
-            String paymentMethodName, String deliveryProviderName, String userEmail){
+            String paymentMethodName, String deliveryProviderName, String userEmail,
+            List<UUID> forbiddenOrderTransactionIds){
 
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
@@ -473,11 +474,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
         else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
                         paymentMethodName, deliveryProviderName, userEmail,
-                        PageRequest.of(0, 24));
+                        forbiddenOrderTransactionIds, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
@@ -486,7 +489,7 @@ public class OrderTransactionService {
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
             Date startingDate, Date endingDate, String paymentMethodName, String deliveryProviderName,
-            String userEmail){
+            String userEmail, List<UUID> forbiddenOrderTransactionIds){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -496,11 +499,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
         else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderNameAndUserEmail(
                         paymentMethodName, deliveryProviderName, userEmail,
-                        PageRequest.of(0, 24));
+                        forbiddenOrderTransactionIds, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }
