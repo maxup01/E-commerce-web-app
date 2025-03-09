@@ -853,33 +853,45 @@ public class OrderTransactionServiceTest {
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(null, RANDOM_EMAIL);
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            null, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndUserEmail("", RANDOM_EMAIL);
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            "", RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, null);
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            RANDOM_PAYMENT_NAME, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, WRONG_EMAIL);
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            RANDOM_PAYMENT_NAME, WRONG_EMAIL, TRANSACTIONS_ID_LIST);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            RANDOM_PAYMENT_NAME, RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+                    .getOrderTransactionsByPaymentMethodNameAndUserEmail(
+                            RANDOM_PAYMENT_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fifthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test

@@ -209,7 +209,7 @@ public class OrderTransactionController {
             try{
                 result = orderTransactionService
                         .getOrderTransactionsByPaymentMethodNameAndUserEmail(
-                                paymentMethodName, userEmail);
+                                paymentMethodName, userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
