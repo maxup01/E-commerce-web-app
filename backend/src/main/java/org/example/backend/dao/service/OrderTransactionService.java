@@ -419,7 +419,8 @@ public class OrderTransactionService {
     //This method gets maximum 24 order transactions
     @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-            Date startingDate, Date endingDate, String paymentMethodName, String userEmail){
+            Date startingDate, Date endingDate, String paymentMethodName, String userEmail,
+            List<UUID> forbiddenOrderTransactionIds) {
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
@@ -427,10 +428,13 @@ public class OrderTransactionService {
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
         else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orderTransactions = orderTransactionRepository
-                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(startingDate, endingDate,
-                        paymentMethodName, userEmail, PageRequest.of(0, 24));
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                        startingDate, endingDate, paymentMethodName, userEmail, forbiddenOrderTransactionIds,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
     }

@@ -135,7 +135,7 @@ public class OrderTransactionController {
 
             try{
                 result = orderTransactionService.getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                        startingDate, endingDate, paymentMethodName, userEmail);
+                        startingDate, endingDate, paymentMethodName, userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

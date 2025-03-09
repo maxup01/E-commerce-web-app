@@ -463,9 +463,19 @@ public class OrderTransactionRepositoryTest {
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
                         DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_EMAIL,
-                        PageRequest.of(0, 10));
+                        List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultSet = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_METHOD, RANDOM_EMAIL,
+                        allIds, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
+        assertEquals(emptyResultSet.size(), 0);
     }
 
     @Test

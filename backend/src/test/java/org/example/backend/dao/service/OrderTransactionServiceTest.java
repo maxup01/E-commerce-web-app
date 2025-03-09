@@ -1020,49 +1020,55 @@ public class OrderTransactionServiceTest {
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            null, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+                            null, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, null, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, null, RANDOM_PAYMENT_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_AFTER, DATE_BEFORE, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+                            DATE_AFTER, DATE_BEFORE, RANDOM_PAYMENT_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, null);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception seventhException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, WRONG_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, WRONG_EMAIL, TRANSACTIONS_ID_LIST);
+        });
+
+        Exception eighthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
                     .getOrderTransactionsByTimePeriodAndPaymentMethodNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, RANDOM_PAYMENT_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
@@ -1072,6 +1078,7 @@ public class OrderTransactionServiceTest {
         assertEquals(fifthException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(eighthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test
