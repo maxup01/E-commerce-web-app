@@ -41,8 +41,7 @@ import java.time.LocalDate;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -1123,6 +1122,36 @@ public class OrderTransactionServiceTest {
         assertEquals(seventhException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(eighthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(ninthException.getMessage(), "Incorrect argument: userEmail");
+    }
+
+    @Test
+    public void testOfGetOrderTransactionsByIdList(){
+
+        List<UUID> listWithIdThatExists = List.of(ID_OF_ORDER_TRANSACTION_THAT_EXIST);
+        List<UUID> listWithIdThatNotExists = List.of(ID_OF_ORDER_TRANSACTION_THAT_NOT_EXIST);
+
+        when(orderTransactionRepository
+                .findOrderTransactionsByIdList(eq(listWithIdThatExists), any()))
+                .thenReturn(List.of(orderTransaction));
+        when(orderTransactionRepository
+                .findOrderTransactionsByIdList(eq(listWithIdThatNotExists), any()))
+                .thenReturn(List.of());
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByIdList(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByIdList(List.of());
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getOrderTransactionsByIdList(listWithIdThatExists);
+            orderTransactionService.getOrderTransactionsByIdList(listWithIdThatNotExists);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: ids");
+        assertEquals(secondException.getMessage(), "Incorrect argument: ids");
     }
 
     @Test
