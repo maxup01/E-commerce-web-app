@@ -31,6 +31,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -371,5 +372,24 @@ public class OrderTransactionRepositoryTest {
                         RANDOM_EMAIL, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
+    }
+
+    @Test
+    public void testOfFindOrderTransactionsByIdList(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<UUID> listWithIds = new ArrayList<>();
+
+        List<OrderTransaction> result = orderTransactionRepository.findAll();
+
+        result.forEach(orderTransaction -> {
+            listWithIds.add(orderTransaction.getId());
+        });
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByIdList(listWithIds, PageRequest.of(0, 10));
+
+        assertEquals(orders.size(), 2);
     }
 }

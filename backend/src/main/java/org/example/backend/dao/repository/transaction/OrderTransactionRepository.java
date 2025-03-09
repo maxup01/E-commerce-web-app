@@ -103,4 +103,7 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
             @Param("paymentMethodName") String paymentMethodName,
             @Param("deliveryProviderName") String deliveryProviderName,
             @Param("userEmail") String userEmail, Pageable pageable);
+
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.id IN (:ids)")
+    List<OrderTransaction> findOrderTransactionsByIdList(@Param("ids") List<UUID> ids, Pageable pageable);
 }
