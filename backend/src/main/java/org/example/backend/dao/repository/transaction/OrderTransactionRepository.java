@@ -62,10 +62,11 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
             @Param("forbiddenOrderTransactionIds") List<UUID> forbiddenOrderTransactionIds, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName " +
-            "AND o.deliveryProvider.name = :deliveryProviderName")
+            "AND o.deliveryProvider.name = :deliveryProviderName AND o.id NOT IN (:forbiddenOrderTransactionIds)")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
             @Param("paymentMethodName") String paymentMethodName,
-            @Param("deliveryProviderName") String deliveryProviderName, Pageable pageable);
+            @Param("deliveryProviderName") String deliveryProviderName,
+            @Param("forbiddenOrderTransactionIds") List<UUID> forbiddenOrderTransactionIds, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName AND " +
             "o.userEmail = :userEmail")

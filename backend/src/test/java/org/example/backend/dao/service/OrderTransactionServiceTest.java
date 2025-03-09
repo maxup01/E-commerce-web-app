@@ -807,38 +807,45 @@ public class OrderTransactionServiceTest {
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(null,
-                            DELIVERY_PROVIDER_NAME);
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            null, DELIVERY_PROVIDER_NAME, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName("",
-                            DELIVERY_PROVIDER_NAME);
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            "", DELIVERY_PROVIDER_NAME, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
-                            null);
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            RANDOM_PAYMENT_NAME, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
-                            "");
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            RANDOM_PAYMENT_NAME, "", TRANSACTIONS_ID_LIST);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(RANDOM_PAYMENT_NAME,
-                            DELIVERY_PROVIDER_NAME);
+                    .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                            RANDOM_PAYMENT_NAME, DELIVERY_PROVIDER_NAME, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(fifthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test

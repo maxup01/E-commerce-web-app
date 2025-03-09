@@ -199,7 +199,7 @@ public class OrderTransactionController {
             try{
                 result = orderTransactionService
                         .getOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
-                                paymentMethodName, deliveryProviderName);
+                                paymentMethodName, deliveryProviderName, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

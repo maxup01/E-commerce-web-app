@@ -351,9 +351,20 @@ public class OrderTransactionRepositoryTest {
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
-                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, PageRequest.of(0, 10));
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultList = orderTransactionRepository
+                .findOrderTransactionsByPaymentMethodNameAndDeliveryProviderName(
+                        RANDOM_PAYMENT_METHOD, RANDOM_DELIVERY_PROVIDER_NAME, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
