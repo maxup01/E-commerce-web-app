@@ -297,13 +297,25 @@ public class OrderTransactionRepositoryTest {
 
         orderTransactionRepository.save(orderTransaction);
 
-        List<OrderTransaction> orders = orderTransactionRepository.findOrderTransactionsByTimePeriodAndDeliveryProviderName(
-                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, PageRequest.of(0, 10));
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderName(
+                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, List.of(),
+                PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultSet = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderName(
+                DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, allIds,
+                PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
         assertEquals(orders.get(0).getDeliveryAddress(), address);
         assertEquals(orders.get(0).getPaymentMethod(), paymentMethod);
         assertEquals(orders.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultSet.size(), 0);
     }
 
     @Test
