@@ -899,33 +899,45 @@ public class OrderTransactionServiceTest {
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(null, RANDOM_EMAIL);
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            null, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail("", RANDOM_EMAIL);
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            "", RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, null);
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            DELIVERY_PROVIDER_NAME, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, "");
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            DELIVERY_PROVIDER_NAME, "", TRANSACTIONS_ID_LIST);
+        });
+
+        Exception fifthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                    .getOrderTransactionsByDeliveryProviderNameAndUserEmail(
+                            DELIVERY_PROVIDER_NAME, RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(fourthException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fifthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test
