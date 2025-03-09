@@ -263,6 +263,22 @@ public class OrderTransactionController {
         return ResponseEntity.status(HttpStatus.OK).body(result);
     }
 
+    @GetMapping("/orders-by-ids")
+    public ResponseEntity<List<OrderTransactionModel>> getOrderTransactionsByIds(
+            @RequestParam("ids") List<UUID> ids){
+
+        List<OrderTransactionModel> orderTransactionModels;
+
+        try{
+            orderTransactionModels = orderTransactionService
+                    .getOrderTransactionsByIdList(ids);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(orderTransactionModels);
+    }
+
     @GetMapping("/orders/count-by-time-period")
     public ResponseEntity<Long> getCountOfAllOrderTransactionsByTimePeriod(
             @RequestBody TimePeriodModel timePeriodModel) {
