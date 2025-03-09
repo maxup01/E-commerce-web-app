@@ -566,20 +566,28 @@ public class OrderTransactionServiceTest {
     public void testOfGetOrderTransactionsByPaymentMethodName(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByPaymentMethodName(null);
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodName(null, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByPaymentMethodName("");
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodName("", TRANSACTIONS_ID_LIST);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
             orderTransactionService
-                    .getOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_NAME);
+                    .getOrderTransactionsByPaymentMethodName(RANDOM_PAYMENT_NAME, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: paymentMethodName");
         assertEquals(secondException.getMessage(), "Incorrect argument: paymentMethodName");
+        assertEquals(thirdException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test

@@ -221,14 +221,18 @@ public class OrderTransactionService {
 
     //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodName(String paymentMethodName) {
+    public List<OrderTransactionModel> getOrderTransactionsByPaymentMethodName(
+            String paymentMethodName, List<UUID> forbiddenOrderTransactionIds) {
 
         if((paymentMethodName == null) || (paymentMethodName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: paymentMethodName");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByPaymentMethodName(
-                        paymentMethodName, PageRequest.of(0, 24));
+                        paymentMethodName, forbiddenOrderTransactionIds,
+                        PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orders);
     }
