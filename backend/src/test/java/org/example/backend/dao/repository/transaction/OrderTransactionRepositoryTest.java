@@ -440,9 +440,19 @@ public class OrderTransactionRepositoryTest {
         List<OrderTransaction> orders = orderTransactionRepository
                 .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
                         DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
-                        PageRequest.of(0, 10));
+                        List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultList = orderTransactionRepository
+                .findOrderTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                        allIds, PageRequest.of(0, 10));
 
         assertEquals(orders.size(), 1);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
