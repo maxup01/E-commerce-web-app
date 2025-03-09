@@ -180,6 +180,25 @@ public class OrderTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfFindOrderTransactions(){
+
+        orderTransactionRepository.save(orderTransaction);
+
+        List<OrderTransaction> orders = orderTransactionRepository
+                .findOrderTransactions(List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        orders.forEach(order -> allIds.add(order.getId()));
+
+        List<OrderTransaction> emptyResultList = orderTransactionRepository
+                .findOrderTransactions(allIds, PageRequest.of(0, 10));
+
+        assertEquals(orders.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
+    }
+
+    @Test
     public void testOfFindOrderTransactionsByTimePeriod(){
 
         orderTransactionRepository.save(orderTransaction);
