@@ -258,7 +258,7 @@ public class OrderTransactionController {
 
             try{
                 result = orderTransactionService
-                        .getOrderTransactionsByUserEmail(userEmail);
+                        .getOrderTransactionsByUserEmail(userEmail, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

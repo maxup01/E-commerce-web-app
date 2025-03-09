@@ -257,13 +257,17 @@ public class OrderTransactionService {
 
     //This method gets maximum 24 order transactions
     @Transactional
-    public List<OrderTransactionModel> getOrderTransactionsByUserEmail(String userEmail) {
+    public List<OrderTransactionModel> getOrderTransactionsByUserEmail(
+            String userEmail, List<UUID> forbiddenOrderTransactionIds) {
 
         if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
 
         List<OrderTransaction> orders = orderTransactionRepository
-                .findOrderTransactionsByUserEmail(userEmail, PageRequest.of(0, 24));
+                .findOrderTransactionsByUserEmail(
+                        userEmail, forbiddenOrderTransactionIds, PageRequest.of(0, 24));
 
         return mapOrderTransactionListToOrderTransactionModelList(orders);
     }

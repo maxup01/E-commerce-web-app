@@ -595,12 +595,18 @@ public class OrderTransactionServiceTest {
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderName(null, List.of());
+                    .getOrderTransactionsByDeliveryProviderName(null, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             orderTransactionService
-                    .getOrderTransactionsByDeliveryProviderName("", List.of());
+                    .getOrderTransactionsByDeliveryProviderName("", TRANSACTIONS_ID_LIST);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByDeliveryProviderName(
+                            RANDOM_PAYMENT_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
@@ -610,25 +616,31 @@ public class OrderTransactionServiceTest {
 
         assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(thirdException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test
     public void testOfGetOrderTransactionsByUserEmail(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByUserEmail(null);
+            orderTransactionService.getOrderTransactionsByUserEmail(null, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByUserEmail(WRONG_EMAIL);
+            orderTransactionService.getOrderTransactionsByUserEmail(WRONG_EMAIL, TRANSACTIONS_ID_LIST);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactionsByUserEmail(RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
-            orderTransactionService.getOrderTransactionsByUserEmail(RANDOM_EMAIL);
+            orderTransactionService.getOrderTransactionsByUserEmail(RANDOM_EMAIL, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(thirdException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test
