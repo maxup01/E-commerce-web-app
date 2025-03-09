@@ -94,11 +94,15 @@ public class OrderTransactionController {
 
     @GetMapping("/orders-by-search")
     public ResponseEntity<List<OrderTransactionModel>> getOrderTransactionsBySearch(
-            @RequestParam(name = "startingDate") Date startingDate,
-            @RequestParam(name = "endingDate") Date endingDate,
-            @RequestParam(name = "paymentMethodName") String paymentMethodName,
-            @RequestParam(name = "deliveryProviderName") String deliveryProviderName,
-            @RequestParam(name = "userEmail") String userEmail) {
+            @RequestParam("startingDate") Date startingDate,
+            @RequestParam("endingDate") Date endingDate,
+            @RequestParam("paymentMethodName") String paymentMethodName,
+            @RequestParam("deliveryProviderName") String deliveryProviderName,
+            @RequestParam("userEmail") String userEmail,
+            @RequestParam("forbiddenOrderTransactionIds") List<UUID> forbiddenOrderTransactionIds) {
+
+        if(forbiddenOrderTransactionIds == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
         List<OrderTransactionModel> result;
 
@@ -224,7 +228,8 @@ public class OrderTransactionController {
 
             try{
                 result = orderTransactionService
-                        .getOrderTransactionsByTimePeriod(startingDate, endingDate);
+                        .getOrderTransactionsByTimePeriod(
+                                startingDate, endingDate, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

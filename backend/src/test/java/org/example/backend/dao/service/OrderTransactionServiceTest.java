@@ -39,6 +39,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
@@ -91,6 +92,7 @@ public class OrderTransactionServiceTest {
     private final UserImage USER_IMAGE = new UserImage(new byte[12]);
     private final LocalDate BIRTH_DATE = LocalDate.of(2020, 1, 1);
     private final Double RANDOM_PRICE = 15.00;
+    private final List<UUID> TRANSACTIONS_ID_LIST = List.of(ID_OF_ORDER_TRANSACTION_THAT_EXIST);
 
 
     @Mock
@@ -531,24 +533,33 @@ public class OrderTransactionServiceTest {
     public void testOfGetOrderTransactionsByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(null, DATE_NOW);
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriod(null, DATE_NOW, TRANSACTIONS_ID_LIST);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_BEFORE, null);
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriod(DATE_BEFORE, null, TRANSACTIONS_ID_LIST);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_NOW, DATE_BEFORE);
+            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_NOW, DATE_BEFORE, TRANSACTIONS_ID_LIST);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW, null);
         });
 
         assertDoesNotThrow(() -> {
-            orderTransactionService.getOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW);
+            orderTransactionService
+                    .getOrderTransactionsByTimePeriod(DATE_BEFORE, DATE_NOW, TRANSACTIONS_ID_LIST);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
         assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Null argument: forbiddenOrderTransactionIds");
     }
 
     @Test

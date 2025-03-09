@@ -16,9 +16,11 @@ public interface OrderTransactionRepository extends JpaRepository<OrderTransacti
     Long getCountOfAllOrderTransactionsByTimePeriod(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
-    @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate")
+    @Query("SELECT o FROM OrderTransaction AS o WHERE o.date >= :startingDate AND o.date <= :endingDate " +
+            " AND o.id NOT IN (:forbiddenOrderTransactionIds)")
     List<OrderTransaction> findOrderTransactionsByTimePeriod(
-            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate, Pageable pageable);
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("forbiddenOrderTransactionIds") List<UUID> ids, Pageable pageable);
 
     @Query("SELECT o FROM OrderTransaction AS o WHERE o.paymentMethod.name = :paymentMethodName")
     List<OrderTransaction> findOrderTransactionsByPaymentMethodName(
