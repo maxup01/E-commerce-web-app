@@ -248,7 +248,8 @@ public class OrderTransactionController {
 
             try{
                 result = orderTransactionService
-                        .getOrderTransactionsByDeliveryProviderName(deliveryProviderName);
+                        .getOrderTransactionsByDeliveryProviderName(
+                                deliveryProviderName, forbiddenOrderTransactionIds);
             } catch (BadArgumentException e){
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
