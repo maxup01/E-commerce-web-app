@@ -203,6 +203,19 @@ public class OrderTransactionService {
 
     //This method gets maximum 24 order transactions
     @Transactional
+    public List<OrderTransactionModel> getOrderTransactions(List<UUID> forbiddenOrderTransactionIds) {
+
+        if(forbiddenOrderTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenOrderTransactionIds");
+
+        List<OrderTransaction> orderTransactions = orderTransactionRepository
+                .findOrderTransactions(forbiddenOrderTransactionIds, PageRequest.of(0, 24));
+
+        return mapOrderTransactionListToOrderTransactionModelList(orderTransactions);
+    }
+
+    //This method gets maximum 24 order transactions
+    @Transactional
     public List<OrderTransactionModel> getOrderTransactionsByTimePeriod(
             Date startingDate, Date endingDate, List<UUID> forbiddenOrderTransactionIds) {
 

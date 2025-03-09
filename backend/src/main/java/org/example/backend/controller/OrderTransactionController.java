@@ -265,7 +265,12 @@ public class OrderTransactionController {
             }
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            try{
+                result = orderTransactionService
+                        .getOrderTransactions(forbiddenOrderTransactionIds);
+            } catch (BadArgumentException e){
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(result);

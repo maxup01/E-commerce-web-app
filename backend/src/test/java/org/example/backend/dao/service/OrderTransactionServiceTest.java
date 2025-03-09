@@ -530,6 +530,20 @@ public class OrderTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetOrderTransactions(){
+
+        Exception exception = assertThrows(BadArgumentException.class, () -> {
+            orderTransactionService.getOrderTransactions(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            orderTransactionService.getOrderTransactions(TRANSACTIONS_ID_LIST);
+        });
+
+        assertEquals(exception.getMessage(), "Null argument: forbiddenOrderTransactionIds");
+    }
+
+    @Test
     public void testOfGetOrderTransactionsByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
