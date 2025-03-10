@@ -85,6 +85,21 @@ public class ReturnTransactionController{
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModel);
     }
 
+    @GetMapping("/return-transactions-by-ids")
+    public ResponseEntity<List<ReturnTransactionModel>> getReturnTransactionByIdList(
+            @RequestParam("ids") List<UUID> ids){
+
+        List<ReturnTransactionModel> returnTransactionModelList;
+
+        try{
+            returnTransactionModelList = returnTransactionService.getReturnTransactionsByIdList(ids);
+        } catch (BadArgumentException e){
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModelList);
+    }
+
     @GetMapping("/return-transactions-by-search")
     public ResponseEntity<List<ReturnTransactionModel>> getReturnTransactionsByReturnTransactionSearchModel(
             @RequestParam("startingDate") Date startingDate, @RequestParam("endingDate") Date endingDate,
@@ -257,7 +272,12 @@ public class ReturnTransactionController{
             }
         }
         else{
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            try{
+                returnTransactionModels = returnTransactionService
+                        .getReturnTransactions(forbiddenReturnTransactionIds);
+            } catch (BadArgumentException e) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+            }
         }
 
         return ResponseEntity.status(HttpStatus.OK).body(returnTransactionModels);
