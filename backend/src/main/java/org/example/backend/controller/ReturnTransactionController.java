@@ -103,10 +103,12 @@ public class ReturnTransactionController{
     @GetMapping("/return-transactions-by-search")
     public ResponseEntity<List<ReturnTransactionModel>> getReturnTransactionsByReturnTransactionSearchModel(
             @RequestParam("startingDate") Date startingDate, @RequestParam("endingDate") Date endingDate,
-            @RequestParam("returnCause") ReturnCause returnCause,
+            @RequestParam("returnCause") String returnCauseName,
             @RequestParam("deliveryProviderName") String deliveryProviderName,
             @RequestParam("userEmail") String userEmail,
             @RequestParam("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds) {
+
+        ReturnCause returnCause = ReturnCause.fromString(returnCauseName);
 
         if(forbiddenReturnTransactionIds == null)
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
