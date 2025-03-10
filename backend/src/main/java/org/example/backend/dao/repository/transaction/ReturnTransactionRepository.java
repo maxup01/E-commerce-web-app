@@ -18,6 +18,10 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     Long getCountOfAllReturnTransactionsByTimePeriod(
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.id IN (:returnTransactionIds)")
+    List<ReturnTransaction> getReturnTransactionsByReturnTransactionIds(
+            @Param("returnTransactionIds") List<UUID> returnTransactionIds);
+
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.id NOT IN (:forbiddenReturnTransactionIds)")
     List<ReturnTransaction> getReturnTransactions(
             @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,

@@ -161,6 +161,23 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfGetReturnTransactionsByReturnTransactionIds(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> allReturnTransactions = returnTransactionRepository.findAll();
+
+        List<UUID> allIds = new ArrayList<>();
+
+        allReturnTransactions.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .getReturnTransactionsByReturnTransactionIds(allIds);
+
+        assertEquals(returnTransactions.size(), 2);
+    }
+
+    @Test
     public void testOfGetReturnTransactions(){
 
         returnTransactionRepository.save(returnTransaction);
