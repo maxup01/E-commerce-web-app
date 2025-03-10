@@ -161,6 +161,25 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
+    public void testOfGetReturnTransactions(){
+
+        returnTransactionRepository.save(returnTransaction);
+
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .getReturnTransactions(List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returnTransactions.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .getReturnTransactions(allIds, PageRequest.of(0, 10));
+
+        assertEquals(returnTransactions.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
+    }
+
+    @Test
     public void testOfFindReturnTransactionsByTimePeriod(){
 
         returnTransactionRepository.save(returnTransaction);

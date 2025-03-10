@@ -13,8 +13,15 @@ import java.util.UUID;
 
 public interface ReturnTransactionRepository extends JpaRepository<ReturnTransaction, UUID> {
 
-    @Query("SELECT COUNT(r) FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate")
-    Long getCountOfAllReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+    @Query("SELECT COUNT(r) FROM ReturnTransaction AS r WHERE r.date >= :startingDate " +
+            " AND r.date <= :endingDate")
+    Long getCountOfAllReturnTransactionsByTimePeriod(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.id NOT IN (:forbiddenReturnTransactionIds)")
+    List<ReturnTransaction> getReturnTransactions(
+            @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,
+            Pageable pageable);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate " +
             " AND r.id NOT IN (:forbiddenReturnTransactionIds)")
