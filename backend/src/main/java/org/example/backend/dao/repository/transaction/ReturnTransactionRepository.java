@@ -19,11 +19,11 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
             @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.id IN (:returnTransactionIds)")
-    List<ReturnTransaction> getReturnTransactionsByReturnTransactionIds(
+    List<ReturnTransaction> findReturnTransactionsByReturnTransactionIds(
             @Param("returnTransactionIds") List<UUID> returnTransactionIds);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.id NOT IN (:forbiddenReturnTransactionIds)")
-    List<ReturnTransaction> getReturnTransactions(
+    List<ReturnTransaction> findReturnTransactions(
             @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,
             Pageable pageable);
 

@@ -206,6 +206,20 @@ public class ReturnTransactionService {
     }
 
     @Transactional
+    public List<ReturnTransactionModel> getReturnTransactionsByIdList(
+            List<UUID> returnTransactionIds){
+
+        if((returnTransactionIds == null) || (returnTransactionIds.isEmpty()))
+            throw new BadArgumentException("Incorrect argument: returnTransactionIds");
+
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByReturnTransactionIds(returnTransactionIds);
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
+    }
+
+    //This method returns list of maximum 24 ReturnTransaction
+    @Transactional
     public List<ReturnTransactionModel> getReturnTransactions(
             List<UUID> forbiddenReturnTransactionIds){
 
@@ -213,7 +227,7 @@ public class ReturnTransactionService {
             throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
         List<ReturnTransaction> returnTransactions = returnTransactionRepository
-                .getReturnTransactions(forbiddenReturnTransactionIds,
+                .findReturnTransactions(forbiddenReturnTransactionIds,
                         PageRequest.of(0, 24));
 
         return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);

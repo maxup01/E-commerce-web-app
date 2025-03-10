@@ -542,6 +542,25 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetReturnTransactionsByIdList(){
+
+        Exception firstException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByIdList(null);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactionsByIdList(List.of());
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactionsByIdList(TRANSACTION_IDS);
+        });
+
+        assertEquals(firstException.getMessage(), "Incorrect argument: returnTransactionIds");
+        assertEquals(secondException.getMessage(), "Incorrect argument: returnTransactionIds");
+    }
+
+    @Test
     public void testOfGetReturnTransactions(){
 
         Exception exception = assertThrows(BadArgumentException.class, () -> {

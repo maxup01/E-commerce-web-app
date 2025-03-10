@@ -161,7 +161,7 @@ public class ReturnTransactionRepositoryTest {
     }
 
     @Test
-    public void testOfGetReturnTransactionsByReturnTransactionIds(){
+    public void testOfFindReturnTransactionsByReturnTransactionIds(){
 
         returnTransactionRepository.save(returnTransaction);
 
@@ -172,25 +172,25 @@ public class ReturnTransactionRepositoryTest {
         allReturnTransactions.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
 
         List<ReturnTransaction> returnTransactions = returnTransactionRepository
-                .getReturnTransactionsByReturnTransactionIds(allIds);
+                .findReturnTransactionsByReturnTransactionIds(allIds);
 
         assertEquals(returnTransactions.size(), 2);
     }
 
     @Test
-    public void testOfGetReturnTransactions(){
+    public void testOfFindReturnTransactions(){
 
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returnTransactions = returnTransactionRepository
-                .getReturnTransactions(List.of(), PageRequest.of(0, 10));
+                .findReturnTransactions(List.of(), PageRequest.of(0, 10));
 
         List<UUID> allIds = new ArrayList<>();
 
         returnTransactions.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
 
         List<ReturnTransaction> emptyResultList = returnTransactionRepository
-                .getReturnTransactions(allIds, PageRequest.of(0, 10));
+                .findReturnTransactions(allIds, PageRequest.of(0, 10));
 
         assertEquals(returnTransactions.size(), 2);
         assertEquals(emptyResultList.size(), 0);
