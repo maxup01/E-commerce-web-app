@@ -360,9 +360,21 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByReturnCauseAndUserEmail(RANDOM_RETURN_CAUSE, RANDOM_EMAIL);
+                .findReturnTransactionsByReturnCauseAndUserEmail(
+                        RANDOM_RETURN_CAUSE, RANDOM_EMAIL, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndUserEmail(
+                        RANDOM_RETURN_CAUSE, RANDOM_EMAIL, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test

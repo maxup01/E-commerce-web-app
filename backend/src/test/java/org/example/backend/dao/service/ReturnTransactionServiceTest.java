@@ -842,29 +842,40 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetReturnTransactionsByReturnCauseAndUserEmail(){
 
-        when(returnTransactionRepository
-                .findReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, RANDOM_EMAIL))
-                .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(null, RANDOM_EMAIL);
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndUserEmail(
+                            null, RANDOM_EMAIL, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, null);
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndUserEmail(
+                            RETURN_CAUSE, null, TRANSACTION_IDS);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, WRONG_EMAIL);
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndUserEmail(
+                            RETURN_CAUSE, WRONG_EMAIL, TRANSACTION_IDS);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndUserEmail(
+                            RETURN_CAUSE, RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionsByReturnCauseAndUserEmail(RETURN_CAUSE, RANDOM_EMAIL);
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndUserEmail(
+                            RETURN_CAUSE, RANDOM_EMAIL, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Null argument: returnCause");
         assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(thirdException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(fourthException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test
