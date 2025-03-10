@@ -150,7 +150,7 @@ public class ReturnTransactionController{
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
-                                returnCause, deliveryProviderName, userEmail);
+                                returnCause, deliveryProviderName, userEmail, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

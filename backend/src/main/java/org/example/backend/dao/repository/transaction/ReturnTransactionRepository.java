@@ -119,10 +119,13 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
             Pageable pageable);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause AND " +
-            " r.deliveryProvider.name = :deliveryProviderName AND r.userEmail = :userEmail")
+            " r.deliveryProvider.name = :deliveryProviderName AND r.userEmail = :userEmail AND " +
+            " r.id NOT IN (:forbiddenReturnTransactionIds)")
     List<ReturnTransaction> findReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
-            @Param("returnCause") ReturnCause returnCause, @Param("deliveryProviderName") String deliveryProviderName,
-            @Param("userEmail") String userEmail);
+            @Param("returnCause") ReturnCause returnCause,
+            @Param("deliveryProviderName") String deliveryProviderName, @Param("userEmail") String userEmail,
+            @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,
+            Pageable pageable);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate AND " +
             " r.returnCause = :returnCause AND r.deliveryProvider.name = :deliveryProviderName AND " +
