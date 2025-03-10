@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
-import EANValidator from "../util/EanCodeValidator";
+import EANValidator from "../../util/EanCodeValidator";
 
 //TODO add redirect after product creation
 function ProductCreationPage() {

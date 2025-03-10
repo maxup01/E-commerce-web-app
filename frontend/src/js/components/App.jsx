@@ -2,8 +2,8 @@ import React from 'react';
 import '../../css/index.css';
 import {BrowserRouter, Route, Routes} from 'react-router-dom';
 import HomePage from "./HomePage";
-import ProductSearchPage from "./ProductSearchPage";
-import OrderTransactionSearchPage from "./OrderTransactionsSearchPage";
+import ProductSearchPage from "./product/ProductSearchPage";
+import OrderTransactionSearchPage from "./order_transaction/OrderTransactionsSearchPage";
 
 //TODO change mappings in the future so that they will be appropriate for each route
 function App() {

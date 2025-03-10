@@ -1,8 +1,8 @@
 import React, {useEffect} from 'react';
 import axios from 'axios';
 import OrderTransactionSearchBar from "./OrderTransactionSearchBar";
-import TransactionCard from "./TransactionCard";
-import PageNavBar from "./PageNavBar";
+import TransactionCard from "../TransactionCard";
+import PageNavBar from "../PageNavBar";
 
 function OrderTransactionSearchPage() {
 

@@ -2,7 +2,7 @@ import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import ProductSearchBar from "./ProductSearchBar";
 import ProductCard from "./ProductCard";
-import PageNavBar from "./PageNavBar";
+import PageNavBar from "../PageNavBar";
 
 function ProductSearchPage() {
 
