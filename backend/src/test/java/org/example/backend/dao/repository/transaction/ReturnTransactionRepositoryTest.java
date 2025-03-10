@@ -499,8 +499,19 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderNameAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME,
+                        RANDOM_EMAIL, List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME,
+                        RANDOM_EMAIL, allIds, PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
+        assertEquals(emptyResultList.size(), 0);
     }
 }
