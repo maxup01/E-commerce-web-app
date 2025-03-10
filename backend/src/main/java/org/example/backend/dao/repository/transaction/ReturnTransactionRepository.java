@@ -2,6 +2,7 @@ package org.example.backend.dao.repository.transaction;
 
 import org.example.backend.dao.entity.transaction.ReturnTransaction;
 import org.example.backend.enumerated.ReturnCause;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -15,11 +16,19 @@ public interface ReturnTransactionRepository extends JpaRepository<ReturnTransac
     @Query("SELECT COUNT(r) FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate")
     Long getCountOfAllReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
 
-    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate")
-    List<ReturnTransaction> findReturnTransactionsByTimePeriod(@Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate);
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.date >= :startingDate AND r.date <= :endingDate " +
+            " AND r.id NOT IN (:forbiddenReturnTransactionIds)")
+    List<ReturnTransaction> findReturnTransactionsByTimePeriod(
+            @Param("startingDate") Date startingDate, @Param("endingDate") Date endingDate,
+            @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,
+            Pageable pageable);
 
-    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause")
-    List<ReturnTransaction> findReturnTransactionsByReturnCause(@Param("returnCause") ReturnCause returnCause);
+    @Query("SELECT r FROM ReturnTransaction AS r WHERE r.returnCause = :returnCause " +
+            " AND r.id NOT IN (:forbiddenReturnTransactionIds)")
+    List<ReturnTransaction> findReturnTransactionsByReturnCause(
+            @Param("returnCause") ReturnCause returnCause,
+            @Param("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds,
+            Pageable pageable);
 
     @Query("SELECT r FROM ReturnTransaction AS r WHERE r.deliveryProvider.name = :deliveryProviderName")
     List<ReturnTransaction> findReturnTransactionsByDeliveryProviderName(

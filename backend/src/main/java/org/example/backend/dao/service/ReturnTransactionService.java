@@ -26,6 +26,7 @@ import org.example.backend.exception.user.UserNotFoundException;
 import org.example.backend.model.*;
 import org.example.backend.validator.DateValidator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -204,23 +205,40 @@ public class ReturnTransactionService {
         return ReturnTransactionModel.fromReturnTransaction(returnTransactionFound);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
-    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriod(Date startingDate, Date endingDate){
+    public List<ReturnTransactionModel> getReturnTransactionsByTimePeriod(
+            Date startingDate, Date endingDate, List<UUID> forbiddenReturnTransactionIds){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository.findReturnTransactionsByTimePeriod(startingDate, endingDate));
+        if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
+
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByTimePeriod(
+                        startingDate, endingDate, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
-    public List<ReturnTransactionModel> getReturnTransactionsByReturnCause(ReturnCause returnCause){
+    public List<ReturnTransactionModel> getReturnTransactionsByReturnCause(
+            ReturnCause returnCause, List<UUID> forbiddenReturnTransactionIds){
 
         if(returnCause == null)
             throw new BadArgumentException("Null argument: returnCause");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository.findReturnTransactionsByReturnCause(returnCause));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByReturnCause(
+                        returnCause, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     @Transactional

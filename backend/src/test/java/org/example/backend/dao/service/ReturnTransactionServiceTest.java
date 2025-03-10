@@ -95,6 +95,7 @@ public class ReturnTransactionServiceTest {
     private final Role RANDOM_ROLE = new Role();
     private final UserImage USER_IMAGE = new UserImage(new byte[12]);
     private final LocalDate BIRTH_DATE = LocalDate.of(2020, 1, 1);
+    private final List<UUID> TRANSACTION_IDS = List.of(ID_OF_RETURN_TRANSACTION_THAT_EXISTS);
 
     @Mock
     private OrderedProductRepository orderedProductRepository;
@@ -543,45 +544,55 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetReturnTransactionsByTimePeriod(){
 
-        when(returnTransactionRepository.findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER))
-                .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByTimePeriod(null, DATE_AFTER);
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriod(null, DATE_AFTER, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_BEFORE, null);
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriod(DATE_BEFORE, null, TRANSACTION_IDS);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_AFTER, DATE_BEFORE);
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriod(DATE_AFTER, DATE_BEFORE, TRANSACTION_IDS);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER, null);
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
         assertEquals(secondException.getMessage(), "Incorrect argument: endingDate");
         assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
+        assertEquals(fourthException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test
     public void testOfGetReturnTransactionsByReturnCause(){
 
-        when(returnTransactionRepository.findReturnTransactionsByReturnCause(RETURN_CAUSE))
-                .thenReturn(List.of(returnTransaction));
-
         Exception exception = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByReturnCause(null);
+            returnTransactionService.getReturnTransactionsByReturnCause(null, TRANSACTION_IDS);
+        });
+
+        Exception secondException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByReturnCause(RETURN_CAUSE, null);
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionsByReturnCause(RETURN_CAUSE);
+            returnTransactionService.getReturnTransactionsByReturnCause(RETURN_CAUSE, TRANSACTION_IDS);
         });
 
         assertEquals(exception.getMessage(), "Null argument: returnCause");
+        assertEquals(secondException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test

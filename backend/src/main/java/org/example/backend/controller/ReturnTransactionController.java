@@ -1,6 +1,7 @@
 package org.example.backend.controller;
 
 import org.example.backend.dao.service.ReturnTransactionService;
+import org.example.backend.enumerated.ReturnCause;
 import org.example.backend.exception.global.BadArgumentException;
 import org.example.backend.exception.logistic.DeliveryProviderNotFoundException;
 import org.example.backend.exception.product.ProductNotFoundException;
@@ -12,6 +13,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -85,172 +87,166 @@ public class ReturnTransactionController{
 
     @GetMapping("/return-transactions-by-search")
     public ResponseEntity<List<ReturnTransactionModel>> getReturnTransactionsByReturnTransactionSearchModel(
-            @RequestBody ReturnTransactionSearchModel searchModel) {
+            @RequestParam("startingDate") Date startingDate, @RequestParam("endingDate") Date endingDate,
+            @RequestParam("returnCause") ReturnCause returnCause,
+            @RequestParam("deliveryProviderName") String deliveryProviderName,
+            @RequestParam("userEmail") String userEmail,
+            @RequestParam("forbiddenReturnTransactionIds") List<UUID> forbiddenReturnTransactionIds) {
+
+        if(forbiddenReturnTransactionIds == null)
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
 
         List<ReturnTransactionModel> returnTransactionModels;
 
-        if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getReturnCause() != null)
-                && (searchModel.getDeliveryProviderName() != null)
-                && (searchModel.getUserEmail() != null)) {
+        if((startingDate != null) && (endingDate != null) && (returnCause != null)
+                && (deliveryProviderName != null) && (userEmail != null)) {
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderNameAndUserEmail(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getReturnCause(), searchModel.getDeliveryProviderName(),
-                                searchModel.getUserEmail());
+                                startingDate, endingDate, returnCause, deliveryProviderName, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getReturnCause() != null) && (searchModel.getDeliveryProviderName() != null)){
+        else if((startingDate != null) && (endingDate != null)
+                && (returnCause != null) && (deliveryProviderName != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndReturnCauseAndDeliveryProviderName(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getReturnCause(), searchModel.getDeliveryProviderName());
+                                startingDate, endingDate, returnCause, deliveryProviderName);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getReturnCause() != null) && (searchModel.getUserEmail() != null)){
+        else if((startingDate != null) && (endingDate != null)
+                && (returnCause != null) && (userEmail != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getReturnCause(), searchModel.getUserEmail());
+                                startingDate, endingDate, returnCause, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getDeliveryProviderName() != null) && (searchModel.getUserEmail() != null)){
+        else if((startingDate != null) && (endingDate != null)
+                && (deliveryProviderName != null) && (userEmail != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getDeliveryProviderName(), searchModel.getUserEmail());
+                                startingDate, endingDate, deliveryProviderName, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getReturnCause() != null) && (searchModel.getDeliveryProviderName() != null)
-                && (searchModel.getUserEmail() != null)) {
+        else if((returnCause != null) && (deliveryProviderName != null) && (userEmail != null)) {
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByReturnCauseAndDeliveryProviderNameAndUserEmail(
-                                searchModel.getReturnCause(), searchModel.getDeliveryProviderName(),
-                                searchModel.getUserEmail());
+                                returnCause, deliveryProviderName, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getReturnCause() != null)) {
+        else if((startingDate != null) && (endingDate != null) && (returnCause != null)) {
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndReturnCause(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getReturnCause());
+                                startingDate, endingDate, returnCause);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getDeliveryProviderName() != null)){
+        else if((startingDate != null) && (endingDate != null)
+                && (deliveryProviderName != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getDeliveryProviderName());
+                                startingDate, endingDate, deliveryProviderName);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)
-                && (searchModel.getUserEmail() != null)) {
+        else if((startingDate != null) && (endingDate != null)
+                && (userEmail != null)) {
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndUserEmail(
-                                searchModel.getStartingDate(), searchModel.getEndingDate(),
-                                searchModel.getUserEmail());
+                                startingDate, endingDate, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getReturnCause() != null) && (searchModel.getDeliveryProviderName() != null)){
+        else if((returnCause != null) && (deliveryProviderName != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                                searchModel.getReturnCause(), searchModel.getDeliveryProviderName());
+                                returnCause, deliveryProviderName);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getReturnCause() != null) && (searchModel.getUserEmail() != null)){
+        else if((returnCause != null) && (userEmail != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByReturnCauseAndUserEmail(
-                                searchModel.getReturnCause(), searchModel.getUserEmail());
+                                returnCause, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getDeliveryProviderName() != null) && (searchModel.getUserEmail() != null)){
+        else if((deliveryProviderName != null) && (userEmail != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByDeliveryProviderNameAndUserEmail(
-                                searchModel.getDeliveryProviderName(), searchModel.getUserEmail());
+                                deliveryProviderName, userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if((searchModel.getStartingDate() != null) && (searchModel.getEndingDate() != null)){
+        else if((startingDate != null) && (endingDate != null)){
 
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriod(
-                                searchModel.getStartingDate(), searchModel.getEndingDate());
+                                startingDate, endingDate, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if(searchModel.getReturnCause() != null){
+        else if(returnCause != null){
 
             try{
                 returnTransactionModels = returnTransactionService
-                        .getReturnTransactionsByReturnCause(searchModel.getReturnCause());
+                        .getReturnTransactionsByReturnCause(returnCause, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if(searchModel.getDeliveryProviderName() != null){
+        else if(deliveryProviderName != null){
 
             try{
                 returnTransactionModels = returnTransactionService
-                        .getReturnTransactionsByDeliveryProviderName(searchModel.getDeliveryProviderName());
+                        .getReturnTransactionsByDeliveryProviderName(deliveryProviderName);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
         }
-        else if(searchModel.getUserEmail() != null){
+        else if(userEmail != null){
 
             try{
                 returnTransactionModels = returnTransactionService
-                        .getReturnTransactionsByUserEmail(searchModel.getUserEmail());
+                        .getReturnTransactionsByUserEmail(userEmail);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

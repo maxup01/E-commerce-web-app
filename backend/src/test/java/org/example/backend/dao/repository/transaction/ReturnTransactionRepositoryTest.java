@@ -21,10 +21,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
+import org.springframework.data.domain.PageRequest;
 
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -164,12 +166,22 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByTimePeriod(DATE_BEFORE, DATE_AFTER);
+                .findReturnTransactionsByTimePeriod(
+                        DATE_BEFORE, DATE_AFTER, List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriod(
+                        DATE_BEFORE, DATE_AFTER, allIds, PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
@@ -178,13 +190,23 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByReturnCause(RANDOM_RETURN_CAUSE);
+                .findReturnTransactionsByReturnCause(
+                        RANDOM_RETURN_CAUSE, List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByReturnCause(
+                        RANDOM_RETURN_CAUSE, allIds, PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 2);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertTrue((returns.get(0).getDate() == TODAYS_DATE)
                 || (returns.get(0).getDate() == DATE_NOT_IN_RANGE));
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
