@@ -700,37 +700,43 @@ public class ReturnTransactionServiceTest {
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME);
+                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME);
+                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME);
+                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            DATE_BEFORE, DATE_AFTER, null);
+                            DATE_BEFORE, DATE_AFTER, null, TRANSACTION_IDS);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            DATE_BEFORE, DATE_AFTER, "");
+                            DATE_BEFORE, DATE_AFTER, "", TRANSACTION_IDS);
+        });
+
+        Exception sixthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME);
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
@@ -738,6 +744,7 @@ public class ReturnTransactionServiceTest {
         assertEquals(thirdException.getMessage(), "Argument startingDate is after endingDate");
         assertEquals(fourthException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(fifthException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(sixthException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test

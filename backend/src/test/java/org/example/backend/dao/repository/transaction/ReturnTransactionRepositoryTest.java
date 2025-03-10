@@ -260,12 +260,23 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndReturnCause(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCause(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
@@ -275,12 +286,23 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test

@@ -299,17 +299,22 @@ public class ReturnTransactionService {
 
     @Transactional
     public List<ReturnTransactionModel> getReturnTransactionsByTimePeriodAndDeliveryProviderName(
-            Date startingDate, Date endingDate, String deliveryProviderName){
+            Date startingDate, Date endingDate, String deliveryProviderName,
+            List<UUID> forbiddenReturnTransactionIds){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository
-                        .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
-                                startingDate, endingDate, deliveryProviderName));
+        List<ReturnTransaction> orderTransactions = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
+                        startingDate, endingDate, deliveryProviderName, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(orderTransactions);
     }
 
     @Transactional
