@@ -241,24 +241,39 @@ public class ReturnTransactionService {
         return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
-    public List<ReturnTransactionModel> getReturnTransactionsByDeliveryProviderName(String deliveryProviderName){
+    public List<ReturnTransactionModel> getReturnTransactionsByDeliveryProviderName(
+            String deliveryProviderName, List<UUID> forbiddenReturnTransactionIds){
 
         if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
         return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository.findReturnTransactionsByDeliveryProviderName(deliveryProviderName));
+                returnTransactionRepository
+                        .findReturnTransactionsByDeliveryProviderName(
+                                deliveryProviderName, forbiddenReturnTransactionIds,
+                                PageRequest.of(0, 24)));
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
-    public List<ReturnTransactionModel> getReturnTransactionsByUserEmail(String userEmail){
+    public List<ReturnTransactionModel> getReturnTransactionsByUserEmail(
+            String userEmail, List<UUID> forbiddenReturnTransactionIds){
 
         if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository.findReturnTransactionsByUserEmail(userEmail));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByUserEmail(
+                        userEmail, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     @Transactional

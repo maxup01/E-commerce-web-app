@@ -215,9 +215,21 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByDeliveryProviderName(RANDOM_DELIVERY_PROVIDER_NAME);
+                .findReturnTransactionsByDeliveryProviderName(
+                        RANDOM_DELIVERY_PROVIDER_NAME, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderName(
+                        RANDOM_DELIVERY_PROVIDER_NAME, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
@@ -226,9 +238,19 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByUserEmail(RANDOM_EMAIL);
+                .findReturnTransactionsByUserEmail(
+                        RANDOM_EMAIL, List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByUserEmail(
+                        RANDOM_EMAIL, allIds, PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
@@ -237,7 +259,8 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByTimePeriodAndReturnCause(DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
+                .findReturnTransactionsByTimePeriodAndReturnCause(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
@@ -251,8 +274,8 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByTimePeriodAndDeliveryProviderName(DATE_BEFORE, DATE_AFTER,
-                        RANDOM_DELIVERY_PROVIDER_NAME);
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME);
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);

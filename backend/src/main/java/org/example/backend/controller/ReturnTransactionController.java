@@ -237,7 +237,8 @@ public class ReturnTransactionController{
 
             try{
                 returnTransactionModels = returnTransactionService
-                        .getReturnTransactionsByDeliveryProviderName(deliveryProviderName);
+                        .getReturnTransactionsByDeliveryProviderName(
+                                deliveryProviderName, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
@@ -246,7 +247,7 @@ public class ReturnTransactionController{
 
             try{
                 returnTransactionModels = returnTransactionService
-                        .getReturnTransactionsByUserEmail(userEmail);
+                        .getReturnTransactionsByUserEmail(userEmail, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

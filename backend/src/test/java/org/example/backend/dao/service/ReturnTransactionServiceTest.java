@@ -598,45 +598,54 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetReturnTransactionsByDeliveryProviderName(){
 
-        when(returnTransactionRepository.findReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME))
-            .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByDeliveryProviderName(null);
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderName(null, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByDeliveryProviderName("");
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderName("", TRANSACTION_IDS);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME);
+            returnTransactionService
+                    .getReturnTransactionsByDeliveryProviderName(DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(thirdException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test
     public void testOfGetReturnTransactionsByUserEmail(){
 
-        when(returnTransactionRepository.findReturnTransactionsByUserEmail(RANDOM_EMAIL))
-            .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByUserEmail(null);
+            returnTransactionService.getReturnTransactionsByUserEmail(null, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
-            returnTransactionService.getReturnTransactionsByUserEmail(WRONG_EMAIL);
+            returnTransactionService.getReturnTransactionsByUserEmail(WRONG_EMAIL, TRANSACTION_IDS);
+        });
+
+        Exception thirdException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByUserEmail(RANDOM_EMAIL, null);
         });
 
         assertDoesNotThrow(() -> {
-            returnTransactionService.getReturnTransactionsByUserEmail(RANDOM_EMAIL);
+            returnTransactionService.getReturnTransactionsByUserEmail(RANDOM_EMAIL, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(secondException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(thirdException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test
