@@ -276,18 +276,25 @@ public class ReturnTransactionService {
         return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
     public List<ReturnTransactionModel> getReturnTransactionsByTimePeriodAndReturnCause(
-            Date startingDate, Date endingDate, ReturnCause returnCause){
+            Date startingDate, Date endingDate, ReturnCause returnCause,
+            List<UUID> forbiddenReturnTransactionIds){
 
         DateValidator.checkIfDatesAreGood(startingDate, endingDate);
 
         if(returnCause == null)
             throw new BadArgumentException("Null argument: returnCause");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository
-                        .findReturnTransactionsByTimePeriodAndReturnCause(startingDate, endingDate, returnCause));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCause(
+                        startingDate, endingDate, returnCause, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     @Transactional

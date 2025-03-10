@@ -157,7 +157,7 @@ public class ReturnTransactionController{
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndReturnCause(
-                                startingDate, endingDate, returnCause);
+                                startingDate, endingDate, returnCause, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }
