@@ -209,7 +209,7 @@ public class ReturnTransactionController{
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByDeliveryProviderNameAndUserEmail(
-                                deliveryProviderName, userEmail);
+                                deliveryProviderName, userEmail, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

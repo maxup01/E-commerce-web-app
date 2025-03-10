@@ -379,18 +379,24 @@ public class ReturnTransactionService {
         return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
     public List<ReturnTransactionModel> getReturnTransactionsByDeliveryProviderNameAndUserEmail(
-            String deliveryProviderName, String userEmail){
+            String deliveryProviderName, String userEmail, List<UUID> forbiddenReturnTransactionIds){
 
         if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
         else if((userEmail == null) || (!userEmailPattern.matcher(userEmail).matches()))
             throw new BadArgumentException("Incorrect argument: userEmail");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository
-                        .findReturnTransactionsByDeliveryProviderNameAndUserEmail(deliveryProviderName, userEmail));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderNameAndUserEmail(
+                        deliveryProviderName, userEmail, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     @Transactional
