@@ -542,6 +542,20 @@ public class ReturnTransactionServiceTest {
     }
 
     @Test
+    public void testOfGetReturnTransactions(){
+
+        Exception exception = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService.getReturnTransactions(null);
+        });
+
+        assertDoesNotThrow(() -> {
+            returnTransactionService.getReturnTransactions(TRANSACTION_IDS);
+        });
+
+        assertEquals(exception.getMessage(), "Null argument: forbiddenReturnTransactionIds");
+    }
+
+    @Test
     public void testOfGetReturnTransactionsByTimePeriod(){
 
         Exception firstException = assertThrows(BadArgumentException.class, () -> {

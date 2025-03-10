@@ -205,6 +205,20 @@ public class ReturnTransactionService {
         return ReturnTransactionModel.fromReturnTransaction(returnTransactionFound);
     }
 
+    @Transactional
+    public List<ReturnTransactionModel> getReturnTransactions(
+            List<UUID> forbiddenReturnTransactionIds){
+
+        if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
+
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .getReturnTransactions(forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
+    }
+
     //This method returns list of maximum 24 ReturnTransaction
     @Transactional
     public List<ReturnTransactionModel> getReturnTransactionsByTimePeriod(
