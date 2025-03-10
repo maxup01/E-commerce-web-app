@@ -179,7 +179,7 @@ public class ReturnTransactionController{
             try{
                 returnTransactionModels = returnTransactionService
                         .getReturnTransactionsByTimePeriodAndUserEmail(
-                                startingDate, endingDate, userEmail);
+                                startingDate, endingDate, userEmail, forbiddenReturnTransactionIds);
             } catch (BadArgumentException e) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
             }

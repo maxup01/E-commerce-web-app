@@ -311,12 +311,24 @@ public class ReturnTransactionRepositoryTest {
         returnTransactionRepository.save(returnTransaction);
 
         List<ReturnTransaction> returns = returnTransactionRepository
-                .findReturnTransactionsByTimePeriodAndUserEmail(DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL);
+                .findReturnTransactionsByTimePeriodAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_EMAIL, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
         assertEquals(returns.get(0).getDeliveryAddress(), address);
         assertEquals(returns.get(0).getReturnCause(), RANDOM_RETURN_CAUSE);
         assertEquals(returns.get(0).getDate(), TODAYS_DATE);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
