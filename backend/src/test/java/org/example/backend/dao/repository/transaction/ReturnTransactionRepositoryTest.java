@@ -338,9 +338,20 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                        RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME);
+                        RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
+                        RANDOM_RETURN_CAUSE, RANDOM_DELIVERY_PROVIDER_NAME, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 2);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test

@@ -251,11 +251,12 @@ public class ReturnTransactionService {
         else if(forbiddenReturnTransactionIds == null)
             throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository
-                        .findReturnTransactionsByDeliveryProviderName(
-                                deliveryProviderName, forbiddenReturnTransactionIds,
-                                PageRequest.of(0, 24)));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByDeliveryProviderName(
+                        deliveryProviderName, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     //This method returns list of maximum 24 ReturnTransaction
@@ -310,12 +311,12 @@ public class ReturnTransactionService {
         else if(forbiddenReturnTransactionIds == null)
             throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        List<ReturnTransaction> orderTransactions = returnTransactionRepository
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndDeliveryProviderName(
                         startingDate, endingDate, deliveryProviderName, forbiddenReturnTransactionIds,
                         PageRequest.of(0, 24));
 
-        return mapReturnTransactionListToReturnTransactionModelList(orderTransactions);
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     //This method returns list of maximum 24 ReturnTransaction
@@ -338,19 +339,24 @@ public class ReturnTransactionService {
         return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
+    //This method returns list of maximum 24 ReturnTransaction
     @Transactional
     public List<ReturnTransactionModel> getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-            ReturnCause returnCause, String deliveryProviderName){
+            ReturnCause returnCause, String deliveryProviderName, List<UUID> forbiddenReturnTransactionIds){
 
         if(returnCause == null)
             throw new BadArgumentException("Null argument: returnCause");
         else if((deliveryProviderName == null) || (deliveryProviderName.trim().isEmpty()))
             throw new BadArgumentException("Incorrect argument: deliveryProviderName");
+        else if(forbiddenReturnTransactionIds == null)
+            throw new BadArgumentException("Null argument: forbiddenReturnTransactionIds");
 
-        return mapReturnTransactionListToReturnTransactionModelList(
-                returnTransactionRepository
-                        .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                                returnCause, deliveryProviderName));
+        List<ReturnTransaction> returnTransactions = returnTransactionRepository
+                .findReturnTransactionsByReturnCauseAndDeliveryProviderName(
+                        returnCause, deliveryProviderName, forbiddenReturnTransactionIds,
+                        PageRequest.of(0, 24));
+
+        return mapReturnTransactionListToReturnTransactionModelList(returnTransactions);
     }
 
     @Transactional

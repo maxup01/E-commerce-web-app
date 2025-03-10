@@ -803,37 +803,40 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetReturnTransactionsByReturnCauseAndDeliveryProviderName(){
 
-        when(returnTransactionRepository
-                .findReturnTransactionsByReturnCauseAndDeliveryProviderName(RETURN_CAUSE, DELIVERY_PROVIDER_NAME))
-                .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                            null, DELIVERY_PROVIDER_NAME);
+                            null, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                            RETURN_CAUSE, null);
+                            RETURN_CAUSE, null, TRANSACTION_IDS);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                            RETURN_CAUSE, "");
+                            RETURN_CAUSE, "", TRANSACTION_IDS);
+        });
+
+        Exception fourthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
+                            RETURN_CAUSE, DELIVERY_PROVIDER_NAME, null);
         });
 
         assertDoesNotThrow(() -> {
             returnTransactionService
                     .getReturnTransactionsByReturnCauseAndDeliveryProviderName(
-                            RETURN_CAUSE, DELIVERY_PROVIDER_NAME);
+                            RETURN_CAUSE, DELIVERY_PROVIDER_NAME, TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Null argument: returnCause");
         assertEquals(secondException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(thirdException.getMessage(), "Incorrect argument: deliveryProviderName");
+        assertEquals(fourthException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test
