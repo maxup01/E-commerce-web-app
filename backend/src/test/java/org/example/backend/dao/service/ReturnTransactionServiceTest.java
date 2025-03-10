@@ -1055,57 +1055,67 @@ public class ReturnTransactionServiceTest {
     @Test
     public void testOfGetReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(){
 
-        when(returnTransactionRepository
-                .findReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL))
-                .thenReturn(List.of(returnTransaction));
-
         Exception firstException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            null, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         Exception secondException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, null, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         Exception thirdException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_AFTER, DATE_BEFORE, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         Exception fourthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, null, RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         Exception fifthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, "", RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         Exception sixthException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, null);
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, null,
+                            TRANSACTION_IDS);
         });
 
         Exception seventhException = assertThrows(BadArgumentException.class, () -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                                DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, WRONG_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, WRONG_EMAIL,
+                            TRANSACTION_IDS);
+        });
+
+        Exception eighthException = assertThrows(BadArgumentException.class, () -> {
+            returnTransactionService
+                    .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            null);
         });
 
         assertDoesNotThrow(() -> {
             returnTransactionService
                     .getReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                            DATE_BEFORE, DATE_AFTER, DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                            TRANSACTION_IDS);
         });
 
         assertEquals(firstException.getMessage(), "Incorrect argument: startingDate");
@@ -1115,6 +1125,7 @@ public class ReturnTransactionServiceTest {
         assertEquals(fifthException.getMessage(), "Incorrect argument: deliveryProviderName");
         assertEquals(sixthException.getMessage(), "Incorrect argument: userEmail");
         assertEquals(seventhException.getMessage(), "Incorrect argument: userEmail");
+        assertEquals(eighthException.getMessage(), "Null argument: forbiddenReturnTransactionIds");
     }
 
     @Test

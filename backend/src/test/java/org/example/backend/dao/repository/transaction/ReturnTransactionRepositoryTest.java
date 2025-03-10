@@ -430,9 +430,20 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_EMAIL);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_EMAIL, List.of(),
+                        PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndReturnCauseAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_RETURN_CAUSE, RANDOM_EMAIL, allIds,
+                        PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
@@ -442,9 +453,20 @@ public class ReturnTransactionRepositoryTest {
 
         List<ReturnTransaction> returns = returnTransactionRepository
                 .findReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
-                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL);
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                        List.of(), PageRequest.of(0, 10));
+
+        List<UUID> allIds = new ArrayList<>();
+
+        returns.forEach(returnTransaction -> allIds.add(returnTransaction.getId()));
+
+        List<ReturnTransaction> emptyResultList = returnTransactionRepository
+                .findReturnTransactionsByTimePeriodAndDeliveryProviderNameAndUserEmail(
+                        DATE_BEFORE, DATE_AFTER, RANDOM_DELIVERY_PROVIDER_NAME, RANDOM_EMAIL,
+                        allIds, PageRequest.of(0, 10));
 
         assertEquals(returns.size(), 1);
+        assertEquals(emptyResultList.size(), 0);
     }
 
     @Test
